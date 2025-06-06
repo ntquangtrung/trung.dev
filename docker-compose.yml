@@ -1,0 +1,10 @@
+name: simple-django-blog
+
+services:
+  app:
+    build: .
+    image: django-blog-image
+    container_name: django-blog-container
+    command: /app/entrypoint.sh
+    ports:
+      - "8000:8000"

@@ -1,0 +1,69 @@
+# Python cache and compiled files
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+
+# Database files
+*.db
+*.sqlite3
+
+# Log and translation files
+*.log
+*.pot
+*.mo
+
+# Environment and virtualenv directories/files
+*.env
+*.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE/editor settings
+.idea/
+.vscode/
+
+# Git files and folders
+.git/
+.gitignore
+
+# macOS system files
+.DS_Store
+
+# Node and frontend dependencies
+node_modules/
+bower_components/
+
+# Editor swap/backup files
+*.swp
+*.swo
+*.bak
+*.tmp
+*.orig
+
+# Python packaging/build files
+*.egg-info/
+dist/
+build/
+*.egg
+*.tar.gz
+*.tgz
+*.gz
+*.zip
+*.rar
+*.7z
+
+# SSL certificates/keys
+*.pem
+*.crt
+*.key
+
+# Coverage and test output
+.coverage
+htmlcov/
+
+# Docker override file
+docker-compose.override.yml
