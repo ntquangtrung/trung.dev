@@ -115,6 +115,26 @@
    python3 manage.py migrate <app_name|optional> --settings=config.settings.development
    ```
 
+## 4. Docker
+
+1. Build docker compose
+
+   ```bash
+   docker compose build
+   ```
+
+2. Run docker compose
+
+   ```bash
+   docker compose up -d
+   ```
+
+3. Remove docker container
+
+   ```bash
+   docker compose down --remove-orphans
+   ```
+
 ---
 
 ## Superuser Credentials
