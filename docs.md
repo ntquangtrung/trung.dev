@@ -129,12 +129,50 @@
    docker compose up -d
    ```
 
-3. Remove docker container
+3. Remove docker container and django image
 
    ```bash
    docker compose down --remove-orphans
+
+   or
+
+   docker compose down --rmi local --remove-orphans
    ```
 
+4. Run build and run container
+
+   ```bash
+   docker compose up -d --build
+   ```
+
+---
+
+## 5. Django Tailwind Common Commands
+
+1. Install Tailwind app dependencies:
+
+   ```bash
+   python3 manage.py tailwind install
+   ```
+
+2. Start Tailwind development server (watch for changes):
+
+   ```bash
+   python3 manage.py tailwind start
+   ```
+
+3. Build Tailwind CSS for production:
+
+   ```bash
+   python3 manage.py tailwind build
+   ```
+
+4. Check Tailwind configuration:
+
+   ```bash
+   python3 manage.py tailwind check
+   ```
+   
 ---
 
 ## Superuser Credentials

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 import environ
+from pathlib import Path
 
 env = environ.Env()
 
@@ -38,14 +39,21 @@ LOCAL_APPS = [
     "apps.blog.apps.BlogConfig",
 ]
 
-INSTALLED_APPS = [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-] + LOCAL_APPS
+THIRD_PARTY_APPS = ["tailwind", "theme"]
+
+INSTALLED_APPS = (
+    [
+        "django.contrib.admin",
+        "django.contrib.auth",
+        "django.contrib.contenttypes",
+        "django.contrib.sessions",
+        "django.contrib.messages",
+        "django.contrib.staticfiles",
+    ]
+    + THIRD_PARTY_APPS
+    + LOCAL_APPS
+)
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -125,9 +133,27 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+# Extra static directories (optional)
+STATICFILES_DIRS = [
+    Path(str(BASE_DIR)) / "static",  # Your project-level static folder
+    Path(str(BASE_DIR)) / "theme" / "static",  # Tailwind theme app
+]
+
+STATIC_ROOT = Path(str(BASE_DIR)) / "staticfiles"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "blog.User"
+
+TAILWIND_APP_NAME = "theme"
+
+
+# NPM_PATH = get_npm_path()
+
+# if not NPM_PATH:
+#     raise RuntimeError("NPM is not installed or not in PATH.")
+# else:
+#     NPM_BIN_PATH = NPM_PATH

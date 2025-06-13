@@ -1,18 +1,37 @@
 name: simple-django-blog
 
+x-app: &default-app
+  build:
+    context: .
+  volumes:
+    - .:/app
+  env_file:
+    - path: .env
+      required: true
+  depends_on:
+    - postgres
+
 services:
   django:
-    build: .
+    <<: *default-app
     image: django-blog-image
     container_name: django-blog-container
-    command: /app/entrypoint.sh
+    command: /usr/local/bin/entrypoint.sh
     ports:
       - "8000:8000"
-    depends_on:
-      - postgres
-    env_file:
-    - path: .env
-      required: true # default
+
+  tailwind:
+    <<: *default-app
+    container_name: django-tailwind-container
+    # command: "poetry run python manage.py tailwind start"
+    command: >
+      sh -c 'if [ "$DEBUG" = "1" ]; then
+        echo "Starting Tailwind in development mode";
+        poetry run python manage.py tailwind start;
+      else
+        poetry run python manage.py tailwind build;
+      fi'
+    tty: true
 
   postgres:
     image: postgres

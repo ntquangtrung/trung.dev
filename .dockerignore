@@ -36,6 +36,8 @@ venv.bak/
 # Node and frontend dependencies
 node_modules/
 bower_components/
+**/node_modules
+
 
 # Editor swap/backup files
 *.swp
@@ -67,3 +69,5 @@ htmlcov/
 
 # Docker override file
 docker-compose.override.yml
+
+theme/static/
