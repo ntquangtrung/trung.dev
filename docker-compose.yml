@@ -3,8 +3,13 @@ name: simple-django-blog
 x-app: &default-app
   build:
     context: .
+    args:
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
+      - DEBUG=${DEBUG}
   volumes:
     - .:/app
+    - static_volume:/app/staticfiles
+
   env_file:
     - path: .env
       required: true
@@ -25,10 +30,11 @@ services:
     container_name: django-tailwind-container
     # command: "poetry run python manage.py tailwind start"
     command: >
-      sh -c 'if [ "$DEBUG" = "1" ]; then
+      sh -c 'if [ "$DEBUG" = "True" ]; then
         echo "Starting Tailwind in development mode";
         poetry run python manage.py tailwind start;
       else
+        echo "Starting Tailwind in production mode";
         poetry run python manage.py tailwind build;
       fi'
     tty: true
@@ -50,3 +56,4 @@ services:
 
 volumes:
   postgres_data:
+  static_volume:

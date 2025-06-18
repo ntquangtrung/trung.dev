@@ -19,7 +19,7 @@ env = environ.Env()
 # BASE_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = environ.Path(__file__) - 3
 
-env.read_env(BASE_DIR(".env"))
+environ.Env.read_env(BASE_DIR(".env"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -63,6 +63,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -140,6 +141,9 @@ STATICFILES_DIRS = [
 ]
 
 STATIC_ROOT = Path(str(BASE_DIR)) / "staticfiles"
+
+MEDIA_URL = "media/"
+MEDIA_ROOT = Path(str(BASE_DIR)) / "media"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

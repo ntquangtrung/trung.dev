@@ -2,12 +2,16 @@
 
 FROM python:3.13-slim-bookworm
 
+ARG DJANGO_SETTINGS_MODULE
+ARG DEBUG
+
 # Set environment variables
 ENV POETRY_VERSION=2.0.0 \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     NODE_MAJOR=22 \
-    DJANGO_SETTINGS_MODULE=config.settings.development
+    DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE} \
+    DEBUG=${DEBUG}
 
 # Install system dependencies and Node.js
 RUN apt-get update && apt-get install -y --no-install-recommends \

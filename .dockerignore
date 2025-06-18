@@ -71,3 +71,4 @@ htmlcov/
 docker-compose.override.yml
 
 theme/static/
+.git
