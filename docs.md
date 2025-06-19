@@ -145,6 +145,12 @@
    docker compose up -d --build
    ```
 
+5. Build for production
+
+   ```bash
+   docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+   ```
+
 ---
 
 ## 5. Django Tailwind Common Commands

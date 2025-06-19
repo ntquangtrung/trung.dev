@@ -40,7 +40,7 @@ services:
     tty: true
 
   postgres:
-    image: postgres
+    image: postgres:17
     container_name: django-blog-postgres-container
     ports:
       - "${POSTGRES_PORT}:5432"

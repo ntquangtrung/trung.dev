@@ -27,5 +27,10 @@ else
   echo "Superuser environment variables not set. Skipping superuser creation."
 fi
 
-# Start Django server
-poetry run python manage.py runserver 0.0.0.0:8000
+if [ "$ENVIRONMENT" = "production" ]; then
+  echo "Starting Gunicorn server..."
+  poetry run gunicorn config.wsgi:application --bind 0.0.0.0:8000
+else
+  echo "Starting Django development server..."
+  poetry run python manage.py runserver 0.0.0.0:8000
+fi

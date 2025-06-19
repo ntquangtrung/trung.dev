@@ -2,6 +2,10 @@
 
 FROM python:3.13-slim-bookworm
 
+# Create a non-root user and group
+RUN addgroup --system app && \
+    adduser --system --ingroup app app
+
 ARG DJANGO_SETTINGS_MODULE
 ARG DEBUG
 
@@ -39,16 +43,20 @@ WORKDIR /app
 COPY . /app
 
 # Ensure entrypoint.sh was placed outside of /app directory, else "chmod +x /usr/local/bin/entrypoint.sh" will not work
-COPY /entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 # Grant execute permission to the entrypoint.sh script to ensure it can be run as an executable during container startup
 RUN chmod +x /usr/local/bin/entrypoint.sh
-
-RUN poetry install --only main
 
 # Run Tailwind install + build + collectstatic (must set dummy SECRET_KEY)
 RUN SECRET_KEY=dummy poetry run python manage.py tailwind install --no-package-lock --no-input
 RUN SECRET_KEY=dummy poetry run python manage.py tailwind build --no-input
 RUN SECRET_KEY=dummy poetry run python manage.py collectstatic --no-input
+
+# Give ownership of the app directory to the new user
+RUN chown -R app:app /app
+
+# Switch to the non-root user
+USER app
 
 # Expose port (optional, e.g. for Django default)
 EXPOSE 8000

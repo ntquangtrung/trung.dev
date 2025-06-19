@@ -1,0 +1,15 @@
+services:
+  django:
+    command: /usr/local/bin/entrypoint.sh
+    # volumes: []  # 🚫 This removes the volumes inherited from base
+
+  nginx-proxy:
+    image: nginx:latest
+    container_name: django-blog-nginx-container
+    ports:
+      - "8001:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - static_volume:/app/staticfiles:ro
+    depends_on:
+      - django
