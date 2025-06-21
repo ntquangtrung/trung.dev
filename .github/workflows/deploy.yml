@@ -1,0 +1,67 @@
+name: Manual Deploy to EC2
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+    - name: Checkout Repo
+      uses: actions/checkout@v4
+
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.9.1
+      with:
+        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+
+    - name: Deploy via SSH
+      env:
+        REPO_URL: https://${{ secrets.DEPLOY_PAT_TOKEN }}@github.com/${{ github.repository }}.git
+        BRANCH: ${{ github.ref_name }}
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+        POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        ENVIRONMENT: ${{ vars.ENVIRONMENT }}
+        DEBUG: ${{ vars.DEBUG }}
+        DJANGO_SETTINGS_MODULE: config.settings.${{ vars.ENVIRONMENT }}
+        DJANGO_ALLOWED_HOSTS: ${{ vars.DJANGO_ALLOWED_HOSTS }}
+        DJANGO_CSRF_TRUSTED_ORIGINS: ${{ vars.DJANGO_CSRF_TRUSTED_ORIGINS }}
+        DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      run: |
+        ssh -o StrictHostKeyChecking=no ubuntu@ec2-16-176-172-255.ap-southeast-2.compute.amazonaws.com << EOF
+          set -e
+          # Clone or pull repo------------------
+          if [ ! -d "django-app" ]; then
+            git clone $REPO_URL django-app
+          fi
+          # Change to the app directory------------------
+          cd django-app
+          git pull --rebase origin $BRANCH
+          # Write environment variables------------------
+          cat <<EOT > .env
+          DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB
+          POSTGRES_DB=$POSTGRES_DB
+          POSTGRES_USER=$POSTGRES_USER
+          POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+          POSTGRES_HOST=$POSTGRES_HOST
+          POSTGRES_PORT=$POSTGRES_PORT
+          ENVIRONMENT=$ENVIRONMENT
+          DEBUG=$DEBUG
+          DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
+          DJANGO_ALLOWED_HOSTS=$DJANGO_ALLOWED_HOSTS
+          DJANGO_CSRF_TRUSTED_ORIGINS=$DJANGO_CSRF_TRUSTED_ORIGINS
+          SECRET_KEY="$DJANGO_SECRET_KEY"
+        EOT
+          # Run Docker Compose------------------
+          docker compose down
+          docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+        EOF

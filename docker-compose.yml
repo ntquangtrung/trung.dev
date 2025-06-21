@@ -9,12 +9,9 @@ x-app: &default-app
   volumes:
     - .:/app
     - static_volume:/app/staticfiles
-
   env_file:
     - path: .env
       required: true
-  depends_on:
-    - postgres
 
 services:
   django:
@@ -24,11 +21,12 @@ services:
     command: /usr/local/bin/entrypoint.sh
     ports:
       - "8000:8000"
+    depends_on:
+      - tailwind
 
   tailwind:
     <<: *default-app
     container_name: django-tailwind-container
-    # command: "poetry run python manage.py tailwind start"
     command: >
       sh -c 'if [ "$DEBUG" = "True" ]; then
         echo "Starting Tailwind in development mode";
@@ -39,21 +37,5 @@ services:
       fi'
     tty: true
 
-  postgres:
-    image: postgres:17
-    container_name: django-blog-postgres-container
-    ports:
-      - "${POSTGRES_PORT}:5432"
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    env_file:
-      - path: .env
-        required: true # default
-
 volumes:
-  postgres_data:
   static_volume:
