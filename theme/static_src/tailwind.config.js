@@ -48,7 +48,9 @@ module.exports = {
         // '../../**/*.py'
     ],
     theme: {
-        extend: {},
+        extend: {
+            colors: {}
+        },
     },
     plugins: [
         /**
@@ -57,7 +59,7 @@ module.exports = {
          * comment the line below to disable '@tailwindcss/forms'.
          */
         // require('@tailwindcss/forms'),
-        // require('@tailwindcss/typography'),
+        require('@tailwindcss/typography'),
         // require('@tailwindcss/aspect-ratio'),
     ],
 }

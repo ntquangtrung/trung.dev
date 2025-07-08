@@ -39,7 +39,7 @@ LOCAL_APPS = [
     "apps.blog.apps.BlogConfig",
 ]
 
-THIRD_PARTY_APPS = ["tailwind", "theme"]
+THIRD_PARTY_APPS = ["tailwind", "theme", "tinymce"]
 
 INSTALLED_APPS = (
     [
@@ -71,7 +71,7 @@ ROOT_URLCONF = "config.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": ["templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -161,3 +161,20 @@ TAILWIND_APP_NAME = "theme"
 #     raise RuntimeError("NPM is not installed or not in PATH.")
 # else:
 #     NPM_BIN_PATH = NPM_PATH
+
+TINYMCE_PLUGINS = "advlist,autolink,lists,link,image,charmap,print,preview,anchor,searchreplace, visualblocks,code,fullscreen,insertdatetime,media,table,paste,toc,help,wordcount,emoticons,autoresize"
+
+TINYMCE_TOOLBAR = (
+    "undo redo | blocks | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat help | visualblocks  emoticons  code preview fullscreen | image",
+)
+
+
+TINYMCE_DEFAULT_CONFIG = {
+    "theme": "silver",
+    "height": 500,
+    "menubar": False,
+    "plugins": TINYMCE_PLUGINS,
+    "toolbar": TINYMCE_TOOLBAR,
+    "min_height": 600,
+    "max_height": 1200,
+}

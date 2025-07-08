@@ -1,4 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 /**
   * A catch-all path to Django template files, JavaScript, and Python files
@@ -8,3 +13,37 @@
   * the scope of this path.
   */
 @source "../../../**/*.{html,py,js}";
+
+@layer base {
+  :root {
+    @apply font-mono;
+    @apply text-light dark:text-dark;
+    @apply bg-background-light dark:bg-background-dark;
+  }
+}
+
+@theme {
+  --font-mono: 'JetBrains Mono', monospace;
+  --color-background-dark: #181818;
+  --color-background-light: #fdf9ee;
+
+  --color-background-sidebar-dark: #181818;
+  --color-background-sidebar-light: #eee8d5;
+
+  --color-dark: #fbfbfb;
+  --color-light: #181818;
+
+  --color-clickable-dark: #ffd479;
+  --color-clickable-light: #c48914;
+
+  --color-clickable-hover-dark: #c48914;
+  --color-clickable-hover-light: #ffd479;
+
+  --color-secondary-text-dark: #999999
+  --color-secondary-text-light: #575757;
+
+  --header-height: 3.75rem;
+  --sidebar-width: 16.25rem;
+}
+
+

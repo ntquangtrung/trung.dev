@@ -1,4 +1,4 @@
-# Django By Example - Shop Project
+# Django By Example - Blog Project
 
 ## 1. Basic Setup
 
@@ -139,7 +139,7 @@
    docker compose down --rmi local --remove-orphans
    ```
 
-4. Run build and run container
+4. Run build and run container for development
 
    ```bash
    docker compose up -d --build
