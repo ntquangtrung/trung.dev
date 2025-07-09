@@ -57,6 +57,8 @@
     --color-background-navbar-link-hover: #252525; /* Jet Black */
 
     --color-border-muted: #252525; /* Jet Black */
+
+    --color-gold: #ffd479; /* Light Gold */
   }
 }
 
@@ -82,7 +84,7 @@
 
   --color-border-muted: #e5dcbd; /* Light Beige */
 
-  --color-gold: #ffd479;
+  --color-gold: #c48914;
 }
 
 @layer components {
