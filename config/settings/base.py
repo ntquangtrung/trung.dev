@@ -39,7 +39,7 @@ LOCAL_APPS = [
     "apps.blog.apps.BlogConfig",
 ]
 
-THIRD_PARTY_APPS = ["tailwind", "theme", "tinymce"]
+THIRD_PARTY_APPS = ["tailwind", "theme", "tinymce", "taggit"]
 
 INSTALLED_APPS = (
     [
