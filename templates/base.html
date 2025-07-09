@@ -1,4 +1,5 @@
 {% load static tailwind_tags %}
+
 <!DOCTYPE html>
 <html lang="en" class="dark">
 	<head>
@@ -6,17 +7,18 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="icon" type="image/png" href="{% static 'icons/favicon.ico' %}">
 	{% tailwind_css %}
 	</head>
 
 	<body class="">
-		<div>
+		<section id="root">
 			{% include "header.html" %}
 			{% include "sidebar.html" %}
 			<div class="pt-[var(--header-height)] ml-[var(--sidebar-width)]">
 				{% block content %}<div>No content available</div>{% endblock content %}
 				{% include "footer.html" %}
 			</div>
-		<div>
+		</section>
 	</body>
 </html>

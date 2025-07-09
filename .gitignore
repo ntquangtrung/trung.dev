@@ -21,7 +21,6 @@ ENV/
 db.sqlite3
 media/
 staticfiles/
-static/
 
 # Django migrations (optional — keep if you want to commit initial structure only)
 **/migrations/__pycache__/

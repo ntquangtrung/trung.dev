@@ -6,44 +6,96 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 /**
-  * A catch-all path to Django template files, JavaScript, and Python files
-  * that contain Tailwind CSS classes and will be scanned by Tailwind to generate the final CSS file.
-  *
-  * If your final CSS file is not being updated after code changes, you may want to broaden or narrow
-  * the scope of this path.
-  */
+ * A catch-all path to Django template files, JavaScript, and Python files
+ * that contain Tailwind CSS classes and will be scanned by Tailwind to generate the final CSS file.
+ *
+ * If your final CSS file is not being updated after code changes, you may want to broaden or narrow
+ * the scope of this path.
+ */
 @source "../../../**/*.{html,py,js}";
 
 @layer base {
   :root {
+    font-size: 1rem;
     @apply font-mono;
-    @apply text-light dark:text-dark;
-    @apply bg-background-light dark:bg-background-dark;
+    @apply text-primary;
+    @apply bg-background-primary;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    line-height: 1.2;
+  }
+
+  button:hover {
+    @apply cursor-pointer;
+  }
+
+  .dark {
+    --color-background-primary: #181818; /* Charcoal Black */
+
+    --color-background-sidebar-primary: #181818; /* Charcoal Black */
+
+    --color-primary: #fbfbfb; /* Snow White */
+
+    --color-clickable-primary: #ffd479; /* Light Gold */
+
+    --color-clickable-hover-primary: #c48914; /* Bronze */
+
+    --color-secondary: #999999; /* Silver Gray */
+
+    --color-background-navbar-link-hover: #252525; /* Jet Black */
+
+    --color-border-muted: #252525; /* Jet Black */
   }
 }
 
 @theme {
   --font-mono: 'JetBrains Mono', monospace;
-  --color-background-dark: #181818;
-  --color-background-light: #fdf9ee;
 
-  --color-background-sidebar-dark: #181818;
-  --color-background-sidebar-light: #eee8d5;
+  --color-background-primary: #fdf9ee; /* Ivory */
 
-  --color-dark: #fbfbfb;
-  --color-light: #181818;
+  --color-background-sidebar-primary: #eee8d5; /* Sand */
 
-  --color-clickable-dark: #ffd479;
-  --color-clickable-light: #c48914;
+  --color-primary: #181818; /* Charcoal Black */
 
-  --color-clickable-hover-dark: #c48914;
-  --color-clickable-hover-light: #ffd479;
+  --color-clickable-primary: #c48914; /* Bronze */
 
-  --color-secondary-text-dark: #999999
-  --color-secondary-text-light: #575757;
+  --color-clickable-hover-primary: #ffd479; /* Light Gold */
+
+  --color-secondary: #575757; /* Graphite Gray */
 
   --header-height: 3.75rem;
   --sidebar-width: 16.25rem;
+
+  --color-background-navbar-link-hover: #eee8d5; /* Sand */
+
+  --color-border-muted: #e5dcbd; /* Light Beige */
+
+  --color-gold: #ffd479;
 }
 
+@layer components {
+  .btn-nav {
+    @apply flex gap-2 hover:bg-background-navbar-link-hover px-3 py-2 rounded-lg;
+  }
 
+  .header-actions img {
+    @apply h-6 w-6;
+  }
+
+  .social-actions > li {
+    @apply h-8 w-8 md:h-10 md:w-10 hover:bg-background-navbar-link-hover rounded-lg flex items-center justify-center;
+  }
+
+}
