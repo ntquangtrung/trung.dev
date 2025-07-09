@@ -53,6 +53,21 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+name = "django-appconf"
+version = "1.1.0"
+description = "A helper class for handling configuration defaults of packaged apps gracefully."
+optional = false
+python-versions = ">=3.9"
+groups = ["main"]
+files = [
+    {file = "django-appconf-1.1.0.tar.gz", hash = "sha256:9fcead372f82a0f21ee189434e7ae9c007cbb29af1118c18251720f3d06243e4"},
+    {file = "django_appconf-1.1.0-py3-none-any.whl", hash = "sha256:7abd5a163ff57557f216e84d3ce9dac36c37ffce1ab9a044d3d53b7c943dd10f"},
+]
+
+[package.dependencies]
+django = "*"
+
+[[package]]
 name = "django-browser-reload"
 version = "1.18.0"
 description = "Automatically reload your browser in development."
@@ -114,6 +129,27 @@ files = [
 
 [package.dependencies]
 Django = ">=3.2"
+
+[[package]]
+name = "django-select2"
+version = "8.4.1"
+description = "This is a Django_ integration of Select2_."
+optional = false
+python-versions = ">=3.10"
+groups = ["main"]
+files = [
+    {file = "django_select2-8.4.1-py3-none-any.whl", hash = "sha256:1df5e6788cc032795c1be0f2e2a2ea7a5a1dd89878575217a2c23f25d7301fbf"},
+    {file = "django_select2-8.4.1.tar.gz", hash = "sha256:e6cdc0ae647b91b1bed610628893d10dea50a96fffba8e83af27f35dd6003572"},
+]
+
+[package.dependencies]
+django = ">=4.2"
+django-appconf = ">=0.6.0"
+
+[package.extras]
+docs = ["sphinx"]
+selenium = ["selenium"]
+test = ["pytest", "pytest-cov", "pytest-django", "selenium"]
 
 [[package]]
 name = "django-taggit"
@@ -498,4 +534,4 @@ brotli = ["brotli"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<4"
-content-hash = "1c847653ab30b981cc0d794697dd5a3149aba69c6cf5eec66daad6e29e8afdaf"
+content-hash = "a10dfdc7926d387db6d5bc84b4b4f2fa2d2a7a1a8737186869d7b4f0bbc3f524"

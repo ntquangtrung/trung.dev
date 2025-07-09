@@ -39,7 +39,7 @@ LOCAL_APPS = [
     "apps.blog.apps.BlogConfig",
 ]
 
-THIRD_PARTY_APPS = ["tailwind", "theme", "tinymce", "taggit"]
+THIRD_PARTY_APPS = ["tailwind", "theme", "tinymce", "taggit", "django_select2"]
 
 INSTALLED_APPS = (
     [
@@ -162,7 +162,7 @@ TAILWIND_APP_NAME = "theme"
 # else:
 #     NPM_BIN_PATH = NPM_PATH
 
-TINYMCE_PLUGINS = "advlist,autolink,lists,link,image,charmap,print,preview,anchor,searchreplace, visualblocks,code,fullscreen,insertdatetime,media,table,paste,toc,help,wordcount,emoticons,autoresize"
+TINYMCE_PLUGINS = "advlist,autolink,lists,link,image,charmap,preview,anchor,searchreplace, visualblocks,code,fullscreen,insertdatetime,media,table,help,wordcount,emoticons,autoresize"
 
 TINYMCE_TOOLBAR = (
     "undo redo | blocks | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat help | visualblocks  emoticons  code preview fullscreen | image",
@@ -178,3 +178,8 @@ TINYMCE_DEFAULT_CONFIG = {
     "min_height": 600,
     "max_height": 1200,
 }
+
+SELECT2_CSS = [
+    "admin/css/vendor/select2/select2.min.css",  # Default Select2 styles
+    "css/admin/admin_custom.css",
+]

@@ -1,0 +1,45 @@
+/* Styling for Select2 in Dark Mode */
+
+[data-theme="dark"] .select2-container--default .select2-selection--multiple {
+    background-color: #1e1e1e;
+    border: 1px solid #555;
+    color: #e0e0e0;
+    border-radius: 6px;
+}
+
+/* Tag pills */
+[data-theme="dark"] .select2-selection__choice {
+    background-color: #333;
+    color: #666;
+    border: 1px solid #666;
+}
+
+/* Tag remove button (×) */
+[data-theme="dark"] .select2-selection__choice__remove {
+    color: #bbb;
+}
+
+[data-theme="dark"] .select2-selection__choice__remove:hover {
+    color: #f44336;
+    background: transparent;
+}
+
+/* Search input inside tag input */
+[data-theme="dark"] .select2-search__field {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    border: none;
+}
+
+/* Dropdown options container */
+[data-theme="dark"] .select2-container--default .select2-results__option {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #333;
+    color: #fff;
+}
+
+/* End of styling for Select2 in Dark Mode */

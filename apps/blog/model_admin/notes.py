@@ -10,3 +10,4 @@ class NoteAdmin(admin.ModelAdmin):
     list_filter = ("created",)
     ordering = ("-created",)
     prepopulated_fields = {"slug": ("title",)}
+    autocomplete_fields = ("tags",)
