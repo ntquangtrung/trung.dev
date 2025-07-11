@@ -108,6 +108,10 @@
 
    ```bash
    python3 manage.py makemigrations <app_name> --settings=config.settings.development
+
+   or
+   
+   python3 manage.py makemigrations --settings=config.settings.development
    ```
 
 3. Apply migrations:

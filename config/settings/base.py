@@ -15,8 +15,6 @@ from pathlib import Path
 
 env = environ.Env()
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-# BASE_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = environ.Path(__file__) - 3
 
 environ.Env.read_env(BASE_DIR(".env"))
@@ -39,7 +37,7 @@ LOCAL_APPS = [
     "apps.blog.apps.BlogConfig",
 ]
 
-THIRD_PARTY_APPS = ["tailwind", "theme", "tinymce", "taggit", "django_select2"]
+THIRD_PARTY_APPS = ["tailwind", "theme", "tinymce", "taggit", "taggit_labels"]
 
 INSTALLED_APPS = (
     [
@@ -54,6 +52,25 @@ INSTALLED_APPS = (
     + LOCAL_APPS
 )
 
+MAX_UPLOAD_SIZE = 2 * 1024 * 1024  # 2 MB
+
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "region_name": env.str("SUPABASE_S3_REGION"),
+            "access_key": env.str("SUPABASE_S3_ACCESS_KEY"),
+            "secret_key": env.str("SUPABASE_S3_SECRET_ACCESS_KEY"),
+            "bucket_name": env.str("SUPABASE_STORAGE_BUCKET_NAME"),
+            "endpoint_url": env.str("SUPABASE_S3_ENDPOINT_URL"),
+            "querystring_auth": False,  # Setting AWS_QUERYSTRING_AUTH to False to remove query parameter authentication from generated URLs. This can be useful if your S3 buckets are public.
+            "custom_domain": env.str("SUPABASE_CUSTOM_DOMAIN"),
+        },
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -168,6 +185,10 @@ TINYMCE_TOOLBAR = (
     "undo redo | blocks | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat help | visualblocks  emoticons  code preview fullscreen | image",
 )
 
+path_to_image_upload_handler = (
+    Path(str(BASE_DIR)) / "static" / "js/tinymce_images_upload_handler.js"
+)
+tinymce_images_upload_handler = path_to_image_upload_handler.read_text(encoding="utf-8")
 
 TINYMCE_DEFAULT_CONFIG = {
     "theme": "silver",
@@ -177,9 +198,8 @@ TINYMCE_DEFAULT_CONFIG = {
     "toolbar": TINYMCE_TOOLBAR,
     "min_height": 600,
     "max_height": 1200,
+    "images_upload_url": "/admin/tinymce-upload/",
+    "images_upload_credentials": True,
+    "images_upload_handler": tinymce_images_upload_handler,
+    "images_file_types": "jpeg,jpg,png,gif,webp,svg",
 }
-
-SELECT2_CSS = [
-    "admin/css/vendor/select2/select2.min.css",  # Default Select2 styles
-    "css/admin/admin_custom.css",
-]

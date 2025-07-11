@@ -20,14 +20,16 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from apps.blog.views import tinymce_upload_image
+
 urlpatterns = [
     # Apps URLs
     path("", include("apps.blog.urls")),
     # Admin URLs
+    path("admin/tinymce-upload/", tinymce_upload_image, name="tinymce-upload"),
     path("admin/", admin.site.urls),
     # Third-party URLs
     path("tinymce/", include("tinymce.urls")),
-    path("select2/", include("django_select2.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 if settings.DEBUG:
