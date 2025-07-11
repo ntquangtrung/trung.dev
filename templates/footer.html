@@ -1,5 +1,25 @@
-<footer style="background: #f8f9fa; padding: 20px 0; text-align: center; font-size: 14px; color: #6c757d;">
-    <div>
-        &copy; {{ year|default:"2024" }} Simple Django Blog. All rights reserved.
+{% load static %}
+
+<footer class="p-6 shadow-lg border-t-2 border-t-border-muted">
+    <div class="flex flex-col items-center justify-center gap-2">
+        <span>
+            Huge thanks to
+            <a
+                href="https://tania.dev"
+                target="_blank"
+                class="text-blue-500 hover:underline"
+            >
+                Tania
+            </a>
+            — her work was a big inspiration for this project
+        </span>
+        <span>
+            Made by Trung
+            <img
+                class="inline-block h-6 w-6"
+                src="{% static 'icons/heart.png' %}"
+                alt="Made with love"
+            />
+        </span>
     </div>
 </footer>

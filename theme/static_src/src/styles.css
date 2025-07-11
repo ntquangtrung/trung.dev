@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
 
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
@@ -63,7 +63,7 @@
 }
 
 @theme {
-  --font-mono: 'JetBrains Mono', monospace;
+  --font-mono: "JetBrains Mono", monospace;
 
   --color-background-primary: #fdf9ee; /* Ivory */
 
@@ -99,5 +99,4 @@
   .social-actions > li {
     @apply h-8 w-8 md:h-10 md:w-10 hover:bg-background-navbar-link-hover rounded-lg flex items-center justify-center;
   }
-
 }
