@@ -187,10 +187,10 @@ TAILWIND_APP_NAME = "theme"
 # else:
 #     NPM_BIN_PATH = NPM_PATH
 
-TINYMCE_PLUGINS = "advlist,autolink,lists,link,image,charmap,preview,anchor,searchreplace, visualblocks,code,fullscreen,insertdatetime,media,table,help,wordcount,emoticons,autoresize"
+TINYMCE_PLUGINS = "advlist,autolink,lists,link,image,charmap,preview,anchor,searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,help,wordcount,emoticons,autoresize,codesample"
 
 TINYMCE_TOOLBAR = (
-    "undo redo | blocks | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat help | visualblocks  emoticons  code preview fullscreen | image",
+    "undo redo | blocks fontsize | bold italic backcolor | table tabledelete | tablecellborderstyle tablecellvalign tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat help | visualblocks emoticons code preview fullscreen | image codesample link anchor",
 )
 
 path_to_image_upload_handler = (
@@ -210,4 +210,35 @@ TINYMCE_DEFAULT_CONFIG = {
     "images_upload_credentials": True,
     "images_upload_handler": tinymce_images_upload_handler,
     "images_file_types": "jpeg,jpg,png,gif,webp,svg",
+    "link_default_target": "_blank",
+    "codesample_languages": [
+        {"text": "HTML/XML", "value": "markup"},
+        {"text": "JavaScript", "value": "javascript"},
+        {"text": "CSS", "value": "css"},
+        # {"text": "PHP", "value": "php"},
+        # {"text": "Ruby", "value": "ruby"},
+        {"text": "Python", "value": "python"},
+        # {"text": "Java", "value": "java"},
+        # {"text": "C", "value": "c"},
+        # {"text": "C#", "value": "csharp"},
+        # {"text": "C++", "value": "cpp"},
+        {"text": "Git", "value": "git"},
+        {"text": "TypeScript", "value": "typescript"},
+        {"text": "SQL", "value": "sql"},
+        {"text": "JSON", "value": "json"},
+        {"text": "Plain Text", "value": "plaintext"},
+    ],
+    "codesample_global_prismjs": True,
+    "table_border_styles": [
+        {"title": "Solid", "value": "solid"},
+        {"title": "Dotted", "value": "dotted"},
+        {"title": "Dashed", "value": "dashed"},
+        {"title": "Double", "value": "double"},
+        {"title": "Groove", "value": "groove"},
+        {"title": "Ridge", "value": "ridge"},
+        {"title": "Inset", "value": "inset"},
+        {"title": "Outset", "value": "outset"},
+        {"title": "None", "value": "none"},
+        {"title": "Hidden", "value": "hidden"},
+    ],
 }

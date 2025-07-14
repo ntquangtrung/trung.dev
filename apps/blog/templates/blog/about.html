@@ -1,8 +1,16 @@
 {% extends "base.html" %}
-
+{% load static %}
+{% load svg_tags %}
 {% block title %}<title>About me</title>{% endblock title %}
-
+{% block prismjs %}<script src="{% static 'prism/prism.js' %}"></script>{% endblock prismjs %}
+{% block prismcss %}<link rel="stylesheet" href="{% static 'prism/prism.css' %}">{% endblock prismcss %}
 
 {% block content %}
-<div class="text-title-light dark:text-title-dark text-red h-[1500px]">about</div>
+    <article class="custom-prose">{{ user.profile.about|safe }}</article>
+    <section>
+        <h2 id="contact" class="mb-4 flex items-center"><a class="pr-2" href="#contact">{% render_svg "icons/anchor.svg" tailwind_css_color="fill-gold" %}</a> Contact</h2>
+        <div>
+            <span>Email: <a href="mailto:{{ user.email }}"><strong>{{ user.email }}</strong></a></span>
+        </div>
+    </section>
 {% endblock content %}

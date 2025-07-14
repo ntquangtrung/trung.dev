@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from ..models import Profile
+from apps.blog.models import Profile
+from .abstracts import PrismAdmin
 
 
 class ProfileInline(admin.StackedInline):
@@ -22,7 +23,7 @@ class CustomUserAdmin(UserAdmin):
         css = {"all": [""]}
 
 
-class ProfileAdmin(admin.ModelAdmin):
+class ProfileAdmin(PrismAdmin):
     list_display = (
         "id",
         "user",
@@ -40,6 +41,3 @@ class ProfileAdmin(admin.ModelAdmin):
         "about",
     )
     readonly_fields = ("user",)
-
-    class Media:
-        css = {"all": [""]}
