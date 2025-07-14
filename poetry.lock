@@ -105,6 +105,18 @@ argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+name = "django-active-link"
+version = "0.2.2"
+description = "The best and simplest way to highlight active links in your Django app."
+optional = false
+python-versions = "<4.0,>=3.8"
+groups = ["main"]
+files = [
+    {file = "django_active_link-0.2.2-py3-none-any.whl", hash = "sha256:8bd88b0102904886887e4fbf329eb454b62c35fe000d700801b7153f6894f0df"},
+    {file = "django_active_link-0.2.2.tar.gz", hash = "sha256:d5ff2c08cbda0632e2ac0fdda187743734d74e2ad5bffc68795768ad8721fee7"},
+]
+
+[[package]]
 name = "django-browser-reload"
 version = "1.18.0"
 description = "Automatically reload your browser in development."
@@ -665,4 +677,4 @@ brotli = ["brotli"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13,<4"
-content-hash = "d68c6cf0e552ebabb25299aba9134d185901fc247b4d0b5f182a29bcf321bf7a"
+content-hash = "16a8c04fa3691762bb96e31afaae633b535ede95787869f608a3fb63682fd638"

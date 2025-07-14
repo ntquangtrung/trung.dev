@@ -4,6 +4,7 @@ botocore==1.39.3
 defusedxml==0.7.1
 dj-database-url==3.0.0
 Django==5.2.1
+django-active-link==0.2.2
 django-browser-reload==1.18.0
 django-environ==0.12.0
 django-extensions==4.1
