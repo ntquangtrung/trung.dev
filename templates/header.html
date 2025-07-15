@@ -9,7 +9,7 @@
                 <span class="hover:underline decoration-2 font-bold">trng.dev</span>
             </a>
 
-            <button id="toggle-sidebar-desktop" class="hidden md:block group/nav">
+            <button id="toggle-sidebar-desktop" class="hidden md:block group/nav" onclick="toggleNav.bind(this)()">
                 <svg class="hidden group-[.open]/nav:block" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path><path d="M9 4v16"></path><path d="M15 10l-2 2l2 2"></path></svg>
 
                 <svg class="block group-[.open]/nav:hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path><path d="M9 4v16"></path><path d="M14 10l2 2l-2 2"></path></svg>
@@ -18,7 +18,7 @@
             <button
                 id="toggle-sidebar-mobile"
                 class="md:hidden shadow-sm relative w-10 h-10 flex flex-col items-center justify-center group [&.open]:border-2 rounded-md [&.open]:border-gold [&.open]:bg-background-navbar-link-hover transition-all"
-                onclick="this.classList.toggle('open')"
+                onclick="toggleNav.bind(this)()"
             >
                 <!-- Top bar -->
                 <span class="block w-6 h-0.5 transition-transform duration-300 ease-in-out group-[.open]:rotate-45 group-[.open]:translate-y-1.5 bg-primary group-[.open]:bg-gold"></span>
@@ -57,7 +57,7 @@
 
             <ul class="flex items-center gap-2 md:gap-4 social-actions">
                 <li>
-                    <button id="toggle-darkmode" class="group/darkmode">
+                    <button id="toggle-darkmode" class="group/darkmode" onclick="toggleDarkMode()">
                         <img class="hidden group-[.dark]/darkmode:block h-6 w-6" src="{% static 'icons/moon.svg' %}" alt="darkmode">
                         <img class="block group-[.dark]/darkmode:hidden h-6 w-6" src="{% static 'icons/sun.svg' %}" alt="darkmode">
                     </button>
