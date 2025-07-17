@@ -110,7 +110,7 @@
    python3 manage.py makemigrations <app_name> --settings=config.settings.development
 
    or
-   
+
    python3 manage.py makemigrations --settings=config.settings.development
    ```
 
@@ -184,6 +184,16 @@
    ```
    
 ---
+
+## 6. Django Test Runner
+
+1. **Run Django Tests**
+   - Execute:
+     ```bash
+     python3 manage.py test --pattern="*.test.py" --settings=config.settings.development
+     ```
+   - Confirm all tests in files matching `*.test.py` are discovered and executed.
+
 
 ## Superuser Credentials
 

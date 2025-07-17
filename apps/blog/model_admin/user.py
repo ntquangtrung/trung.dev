@@ -1,8 +1,9 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
+from apps.blog.forms.profile import ProfileAdminForm
 from apps.blog.models import Profile
-from .abstracts import PrismAdmin
+from apps.blog.model_admin.abstracts import PrismAdmin
 
 
 class ProfileInline(admin.StackedInline):
@@ -29,6 +30,7 @@ class ProfileAdmin(PrismAdmin):
         "user",
         "year_of_birth",
     )
+    form = ProfileAdminForm
     search_fields = ("user__username", "user__email")
     list_filter = ("year_of_birth",)
     fields = (

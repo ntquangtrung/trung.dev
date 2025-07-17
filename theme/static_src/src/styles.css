@@ -95,7 +95,8 @@
 
     --color-background-navbar-link-hover: #252525; /* Jet Black */
 
-    --color-border-muted: #252525; /* Jet Black */
+    --color-muted: #252525;
+    --color-border-muted: var(--color-muted); /* Jet Black */
 
     --color-gold: #ffd479; /* Light Gold */
   }
@@ -121,7 +122,8 @@
 
   --color-background-navbar-link-hover: #eee8d5; /* Sand */
 
-  --color-border-muted: #e5dcbd; /* Light Beige */
+  --color-muted: #e5dcbd;
+  --color-border-muted: var(--color-muted); /* Light Beige */
 
   --color-gold: #c48914;
 }
@@ -142,8 +144,17 @@
     @apply h-8 w-8 md:h-10 md:w-10 hover:bg-background-navbar-link-hover rounded-lg flex items-center justify-center;
   }
 
-  /* Custom css for content that derive from the TinyMCE editor */
+  .divider {
+    @apply border-t border-border-muted my-4 w-full;
+  }
+}
+
+@layer component {
   .custom-prose {
+    hr {
+      @apply text-muted my-4;
+    }
+
     h1,
     h2,
     h3,
@@ -161,9 +172,17 @@
       @apply text-gold hover:underline;
     }
 
+    strong * {
+      @apply font-bold;
+    }
+
     p {
       margin-block-start: 1em;
       margin-block-end: 1em;
+    }
+
+    ul {
+      @apply list-disc pl-6 mt-4 marker:leading-[3];
     }
 
     table:not([cellpadding]) td,
@@ -177,8 +196,19 @@
         flex-direction: column;
       }
 
+      .responsive-table,
+      .responsive-table tbody {
+        display: block;
+        height: 100% !important;
+      }
+
+      .responsive-table tr {
+        height: 100% !important;
+      }
+
       .responsive-table td {
         width: 100% !important;
+        height: initial !important;
         display: block;
       }
 
@@ -188,5 +218,4 @@
       }
     }
   }
-  /* End of: Custom css for content that derive from the TinyMCE editor */
 }

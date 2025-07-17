@@ -8,5 +8,5 @@ class PrismAdmin(admin.ModelAdmin):
     """
 
     class Media:
-        css = {"all": ["prism/prism.css"]}
+        css = {"all": ("prism/prism.css",)}
         js = ("prism/prism.js",)

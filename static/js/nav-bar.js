@@ -1,6 +1,5 @@
 $(function () {
   if (localStorage.getItem("sidebar") === "open") {
-    console.log("calling me...");
     $(
       "#nav-sidebar, #main-content, #toggle-sidebar-desktop, #toggle-sidebar-mobile"
     ).addClass("open");

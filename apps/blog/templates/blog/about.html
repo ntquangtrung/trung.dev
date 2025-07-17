@@ -6,11 +6,5 @@
 {% block prismcss %}<link rel="stylesheet" href="{% static 'prism/prism.css' %}">{% endblock prismcss %}
 
 {% block content %}
-    <article class="custom-prose">{{ user.profile.about|safe }}</article>
-    <section>
-        <h2 id="contact" class="mb-4 flex items-center"><a class="pr-2" href="#contact">{% render_svg "icons/anchor.svg" tailwind_css_color="fill-gold" %}</a> Contact</h2>
-        <div>
-            <span>Email: <a href="mailto:{{ user.email }}"><strong>{{ user.email }}</strong></a></span>
-        </div>
-    </section>
+    <article class="custom-prose mb-20">{{ user.profile.about|safe }}</article>
 {% endblock content %}
