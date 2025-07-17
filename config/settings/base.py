@@ -30,6 +30,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = []
 
+INTERNAL_IPS = []
 
 # Application definition
 

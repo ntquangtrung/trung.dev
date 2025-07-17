@@ -5,8 +5,13 @@ x-app: &default-app
     context: .
     # We are not using env_file here because Dockerfile build args do not receive values from env_file; instead, we must pass environment variables directly via args in the docker-compose file.
     args:
-      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
       - DEBUG=${DEBUG}
+      - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
+
+      - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+      - DJANGO_CSRF_TRUSTED_ORIGINS=${DJANGO_CSRF_TRUSTED_ORIGINS}
+      - DJANGO_INTERNAL_IPS=${DJANGO_INTERNAL_IPS}
+
       - SUPABASE_S3_REGION=${SUPABASE_S3_REGION}
       - SUPABASE_S3_ACCESS_KEY=${SUPABASE_S3_ACCESS_KEY}
       - SUPABASE_S3_SECRET_ACCESS_KEY=${SUPABASE_S3_SECRET_ACCESS_KEY}
