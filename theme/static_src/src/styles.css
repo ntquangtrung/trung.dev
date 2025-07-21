@@ -15,6 +15,65 @@
 @source "../../../**/*.{html,py,js}";
 
 @layer base {
+  .dark {
+    --color-background-primary: #181818; /* Charcoal Black */
+
+    --color-background-sidebar-primary: #181818; /* Charcoal Black */
+
+    --color-primary: #fbfbfb; /* Snow White */
+
+    --color-clickable-primary: #ffd479; /* Light Gold */
+
+    --color-clickable-hover-primary: #c48914; /* Bronze */
+
+    --color-secondary: #999999; /* Silver Gray */
+
+    --color-background-navbar-link-hover: #252525; /* Jet Black */
+
+    --color-muted: #252525;
+
+    --color-border-muted: var(--color-muted); /* Jet Black */
+
+    --color-gold: #ffd479; /* Light Gold */
+
+    --color-background-card: #1f1f1f; /* Dark Charcoal */
+
+    --color-background-button: hsla(0, 0%, 100%, 0.05);
+  }
+}
+
+@theme {
+  --font-mono: "JetBrains Mono", monospace;
+
+  --color-background-primary: #fdf9ee; /* Ivory */
+
+  --color-background-sidebar-primary: #eee8d5; /* Sand */
+
+  --color-primary: #181818; /* Charcoal Black */
+
+  --color-clickable-primary: #c48914; /* Bronze */
+
+  --color-clickable-hover-primary: #ffd479; /* Light Gold */
+
+  --color-secondary: #575757; /* Graphite Gray */
+
+  --header-height: 3.75rem;
+  --sidebar-width: 16.25rem;
+
+  --color-background-navbar-link-hover: #eee8d5; /* Sand */
+
+  --color-muted: #e5dcbd;
+
+  --color-border-muted: var(--color-muted); /* Light Beige */
+
+  --color-gold: #c48914; /* Bronze */
+
+  --color-background-card: #f6f0df; /* Ivory */
+
+  --color-background-button: hsla(0, 0%, 100%, 0.5);
+}
+
+@layer base {
   :root {
     font-size: 1rem;
     @apply font-mono;
@@ -79,53 +138,6 @@
   button:hover {
     @apply cursor-pointer;
   }
-
-  .dark {
-    --color-background-primary: #181818; /* Charcoal Black */
-
-    --color-background-sidebar-primary: #181818; /* Charcoal Black */
-
-    --color-primary: #fbfbfb; /* Snow White */
-
-    --color-clickable-primary: #ffd479; /* Light Gold */
-
-    --color-clickable-hover-primary: #c48914; /* Bronze */
-
-    --color-secondary: #999999; /* Silver Gray */
-
-    --color-background-navbar-link-hover: #252525; /* Jet Black */
-
-    --color-muted: #252525;
-    --color-border-muted: var(--color-muted); /* Jet Black */
-
-    --color-gold: #ffd479; /* Light Gold */
-  }
-}
-
-@theme {
-  --font-mono: "JetBrains Mono", monospace;
-
-  --color-background-primary: #fdf9ee; /* Ivory */
-
-  --color-background-sidebar-primary: #eee8d5; /* Sand */
-
-  --color-primary: #181818; /* Charcoal Black */
-
-  --color-clickable-primary: #c48914; /* Bronze */
-
-  --color-clickable-hover-primary: #ffd479; /* Light Gold */
-
-  --color-secondary: #575757; /* Graphite Gray */
-
-  --header-height: 3.75rem;
-  --sidebar-width: 16.25rem;
-
-  --color-background-navbar-link-hover: #eee8d5; /* Sand */
-
-  --color-muted: #e5dcbd;
-  --color-border-muted: var(--color-muted); /* Light Beige */
-
-  --color-gold: #c48914;
 }
 
 @layer components {
@@ -146,6 +158,12 @@
 
   .divider {
     @apply border-t border-border-muted my-4 w-full;
+  }
+
+  a.button {
+    @apply py-2 px-4 rounded-lg border bg-background-button;
+    @apply text-gold hover:text-white border-gold hover:bg-gold;
+    @apply dark:text-white dark:border-transparent dark:hover:bg-background-button dark:hover:border-gold dark:hover:text-gold;
   }
 }
 

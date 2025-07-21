@@ -1,5 +1,29 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
-<div class="text-title-light dark:text-title-dark text-red h-[1500px]">hello world</div>
+<div class="bg-background-card rounded-xl p-6 mt-8 border border-[#3d3d3d] shadow-lg flex justify-between">
+    <div class="flex flex-col justify-between">
+        <div>
+            <h1 class="mb-6">
+                Xin chao, I'm <strong class="text-gold">{{ first_name }}</strong>
+            </h1>
+            <p class="mb-4">
+                I’m a self-taught frontend developer who’s been building things on the
+                web for the past 5 years. Now I’m diving deeper into backend development
+                to become a full-stack dev. This blog is my space to share code,
+                lessons, and maybe a few facepalms from the journey.
+            </p>
+            <p class="mb-4">
+                This site was built with <strong>Django</strong>, with a sprinkle of AI
+                help here and there.
+            </p>
+        </div>
+        <div class="flex justify-between">
+            <a class="button" href="{% url 'blog:about' %}">About me</a>
+        </div>
+    </div>
+    <div class="rounded-lg overflow-hidden">
+        <img src="{% static 'icons/django.jpg' %}" alt="sauron" class="w-3xl" />
+    </div>
+</div>
 {% endblock content %}

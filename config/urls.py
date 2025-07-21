@@ -25,7 +25,7 @@ from apps.blog.views import tinymce_upload_image
 
 urlpatterns = [
     # Apps URLs
-    path("", include("apps.blog.urls")),
+    path("", include(("apps.blog.urls", "blog"), namespace="blog")),
     # Admin URLs
     path("admin/tinymce-upload/", tinymce_upload_image, name="tinymce-upload"),
     path("admin/", admin.site.urls),

@@ -42,13 +42,13 @@
                     </li>
                     <li>
                         <a href="#" class="btn-nav">
-                            <img src="{% static 'icons/projects.svg' %}" alt="projects">
+                            <img class="fill-gold" src="{% static 'icons/projects.svg' %}" alt="projects">
                             Projects
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'blog:about' %}" class="btn-nav {% active_link 'blog:about' %}">
-                            <img src="{% static 'icons/beer.svg' %}" alt="projects">
+                        <a href="{% url 'blog:about' %}" class="btn-nav {% active_link 'blog:about' strict=True %}">
+                            <img src="{% static 'icons/face.svg' %}" alt="about-me">
                             About
                         </a>
                     </li>
