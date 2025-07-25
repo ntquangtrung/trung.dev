@@ -39,7 +39,7 @@ class NotesToSelf(TimeStampedModel, UUIDModel):
     content = HTMLField(blank=True, null=True)
     year = models.PositiveIntegerField()
     slug = models.SlugField(max_length=255, unique=True)
-    author = models.OneToOneField(
+    author = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notes"
     )
     tags = TaggableManager(through=UUIDTaggedItem)
