@@ -43,6 +43,7 @@ class NotesToSelf(TimeStampedModel, UUIDModel):
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notes"
     )
     tags = TaggableManager(through=UUIDTaggedItem)
+    table_of_contents = HTMLField(blank=True, null=True)
 
     objects = models.Manager()  # Default manager (shows all records, including drafts)
     published = NotesToSelfManager()  # Custom manager for published notes only

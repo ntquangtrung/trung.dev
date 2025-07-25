@@ -12,8 +12,6 @@ class NoteAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
     autocomplete_fields = ("tags",)
     fields = (
-        "created",
-        "modified",
         "title",
         "year",
         "status",
@@ -21,5 +19,8 @@ class NoteAdmin(admin.ModelAdmin):
         "tags",
         "author",
         "content",
+        "table_of_contents",
+        "created",
+        "modified",
     )
     readonly_fields = ("created", "modified", "author")

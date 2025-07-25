@@ -3,13 +3,32 @@ from django import forms
 from taggit.forms import TagField
 from taggit_labels.widgets import LabelWidget
 from apps.blog.models import NotesToSelf
+from django.conf import settings
+from pathlib import Path
+
+path_to_share_anchor = Path(str(settings.BASE_DIR)) / "static" / "js/share_anchor.js"
 
 
 class NoteAdminForm(forms.ModelForm):
     content = forms.CharField(
         widget=AdminTinyMCE(
-            # attrs={"cols": 80, "rows": 30},
-            mce_attrs={},
+            attrs={"id": "content-editor"},
+            mce_attrs={"selector": "#content-editor"},
+        )
+    )
+    table_of_contents = forms.CharField(
+        widget=AdminTinyMCE(
+            attrs={"id": "toc-editor"},
+            mce_attrs={
+                "width": "50%",
+                "max_height": 300,
+                "selector": "#toc-editor",
+                "setup": path_to_share_anchor.read_text(encoding="utf-8"),
+                "link_list": [
+                    {"title": "Share Anchor", "value": "#haha"},
+                ],
+                "toolbar": "link code",
+            },
         )
     )
     tags = TagField(required=False, widget=LabelWidget)
