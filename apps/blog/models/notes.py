@@ -51,6 +51,11 @@ class NotesToSelf(TimeStampedModel, UUIDModel):
     def __str__(self):
         return self.title
 
+    def get_absolute_url(self):
+        from django.urls import reverse
+
+        return reverse("blog:notes_detail", kwargs={"slug": self.slug})
+
     class Meta:
         indexes = [
             models.Index(fields=["title", "year"], name="notes_title_year_idx"),

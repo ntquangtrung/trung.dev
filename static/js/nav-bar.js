@@ -1,10 +1,12 @@
-$(function () {
-  if (localStorage.getItem("sidebar") === "open") {
-    $(
-      "#nav-sidebar, #main-content, #toggle-sidebar-desktop, #toggle-sidebar-mobile"
-    ).addClass("open");
-  }
-});
+if (localStorage.getItem("darkmode") === "enabled") {
+  $("html").addClass("dark");
+}
+
+if (localStorage.getItem("sidebar") === "open") {
+  $(
+    "#nav-sidebar, #main-content, #toggle-sidebar-desktop, #toggle-sidebar-mobile"
+  ).addClass("open");
+}
 
 const darkModeKey = "darkmode";
 

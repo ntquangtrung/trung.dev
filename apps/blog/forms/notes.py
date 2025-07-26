@@ -17,6 +17,7 @@ class NoteAdminForm(forms.ModelForm):
         )
     )
     table_of_contents = forms.CharField(
+        required=False,
         widget=AdminTinyMCE(
             attrs={"id": "toc-editor"},
             mce_attrs={
@@ -29,7 +30,7 @@ class NoteAdminForm(forms.ModelForm):
                 ],
                 "toolbar": "link code",
             },
-        )
+        ),
     )
     tags = TagField(required=False, widget=LabelWidget)
 

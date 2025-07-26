@@ -4,7 +4,7 @@ from apps.blog.forms.notes import NoteAdminForm
 
 class NoteAdmin(admin.ModelAdmin):
     form = NoteAdminForm
-    list_display = ("id", "status", "title", "created")
+    list_display = ("id", "year", "slug", "status", "title", "created")
     list_editable = ("status",)
     search_fields = ("title", "year")
     list_filter = ("created",)
@@ -23,4 +23,4 @@ class NoteAdmin(admin.ModelAdmin):
         "created",
         "modified",
     )
-    readonly_fields = ("created", "modified", "author")
+    readonly_fields = ("created", "modified")

@@ -11,24 +11,19 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	{% tailwind_css %}
 	{% block prismcss %}{% endblock prismcss %}
-	<script defer src="{% static 'js/nav-bar.js' %}"></script>
 	</head>
 
-	<body class="">
-		<script>
-			// On page load, set dark mode if previously enabled
-			if (localStorage.getItem("darkmode") === "enabled") {
-				$("html").addClass("dark")
-			}
-		</script>
-		
+	<body>
 		<section id="root">
 			{% include "header.html" %}
 			{% include "sidebar.html" %}
 			<div id="main-content" class="pt-[var(--header-height)] ml-0 md:[&.open]:ml-[var(--sidebar-width)] transition-[margin-left] duration-300 ease-in-out">
+				<script src="{% static 'js/nav-bar.js' %}"></script>
+
 				<div class="p-6">
 					<div class="xl:max-w-4xl 2xl:max-w-5xl m-auto">{% block content %}<div>No content available</div>{% endblock content %}</div>
 				</div>
+				
 				{% include "footer.html" %}
 			</div>
 		</section>
