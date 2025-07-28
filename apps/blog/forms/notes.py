@@ -28,7 +28,7 @@ class NoteAdminForm(forms.ModelForm):
                 "link_list": [
                     {"title": "Share Anchor", "value": "#haha"},
                 ],
-                "toolbar": "link code",
+                "toolbar": "link code | blocks fontsize | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent",
             },
         ),
     )

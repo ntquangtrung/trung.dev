@@ -1,0 +1,80 @@
+{% load static %}
+
+<aside class="hidden md:block self-stretch md:w-1/3 pt-6 border-l shrink-0 grow border-border-muted">
+    <div class="sticky top-[var(--header-height)]">
+        <img class="w-20 ml-6" src="{% static 'icons/logo.svg' %}" alt="toc-logo">
+        <div class="flex flex-col gap-2 p-6">
+            <strong>{{ status|capfirst }}</strong>
+            <small>{{ created|date:"N jS, Y" }}</small>
+        </div>
+        <div class="divider-horizontal"></div>
+    
+        {% if tags %}
+            <div class="p-6 flex flex-col gap-2">
+                <strong>Topics</strong>
+                <ul class="flex flex-wrap gap-2">
+                    {% for tag in tags %}
+                        <li><a class="bg-background-button px-2 py-1 border border-border-muted rounded-lg hover:border-gold hover:text-gold text-sm" href="#">{{ tag.name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+    
+        {% if table_of_contents %}
+            <div class="divider-horizontal"></div>
+            <nav class="p-6 flex flex-col gap-2">
+                <strong>Table of contents</strong>
+                <article id="toc" class="table-of-contents-prose">{{ table_of_contents|safe }}</article>
+            </nav>
+    
+            <script>
+                $(function () {
+                    const $tocLinks = $('#toc a');
+                    const headerHeightRem = getComputedStyle(document.documentElement).getPropertyValue('--header-height');
+                    const remInPx = parseFloat(getComputedStyle(document.documentElement).fontSize);
+                    const offset = (parseFloat(headerHeightRem) * remInPx) + 5;
+    
+                    // Track anchors and their parent containers
+                    const $anchors = $('.custom-prose a[id]').map(function () {
+                        return {
+                        id: this.id,
+                        $el: $(this).parent()
+                        };
+                    }).get();
+    
+                    function onScroll() {
+                        const scrollTop = $(window).scrollTop();
+                        const viewportTop = scrollTop + offset;
+                        const viewportBottom = scrollTop + $(window).height();
+    
+                        let currentId = null;
+    
+                        for (let i = 0; i < $anchors.length; i++) {
+                            const { id, $el } = $anchors[i];
+                            const top = $el.offset().top;
+                            const bottom = top + $el.outerHeight();
+    
+                            // If any part of the element is visible in viewport (with header offset)
+                            const isVisible = bottom > viewportTop && top < viewportBottom;
+    
+                            if (isVisible) {
+                                currentId = id;
+                                break; // first visible one, from top
+                            }
+                        }
+    
+                        // Update active TOC link
+                        $tocLinks.removeClass('active-toc');
+                        if (currentId) {
+                            $tocLinks.filter(`[href="#${currentId}"]`).addClass('active-toc');
+                        }
+                    }
+    
+                    $(window).on('scroll', onScroll);
+                    onScroll(); // run on load
+                });
+            </script>
+    
+        {% endif %}
+    </div>
+</aside>

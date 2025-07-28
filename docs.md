@@ -197,7 +197,7 @@
 
 ## Superuser Credentials
 
-- **Username:** `root`
+- **Username:** `admin`
 - **Email:** `ng.qtrung95@gmail.com`
 - **Password:** `123456`
 

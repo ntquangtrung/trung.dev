@@ -18,8 +18,6 @@
   .dark {
     --color-background-primary: #181818; /* Charcoal Black */
 
-    --color-background-sidebar-primary: #181818; /* Charcoal Black */
-
     --color-primary: #fbfbfb; /* Snow White */
 
     --color-clickable-primary: #ffd479; /* Light Gold */
@@ -30,7 +28,7 @@
 
     --color-background-navbar-link-hover: #252525; /* Jet Black */
 
-    --color-muted: #252525;
+    --color-muted: #3d3d3d;
 
     --color-border-muted: var(--color-muted); /* Jet Black */
 
@@ -46,8 +44,6 @@
   --font-mono: "JetBrains Mono", monospace;
 
   --color-background-primary: #fdf9ee; /* Ivory */
-
-  --color-background-sidebar-primary: #eee8d5; /* Sand */
 
   --color-primary: #181818; /* Charcoal Black */
 
@@ -156,8 +152,12 @@
     @apply h-8 w-8 md:h-10 md:w-10 hover:bg-background-navbar-link-hover rounded-lg flex items-center justify-center;
   }
 
-  .divider {
-    @apply border-t border-border-muted my-4 w-full;
+  .divider-vertical {
+    @apply border-t border-border-muted w-full;
+  }
+
+  .divider-horizontal {
+    @apply w-full border-b border-border-muted h-[1px];
   }
 
   a.button {
@@ -234,6 +234,28 @@
       .responsive-table col {
         display: none;
       }
+    }
+  }
+
+  .table-of-contents-prose {
+    p {
+      @apply m-0;
+    }
+
+    a {
+      @apply text-gold hover:underline;
+    }
+
+    ul {
+      @apply pl-6 marker:leading-[3];
+    }
+
+    a {
+      @apply block leading-5 w-full px-4 py-1 text-sm rounded text-secondary;
+    }
+
+    .active-toc {
+      @apply bg-background-button text-gold;
     }
   }
 }

@@ -6,5 +6,5 @@
 {% block prismcss %}<link rel="stylesheet" href="{% static 'prism/prism.css' %}">{% endblock prismcss %}
 
 {% block content %}
-    <article class="custom-prose mb-20">{{ user.profile.about|safe }}</article>
+    <article class="pt-6 custom-prose mb-20">{{ user.profile.about|safe }}</article>
 {% endblock content %}

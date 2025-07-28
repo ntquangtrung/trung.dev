@@ -1,7 +1,13 @@
 {% extends "base.html" %}
+{% load static %}
+{% load svg_tags %}
+{% block title %}<title>{{ object.title }}</title>{% endblock title %}
+{% block prismjs %}<script src="{% static 'prism/prism.js' %}"></script>{% endblock prismjs %}
+{% block prismcss %}<link rel="stylesheet" href="{% static 'prism/prism.css' %}">{% endblock prismcss %}
 
 {% block content %}
-<section class="">
-    hello
+<section class="flex">
+    <article class="custom-prose mb-20 p-6">{{ object.content|safe }}</article>
+    {% include "blog/shared/toc.html" with tags=object.tags.all status=object.status created=object.created table_of_contents=object.table_of_contents %}
 </section>
 {% endblock content %}

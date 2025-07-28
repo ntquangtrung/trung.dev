@@ -7,8 +7,9 @@ function(editor) {
 
         const anchors = [];
         tempDiv.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id], a[id]').forEach(el => {
+            const parentText = el.parentElement?.textContent?.trim() || el.id;
             anchors.push({
-                title: el.id,
+                title: parentText,
                 value: `#${el.id}`
             });
         });
