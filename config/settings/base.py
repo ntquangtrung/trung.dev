@@ -243,3 +243,7 @@ TINYMCE_DEFAULT_CONFIG = {
         {"title": "Hidden", "value": "hidden"},
     ],
 }
+
+GITHUB_PERSONAL_ACCESS_TOKEN = env.str("GITHUB_PERSONAL_ACCESS_TOKEN", default="")
+GITHUB_BASE_URL = env.str("GITHUB_BASE_URL", default="https://api.github.com")
+GITHUB_API_VERSION = env.str("GITHUB_API_VERSION", default="2022-11-28")
