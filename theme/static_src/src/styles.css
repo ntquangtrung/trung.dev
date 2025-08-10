@@ -37,11 +37,16 @@
     --color-background-card: #1f1f1f; /* Dark Charcoal */
 
     --color-background-button: hsla(0, 0%, 100%, 0.05);
+
+    --color-border-card: #2c2c2c /* Dark Charcoal */;
   }
 }
 
 @theme {
   --font-mono: "JetBrains Mono", monospace;
+
+  --header-height: 3.75rem;
+  --sidebar-width: 16.25rem;
 
   --color-background-primary: #fdf9ee; /* Ivory */
 
@@ -52,9 +57,6 @@
   --color-clickable-hover-primary: #ffd479; /* Light Gold */
 
   --color-secondary: #575757; /* Graphite Gray */
-
-  --header-height: 3.75rem;
-  --sidebar-width: 16.25rem;
 
   --color-background-navbar-link-hover: #eee8d5; /* Sand */
 
@@ -67,6 +69,8 @@
   --color-background-card: #f6f0df; /* Ivory */
 
   --color-background-button: hsla(0, 0%, 100%, 0.5);
+
+  --color-border-card: #ded4b2; /* Light Beige */
 }
 
 @layer base {

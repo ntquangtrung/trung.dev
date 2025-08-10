@@ -41,7 +41,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="btn-nav">
+                        <a href="{% url 'blog:projects' %}" class="btn-nav {% active_link 'blog:projects' strict=True %}">
                             <img class="fill-gold" src="{% static 'icons/projects.svg' %}" alt="projects">
                             Projects
                         </a>

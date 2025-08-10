@@ -188,7 +188,7 @@ TAILWIND_APP_NAME = "theme"
 # else:
 #     NPM_BIN_PATH = NPM_PATH
 
-TINYMCE_PLUGINS = "advlist,autolink,lists,link,image,charmap,preview,anchor,searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,help,wordcount,emoticons,autoresize,codesample,blockquote"
+TINYMCE_PLUGINS = "advlist,autolink,lists,link,image,charmap,preview,anchor,searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,help,wordcount,emoticons,autoresize,codesample"
 
 TINYMCE_TOOLBAR = (
     "undo redo | blocks fontsize | bold italic backcolor | table tabledelete | tablecellborderstyle tablecellvalign tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat help | visualblocks emoticons code preview fullscreen | image codesample link anchor hr blockquote charmap",
