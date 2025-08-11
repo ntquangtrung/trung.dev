@@ -3,7 +3,7 @@ from django.urls import path
 from apps.blog.views import AboutView, HomeView
 from apps.blog.views.notes import NoteListView, NoteDetailView
 from apps.blog.views.projects import ProjectsTemplateView
-from apps.blog.views.resume import ResumeView, ResumePreviewView
+from apps.blog.views.resume import ResumeView, ResumePreviewView, ResumeDownloadView
 
 app_name = "blog"
 
@@ -15,4 +15,5 @@ urlpatterns = [
     path("projects/", ProjectsTemplateView.as_view(), name="projects"),
     path("resume/", ResumeView.as_view(), name="resume"),
     path("resume/preview/", ResumePreviewView.as_view(), name="resume_preview"),
+    path("resume/download/", ResumeDownloadView.as_view(), name="resume_download"),
 ]

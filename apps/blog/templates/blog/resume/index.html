@@ -6,6 +6,7 @@
 {% block content %}
     <section class="p-6">
         <h1 class="mb-4">My Resume</h1>
-        <iframe src="{% url 'blog:resume_preview' %}" width="100%" height="" style="border: none;"></iframe>
+        <iframe src="{% url 'blog:resume_preview' %}" width="100%" style="border: none; height: 100vh;" sandbox="allow-same-origin" referrerpolicy="no-referrer"></iframe>
+        <a class="btn-nav" href="{% url 'blog:resume_download' %}" target="_blank" rel="noopener noreferrer">Download Resume</a>
     </section>
 {% endblock %}

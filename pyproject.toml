@@ -27,6 +27,7 @@ dependencies = [
     "django-active-link (>=0.2.2,<0.3.0)",
     "django-debug-toolbar (>=5.2.0,<6.0.0)",
     "requests (>=2.32.4,<3.0.0)",
+    "weasyprint (>=66.0,<67.0)",
 ]
 
 [tool.poetry]
