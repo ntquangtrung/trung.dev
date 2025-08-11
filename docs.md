@@ -138,7 +138,7 @@
    ```bash
    docker compose down --remove-orphans
 
-   or
+   or remove both containers and images
 
    docker compose down --rmi local --remove-orphans
    ```
