@@ -1,0 +1,46 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resume Preview</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css?family=Calibri:400,700|Arial:400,700|Times+New+Roman:400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/resume/preview.css' %}">
+</head>
+<body>
+    <header>
+        <h1>John Doe</h1>
+        <p>Email: john.doe@example.com | Phone: (123) 456-7890</p>
+    </header>
+    <section>
+        <h2>Summary</h2>
+        <p>Experienced web developer with a passion for building user-friendly applications.</p>
+    </section>
+    <section>
+        <h2>Experience</h2>
+        <ul>
+            <li>
+                <strong>Web Developer</strong> at Example Corp (2020 - Present)
+                <br>
+                Developed and maintained company website and internal tools.
+            </li>
+            <li>
+                <strong>Intern</strong> at Another Company (2019 - 2020)
+                <br>
+                Assisted in front-end development and testing.
+            </li>
+        </ul>
+    </section>
+    <section>
+        <h2>Education</h2>
+        <ul>
+            <li>B.Sc. in Computer Science, University of Example (2016 - 2020)</li>
+        </ul>
+    </section>
+    <footer>
+        <p>&copy; 2024 John Doe</p>
+    </footer>
+</body>
+</html>

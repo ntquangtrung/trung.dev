@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Resume{% endblock %}
+
+{% block content %}
+    <section class="p-6">
+        <h1 class="mb-4">My Resume</h1>
+        <iframe src="{% url 'blog:resume_preview' %}" width="100%" height="" style="border: none;"></iframe>
+    </section>
+{% endblock %}
