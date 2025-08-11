@@ -1,7 +1,7 @@
 {% load static tailwind_tags %}
 
 <!DOCTYPE html>
-<html lang="en" class="group/darkmode">
+<html lang="en" class="group/darkmode h-full">
 	<head>
 		<title>{% block title %}Trung Dev{% endblock title %}</title>
 		<meta charset="UTF-8">
@@ -13,14 +13,14 @@
 		{% block prismcss %}{% endblock prismcss %}
 	</head>
 
-	<body>
-		<section id="root">
+	<body class="h-full">
+		<section id="root" class="h-full">
 			{% include "header.html" %}
 			{% include "sidebar.html" %}
-			<div id="main-content" class="pt-[var(--header-height)] ml-0 md:[&.open]:ml-[var(--sidebar-width)] transition-[margin-left] duration-300 ease-in-out">
+			<div id="main-content" class="pt-[var(--header-height)] ml-0 md:[&.open]:ml-[var(--sidebar-width)] transition-[margin-left] duration-300 ease-in-out flex flex-col min-h-full items-center">
 				<script src="{% static 'js/nav-bar.js' %}"></script>
 
-				<div class="xl:max-w-4xl 2xl:max-w-5xl m-auto">{% block content %}<div>No content available</div>{% endblock content %}</div>
+				<div class="flex-grow w-full lg:max-w-4xl 2xl:max-w-5xl">{% block content %}<div>No content available</div>{% endblock content %}</div>
 				
 				{% include "footer.html" %}
 			</div>
