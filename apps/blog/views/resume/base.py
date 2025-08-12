@@ -21,7 +21,7 @@ class ResumePreviewBaseView(TemplateView):
             context["experiences"] = resume.experiences.all()
 
             # Education
-            context["education"] = resume.education.all()
+            context["educations"] = resume.education.all()
 
             # Projects
             context["projects"] = resume.projects.all()

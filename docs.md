@@ -20,7 +20,7 @@
    source venv/bin/activate
    ```
 
-   _(Run `deactivate` to deactivate the virtual environment.)_
+   _(`deactivate` to deactivate the virtual environment.)_
 
 4. _(Optional)_ Install all dependencies:
 
@@ -28,7 +28,7 @@
    pip install -r requirements.txt
    ```
 
-   _(Use this if you already have a `requirements.txt` file.)_
+   _(If you already have a `requirements.txt` file.)_
 
 5. _(Optional)_ Save installed packages to `requirements.txt`:
 
@@ -37,6 +37,7 @@
    ```
 
 6. _(Optional)_ Uninstall all packages listed in `requirements.txt`:
+
    ```bash
    pip uninstall -r requirements.txt -y
    ```
@@ -81,7 +82,7 @@
    python3 manage.py shell
    ```
 
-   _(Type `exit()` or `quit()` to close the shell.)_
+   _(`exit()` or `quit()` to close the shell.)_
 
 7. Collect static files for production:
 
@@ -90,6 +91,7 @@
    ```
 
 8. _(Optional)_ Run the server with SSL:
+
    ```bash
    python3 manage.py runserver_plus --cert-file cert.crt
    ```
@@ -108,16 +110,21 @@
 
    ```bash
    python3 manage.py makemigrations <app_name> --settings=config.settings.development
+   ```
 
    or
 
+   ```bash
    python3 manage.py makemigrations --settings=config.settings.development
    ```
 
 3. Apply migrations:
+
    ```bash
    python3 manage.py migrate <app_name|optional> --settings=config.settings.development
    ```
+
+---
 
 ## 4. Docker
 
@@ -137,13 +144,15 @@
 
    ```bash
    docker compose down --remove-orphans
+   ```
 
    or remove both containers and images
 
+   ```bash
    docker compose down --rmi local --remove-orphans
    ```
 
-4. Run build and run container for development
+4. Build and run container for development
 
    ```bash
    docker compose up -d --build
@@ -182,14 +191,17 @@
    ```bash
    python3 manage.py tailwind check
    ```
-   
+
 ---
 
 ## 6. Django Test Runner
 
 1. **Run Django Tests**
-   - Execute:
-     ```bash
-     python3 manage.py test --pattern="*.test.py" --settings=config.settings.development
-     ```
-   - Confirm all tests in files matching `*.test.py` are discovered and executed.
+
+   Execute:
+
+   ```bash
+   python3 manage.py test --pattern="*.test.py" --settings=config.settings.development
+   ```
+
+   Confirm all tests in files matching `*.test.py` are discovered and executed.

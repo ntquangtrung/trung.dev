@@ -11,17 +11,20 @@
 </head>
 <body>
     <header>
-        <h1>John Doe</h1>
-        <h2>Web Developer</h2>
+        <div>
+            <h1>{{ last_name|stringformat:"s" }} {{ first_name|stringformat:"s" }}</h1>
+            <h2>Web Developer</h2>
+
+        </div>
     </header>
 
     <div class="divider"></div>
 
     <div>
         <span>
-            <a href="mailto:john.doe@example.com" style="text-decoration:none; color:inherit;">
+            <a href="mailto:{{ email|stringformat:"s" }}" style="text-decoration:none; color:inherit;">
                 <i class="fa-solid fa-envelope" style="margin-right:6px; vertical-align:middle;"></i>
-                john.doe@example.com
+                {{ email|stringformat:"s" }}
             </a>
         </span>
 
@@ -31,39 +34,74 @@
 
     <section>
         <h3>Summary</h3>
-        <p>To obtain a challenging position as a web developer where I can utilize my skills and contribute to the success of the team.</p>
+        {{ resume.objective|safe }}
     </section>
 
     <div class="divider"></div>
 
     <section>
         <h3>Work Experience</h3>
-        <div>
-            <ul>
-                <li>
-                    <strong>Web Developer</strong> at Example Corp (2020 - Present)
-                    <br>
-                    Developed and maintained company website and internal tools.
-                </li>
-                <li>
-                    <strong>Intern</strong> at Another Company (2019 - 2020)
-                    <br>
-                    Assisted in front-end development and testing.
-                </li>
-            </ul>
+        <div class="experiences">
+            {% for experience in experiences %}
+                <div>
+                    <div class="company">
+                        <h4>{{ experience.company }}</h4>
+                        <div class="shrink">
+                            <span>{{ experience.start_date|date:"Y" }}</span>
+                            -
+                            {% if experience.is_current %}
+                                <span>Present</span>
+                            {% else %}
+                                <span>{{ experience.end_date|date:"Y" }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <strong style="margin-bottom: 12px; display: block;">{{ experience.job_title }}</strong>
+                    {{ experience.description|safe }}
+                </div>
+            {% endfor %}
         </div>
     </section>
 
     <div class="divider"></div>
 
     <section>
-        <h2>Education</h2>
-        <ul>
-            <li>B.Sc. in Computer Science, University of Example (2016 - 2020)</li>
-        </ul>
+        <h3>Education</h3>
+        <div class="educations">
+            {% for education in educations %}
+                <div>
+                    <div class="education">
+                        <h4>{{ education.institution }}</h4>
+                        <div class="shrink">
+                            {{ education.start_date|date:"Y" }} -
+                            {% if education.is_current %}
+                                Present
+                            {% else %}
+                                {{ education.end_date|date:"Y" }}
+                            {% endif %}
+                        </div>
+                    </div>
+                    <strong style="margin-bottom: 12px; display: block;">{{ education.degree }}</strong>
+                    {{ education.description|safe }}
+                </div>
+            {% endfor %}
+        </div>
     </section>
-    <footer>
-        <p>&copy; 2024 John Doe</p>
-    </footer>
+
+    <div class="divider"></div>
+
+    <section>
+        <h3>Certifications</h3>
+        <div class="certifications">
+            {% for certification in certifications %}
+                <div class="certification">
+                    <h4>{{ certification.name }}</h4>
+                    <div class="shrink">
+                        <span>{{ certification.date_obtained|date:"Y" }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </section>
 </body>
 </html>

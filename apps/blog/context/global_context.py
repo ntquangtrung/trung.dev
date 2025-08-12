@@ -16,4 +16,5 @@ def shared(request):
         "email": root_user.email,
         "github_link": root_user.profile.github_link,
         "linkedin_link": root_user.profile.linkedin_link,
+        "avatar": root_user.profile.avatar.url if root_user.profile.avatar else None,
     }
