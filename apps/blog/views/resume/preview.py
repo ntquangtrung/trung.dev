@@ -20,7 +20,4 @@ def get_xframe_decorator():
 
 @method_decorator(get_xframe_decorator(), name="dispatch")
 class ResumePreviewView(ResumePreviewBaseView):
-
-    def get_context_data(self, **kwargs):
-
-        return super().get_context_data(**kwargs)
+    pass

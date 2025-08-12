@@ -3,14 +3,19 @@
 }
 
 html {
-  font-size: 20px;
+  font-size: 18px;
+}
+
+html {
+  line-height: 1.2;
 }
 
 body {
   background-color: #fff;
   font-family: "Calibri", Arial, "Times New Roman", sans-serif;
   margin: 0;
-  padding: 80px 50px;
+  padding: 60px 30px;
+  overflow-x: hidden;
 }
 
 h1,
@@ -42,10 +47,20 @@ section {
   display: grid;
   grid-template-columns: 1fr 2fr;
   grid-template-rows: 1fr;
+  gap: 20px;
+}
+
+ul {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .divider {
-  border-top: 1px dashed #ccc;
+  position: relative;
+  left: -5%;
+  width: 100vw;
+  border-top: 1px dashed #888;
   margin: 40px 0;
 }
 
