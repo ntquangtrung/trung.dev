@@ -193,16 +193,3 @@
      python3 manage.py test --pattern="*.test.py" --settings=config.settings.development
      ```
    - Confirm all tests in files matching `*.test.py` are discovered and executed.
-
-
-## Superuser Credentials
-
-- **Username:** `admin`
-- **Email:** `ng.qtrung95@gmail.com`
-- **Password:** `123456`
-
----
-
-## Test Credentials
-
-- **Password:** `Apassword@95`
