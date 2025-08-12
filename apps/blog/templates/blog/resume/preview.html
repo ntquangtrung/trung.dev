@@ -1,38 +1,61 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Resume Preview</title>
+    <title>Nguyen Tran Quang Trung</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css?family=Calibri:400,700|Arial:400,700|Times+New+Roman:400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/resume/preview.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <header>
         <h1>John Doe</h1>
-        <p>Email: john.doe@example.com | Phone: (123) 456-7890</p>
+        <h2>Web Developer</h2>
     </header>
+
+    <div class="divider"></div>
+
+    <div>
+        <span>
+            <a href="mailto:john.doe@example.com" style="text-decoration:none; color:inherit;">
+                <i class="fa-solid fa-envelope" style="margin-right:6px; vertical-align:middle;"></i>
+                john.doe@example.com
+            </a>
+        </span>
+
+    </div>
+
+    <div class="divider"></div>
+
     <section>
-        <h2>Summary</h2>
-        <p>Experienced web developer with a passion for building user-friendly applications.</p>
+        <h3>Summary</h3>
+        <p>To obtain a challenging position as a web developer where I can utilize my skills and contribute to the success of the team.</p>
     </section>
+
+    <div class="divider"></div>
+
     <section>
-        <h2>Experience</h2>
-        <ul>
-            <li>
-                <strong>Web Developer</strong> at Example Corp (2020 - Present)
-                <br>
-                Developed and maintained company website and internal tools.
-            </li>
-            <li>
-                <strong>Intern</strong> at Another Company (2019 - 2020)
-                <br>
-                Assisted in front-end development and testing.
-            </li>
-        </ul>
+        <h3>Work Experience</h3>
+        <div>
+            <ul>
+                <li>
+                    <strong>Web Developer</strong> at Example Corp (2020 - Present)
+                    <br>
+                    Developed and maintained company website and internal tools.
+                </li>
+                <li>
+                    <strong>Intern</strong> at Another Company (2019 - 2020)
+                    <br>
+                    Assisted in front-end development and testing.
+                </li>
+            </ul>
+        </div>
     </section>
+
+    <div class="divider"></div>
+
     <section>
         <h2>Education</h2>
         <ul>

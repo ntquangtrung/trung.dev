@@ -6,7 +6,25 @@
 {% block content %}
     <section class="p-6">
         <h1 class="mb-4">My Resume</h1>
-        <iframe src="{% url 'blog:resume_preview' %}" width="100%" style="border: none; height: 100vh;" sandbox="allow-same-origin" referrerpolicy="no-referrer"></iframe>
-        <a class="btn-nav" href="{% url 'blog:resume_download' %}" target="_blank" rel="noopener noreferrer">Download Resume</a>
+
+        <span class="block md:hidden">Your screen must be at least 768px wide to view the resume.</span>
+
+        <iframe id="resume-preview" class="hidden md:block shadow-lg" src="{% url 'blog:resume_preview' %}" width="100%" style="border: none; height: 100vh;" sandbox="allow-same-origin allow-top-navigation-by-user-activation" referrerpolicy="no-referrer"></iframe>
+
+        <div id="resume-download" class="hidden md:block mt-4 flex justify-center">
+            <a class="text-blue-600 hover:underline" href="{% url 'blog:resume_download' %}" target="_blank" rel="noopener noreferrer">Download My Resume In PDF</a>
+        </div>
     </section>
+
+    <script>
+        $(function() {
+            function toggleResumeElements() {
+                var isIpad = $(window).width() >= 768;
+                $('#resume-preview').toggleClass('hidden', !isIpad).toggleClass('lg:block', isIpad);
+                $('#resume-download').toggleClass('hidden', !isIpad).toggleClass('lg:block', isIpad);
+            }
+            toggleResumeElements();
+            $(window).on('resize', toggleResumeElements);
+        });
+    </script>
 {% endblock %}

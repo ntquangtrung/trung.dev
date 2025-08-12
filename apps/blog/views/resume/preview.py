@@ -1,10 +1,10 @@
 from django.conf import settings
-from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
 from django.views.decorators.clickjacking import (
     xframe_options_exempt,
     xframe_options_sameorigin,
 )
+from apps.blog.views.resume.base import ResumePreviewBaseView
 
 
 def get_xframe_decorator():
@@ -19,5 +19,8 @@ def get_xframe_decorator():
 
 
 @method_decorator(get_xframe_decorator(), name="dispatch")
-class ResumePreviewView(TemplateView):
-    template_name = "blog/resume/preview.html"
+class ResumePreviewView(ResumePreviewBaseView):
+
+    def get_context_data(self, **kwargs):
+
+        return super().get_context_data(**kwargs)
