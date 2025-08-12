@@ -2,7 +2,20 @@
 {% extends "admin/base.html" %}
 {% load static %}
 
+{% block title %}
+    {% if title %}{{ title }} | {% endif %}Trung Dev Admin
+{% endblock %}
+
 {% block extrahead %}
     <link rel="icon" type="image/x-icon" href="{% static 'icons/favicon.ico' %}">
     {{ block.super }}
+{% endblock %}
+
+{% block branding %}
+    <h1 id="site-name">
+        <a href="{% url 'admin:index' %}" style="display: flex; align-items: center; justify-content: center;">
+            <img src="{% static 'icons/logo.svg' %}" alt="Logo" style="height:24px; margin-right:6px;">
+            Admin
+        </a>
+    </h1>
 {% endblock %}
