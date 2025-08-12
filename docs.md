@@ -111,7 +111,7 @@
    ```bash
    python3 manage.py makemigrations <app_name> --settings=config.settings.development
    ```
-
+"weasyprint (>=66.0,<67.0)",
    or
 
    ```bash

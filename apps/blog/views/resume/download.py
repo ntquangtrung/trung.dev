@@ -1,6 +1,5 @@
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from weasyprint import HTML
 
 from apps.blog.views.resume.base import ResumePreviewBaseView
 from apps.blog.context.global_context import shared
@@ -15,6 +14,14 @@ class ResumeDownloadView(ResumePreviewBaseView):
         return context
 
     def get(self, request, *args, **kwargs):
+        # WeasyPrint is only used in PDF generation and requires heavy system dependencies
+        # (Cairo, Pango, etc.) that are not installed in local dev environments.
+        # To avoid breaking commands like `makemigrations` locally, we import it lazily
+        # inside the function where it’s needed. This ensures Docker/prod environments
+        # still have full PDF functionality without forcing all developers to install
+        # the extra dependencies locally.
+        from weasyprint import HTML
+
         # 1. Render template to HTML string
         html_string = render_to_string(
             self.template_name, context=self.get_context_data()

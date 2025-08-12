@@ -92,11 +92,14 @@
         <h3>Certifications</h3>
         <div class="certifications">
             {% for certification in certifications %}
-                <div class="certification">
-                    <h4>{{ certification.name }}</h4>
-                    <div class="shrink">
-                        <span>{{ certification.date_obtained|date:"Y" }}</span>
+                <div>
+                    <div class="certification">
+                        <h4>{{ certification.name }}</h4>
+                        <div class="shrink">
+                            <span>{{ certification.date_obtained|date:"Y" }}</span>
+                        </div>
                     </div>
+                    {{ certification.description }}
                 </div>
             {% endfor %}
         </div>

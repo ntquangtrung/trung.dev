@@ -65,6 +65,7 @@ class CertificationInline(admin.StackedInline):
     fields = (
         "name",
         "issuer",
+        "description",
         "date_obtained",
         "credential_url",
     )

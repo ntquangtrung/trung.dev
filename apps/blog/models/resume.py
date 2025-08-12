@@ -105,6 +105,9 @@ class Certification(models.Model):
     issuer = models.CharField(max_length=255)
     date_obtained = models.DateField()
     credential_url = models.URLField(blank=True)
+    description = models.TextField(
+        blank=True, help_text="Additional details about the certification."
+    )
 
     def __str__(self):
         return self.name
