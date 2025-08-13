@@ -1,9 +1,17 @@
 {% extends "base.html" %}
 {% load static %}
 {% load svg_tags %}
-{% block title %}<title>{{ object.title }}</title>{% endblock title %}
+
 {% block prismjs %}<script src="{% static 'prism/prism.js' %}"></script>{% endblock prismjs %}
 {% block prismcss %}<link rel="stylesheet" href="{% static 'prism/prism.css' %}">{% endblock prismcss %}
+
+{% block title %}{{ object.title }}{% endblock title %}
+
+{% block extrahead %}
+    <link rel="canonical" href="{{ request.build_absolute_uri }}" />
+    <meta name="description" content="Back story" />
+{% endblock extrahead %}
+
 
 {% block content %}
 <section class="flex">
