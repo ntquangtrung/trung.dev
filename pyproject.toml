@@ -28,6 +28,8 @@ dependencies = [
     "django-debug-toolbar (>=5.2.0,<6.0.0)",
     "requests (>=2.32.4,<3.0.0)",
     "weasyprint (>=66.0,<67.0)",
+    "django-redis (>=6.0.0,<7.0.0)",
+    "redis[hiredis] (>=6.4.0,<7.0.0)",
 ]
 
 [tool.poetry]

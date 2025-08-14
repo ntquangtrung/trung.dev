@@ -1,7 +1,12 @@
 services:
   django:
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
+      tailwind:
+        condition: service_started
+      redis:
+        condition: service_healthy
 
   tailwind:
     depends_on:

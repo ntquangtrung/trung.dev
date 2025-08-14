@@ -22,6 +22,11 @@ x-app: &default-app
       - GITHUB_BASE_URL=${GITHUB_BASE_URL}
       - GITHUB_API_VERSION=${GITHUB_API_VERSION}
 
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_DB_NUMBER=${REDIS_DB_NUMBER}
+
   volumes:
     - .:/app
     - static_volume:/app/staticfiles
@@ -34,11 +39,10 @@ services:
     command: /usr/local/bin/entrypoint.sh
     ports:
       - "8000:8000"
-    depends_on:
-      - tailwind
 
   tailwind:
     <<: *default-app
+    image: django-blog-image
     container_name: django-tailwind-container
     command: >
       sh -c 'if [ "$DEBUG" = "True" ]; then
@@ -49,6 +53,20 @@ services:
         poetry run python manage.py tailwind build;
       fi'
     tty: true
+
+  redis:
+    image: redis:alpine
+    container_name: django-redis-container
+    ports:
+      - "6379:6379"
+    command: redis-server --save "" --appendonly no --requirepass ${REDIS_PASSWORD}
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   static_volume:
