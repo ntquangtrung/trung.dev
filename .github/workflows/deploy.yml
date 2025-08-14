@@ -76,5 +76,5 @@ jobs:
         EOT
           # Run Docker Compose------------------
           docker compose down
-          docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+          docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.prod.yml up --build -d
         EOF
