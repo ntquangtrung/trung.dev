@@ -45,6 +45,8 @@ jobs:
         REDIS_DB_INDEX=${{ vars.REDIS_DB_INDEX }}
         CELERY_BROKER_REDIS_DB_INDEX=${{ vars.CELERY_BROKER_REDIS_DB_INDEX }}
         CELERY_BACKEND_REDIS_DB_INDEX=${{ vars.CELERY_BACKEND_REDIS_DB_INDEX }}
+        FLOWER_USER=${{ vars.FLOWER_USER }}
+        FLOWER_PASSWORD=${{ vars.FLOWER_PASSWORD }}
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@ec2-16-176-172-255.ap-southeast-2.compute.amazonaws.com << EOF
           set -e
@@ -77,10 +79,11 @@ jobs:
           REDIS_DB_INDEX=$REDIS_DB_INDEX
           CELERY_BROKER_REDIS_DB_INDEX=$CELERY_BROKER_REDIS_DB_INDEX
           CELERY_BACKEND_REDIS_DB_INDEX=$CELERY_BACKEND_REDIS_DB_INDEX
+          FLOWER_USER=$FLOWER_USER
+          FLOWER_PASSWORD=$FLOWER_PASSWORD
         EOT
           # Run Docker Compose------------------
           docker compose down
           docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.prod.yml up --build -d
           docker image prune -f --filter "dangling=true" # Clean up dangling images
-          docker volume prune -f --filter "dangling=true" # Clean up dangling volumes
         EOF

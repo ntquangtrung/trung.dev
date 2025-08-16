@@ -30,6 +30,9 @@ x-app: &default-app
       - CELERY_BROKER_REDIS_DB_INDEX=${CELERY_BROKER_REDIS_DB_INDEX}
       - CELERY_BACKEND_REDIS_DB_INDEX=${CELERY_BACKEND_REDIS_DB_INDEX}
 
+      - FLOWER_USER=${FLOWER_USER}
+      - FLOWER_PASSWORD=${FLOWER_PASSWORD}
+
   volumes:
     - .:/app
     - static_volume:/app/staticfiles
@@ -74,7 +77,6 @@ services:
       retries: 3
 
   celery-worker:
-    <<: *default-app
     image: django-blog-image
     container_name: django-celery-worker-container
     command: >
@@ -85,6 +87,25 @@ services:
     environment:
       - CELERY_BROKER_URL=redis://:${REDIS_PASSWORD}@redis:${REDIS_PORT}/${CELERY_BROKER_REDIS_DB_INDEX}
       - CELERY_RESULT_BACKEND=redis://:${REDIS_PASSWORD}@redis:${REDIS_PORT}/${CELERY_BACKEND_REDIS_DB_INDEX}
+
+  flower:
+    image: django-blog-image
+    container_name: django-flower-container
+    command: >
+      poetry run celery -A config.celery flower --port=5555 --basic_auth=${FLOWER_USER}:${FLOWER_PASSWORD} --broker=redis://:${REDIS_PASSWORD}@redis:${REDIS_PORT}/${CELERY_BROKER_REDIS_DB_INDEX} --result-backend=redis://:${REDIS_PASSWORD}@redis:${REDIS_PORT}/${CELERY_BACKEND_REDIS_DB_INDEX}
+    ports:
+      - "5555:5555"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_HOST=${REDIS_HOST}
+    depends_on:
+      - redis
+      - django
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5555/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
 volumes:
   static_volume:
