@@ -45,6 +45,7 @@ THIRD_PARTY_APPS = [
     "taggit",
     "taggit_labels",
     "active_link",
+    "django_celery_results",
 ]
 
 INSTALLED_APPS = (
@@ -123,10 +124,12 @@ DATABASES = {
     }
 }
 
+REDIS_URL = f"redis://:{env.str('REDIS_PASSWORD')}@{env.str('REDIS_HOST')}:{env.str('REDIS_PORT')}/{env.str('REDIS_DB_INDEX')}"
+
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"redis://:{env.str('REDIS_PASSWORD')}@{env.str('REDIS_HOST')}:{env.str('REDIS_PORT')}/{env.str('REDIS_DB_NUMBER')}",
+        "LOCATION": REDIS_URL,
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
             "SERIALIZER": "django_redis.serializers.json.JSONSerializer",
@@ -258,3 +261,9 @@ TINYMCE_DEFAULT_CONFIG = {
 GITHUB_PERSONAL_ACCESS_TOKEN = env.str("GITHUB_PERSONAL_ACCESS_TOKEN", default="")
 GITHUB_BASE_URL = env.str("GITHUB_BASE_URL", default="https://api.github.com")
 GITHUB_API_VERSION = env.str("GITHUB_API_VERSION", default="2022-11-28")
+
+CELERY_REDIS_URL = (
+    f"redis://:{env.str('REDIS_PASSWORD')}@redis:{env.str('REDIS_PORT')}/"
+)
+CELERY_BROKER_URL = CELERY_REDIS_URL + env.str("CELERY_BROKER_REDIS_DB_INDEX")
+CELERY_RESULT_BACKEND = CELERY_REDIS_URL + env.str("CELERY_BACKEND_REDIS_DB_INDEX")

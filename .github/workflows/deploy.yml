@@ -40,9 +40,11 @@ jobs:
         GITHUB_BASE_URL=${{ secrets.GITHUB_BASE_URL }}
         GITHUB_API_VERSION=${{ secrets.GITHUB_API_VERSION }}
         REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
-        REDIS_HOST=${{ secrets.REDIS_HOST }}
-        REDIS_PORT=${{ secrets.REDIS_PORT }}
-        REDIS_DB_NUMBER=${{ secrets.REDIS_DB_NUMBER }}
+        REDIS_HOST=${{ vars.REDIS_HOST }}
+        REDIS_PORT=${{ vars.REDIS_PORT }}
+        REDIS_DB_INDEX=${{ vars.REDIS_DB_INDEX }}
+        CELERY_BROKER_REDIS_DB_INDEX=${{ vars.CELERY_BROKER_REDIS_DB_INDEX }}
+        CELERY_BACKEND_REDIS_DB_INDEX=${{ vars.CELERY_BACKEND_REDIS_DB_INDEX }}
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@ec2-16-176-172-255.ap-southeast-2.compute.amazonaws.com << EOF
           set -e
@@ -72,9 +74,13 @@ jobs:
           REDIS_PASSWORD=$REDIS_PASSWORD
           REDIS_HOST=$REDIS_HOST
           REDIS_PORT=$REDIS_PORT
-          REDIS_DB_NUMBER=$REDIS_DB_NUMBER
+          REDIS_DB_INDEX=$REDIS_DB_INDEX
+          CELERY_BROKER_REDIS_DB_INDEX=$CELERY_BROKER_REDIS_DB_INDEX
+          CELERY_BACKEND_REDIS_DB_INDEX=$CELERY_BACKEND_REDIS_DB_INDEX
         EOT
           # Run Docker Compose------------------
           docker compose down
           docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.prod.yml up --build -d
+          docker image prune -f --filter "dangling=true" # Clean up dangling images
+          docker volume prune -f --filter "dangling=true" # Clean up dangling volumes
         EOF

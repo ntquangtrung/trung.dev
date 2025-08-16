@@ -25,7 +25,10 @@ x-app: &default-app
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
-      - REDIS_DB_NUMBER=${REDIS_DB_NUMBER}
+      - REDIS_DB_INDEX=${REDIS_DB_INDEX}
+
+      - CELERY_BROKER_REDIS_DB_INDEX=${CELERY_BROKER_REDIS_DB_INDEX}
+      - CELERY_BACKEND_REDIS_DB_INDEX=${CELERY_BACKEND_REDIS_DB_INDEX}
 
   volumes:
     - .:/app
@@ -62,11 +65,27 @@ services:
     command: redis-server --save "" --appendonly no --requirepass ${REDIS_PASSWORD}
     environment:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
       interval: 30s
       timeout: 10s
       retries: 3
 
+  celery-worker:
+    <<: *default-app
+    image: django-blog-image
+    container_name: django-celery-worker-container
+    command: >
+      sh -c 'poetry run celery -A config worker --loglevel=info'
+    depends_on:
+      - redis
+      - django
+    environment:
+      - CELERY_BROKER_URL=redis://:${REDIS_PASSWORD}@redis:${REDIS_PORT}/${CELERY_BROKER_REDIS_DB_INDEX}
+      - CELERY_RESULT_BACKEND=redis://:${REDIS_PASSWORD}@redis:${REDIS_PORT}/${CELERY_BACKEND_REDIS_DB_INDEX}
+
 volumes:
   static_volume:
+  redis_data:
