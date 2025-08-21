@@ -46,6 +46,7 @@ THIRD_PARTY_APPS = [
     "taggit_labels",
     "active_link",
     "django_celery_results",
+    "django_celery_beat",
 ]
 
 INSTALLED_APPS = (

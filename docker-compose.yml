@@ -88,6 +88,17 @@ services:
       - CELERY_BROKER_URL=redis://:${REDIS_PASSWORD}@redis:${REDIS_PORT}/${CELERY_BROKER_REDIS_DB_INDEX}
       - CELERY_RESULT_BACKEND=redis://:${REDIS_PASSWORD}@redis:${REDIS_PORT}/${CELERY_BACKEND_REDIS_DB_INDEX}
 
+  celery-beat:
+    image: django-blog-image
+    container_name: django-celery-beat-container
+    command: >
+      sh -c 'poetry run celery -A config beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler'
+    depends_on:
+      - redis
+      - django
+    volumes:
+      - .:/app
+
   flower:
     image: django-blog-image
     container_name: django-flower-container
