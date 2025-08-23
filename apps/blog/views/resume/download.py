@@ -1,8 +1,12 @@
+from django.conf import settings
 from django.http import HttpResponse
 from django.template.loader import render_to_string
+from django.utils import timezone
+from zoneinfo import ZoneInfo
 
 from apps.blog.views.resume.base import ResumePreviewBaseView
 from apps.blog.context.global_context import shared
+from services.redis import ResumeCache
 
 
 class ResumeDownloadView(ResumePreviewBaseView):
@@ -22,17 +26,22 @@ class ResumeDownloadView(ResumePreviewBaseView):
         # the extra dependencies locally.
         from weasyprint import HTML
 
-        # 1. Render template to HTML string
+        utc_now = timezone.now()
+        local_now = utc_now.astimezone(ZoneInfo(settings.COMMON_TIMEZONE["sai_gon"]))
+
+        resume_cache = ResumeCache()
+        resume_cache.increase_number_of_downloaded_resume(
+            date=local_now.strftime("%Y-%m-%d")
+        )
+
         html_string = render_to_string(
             self.template_name, context=self.get_context_data()
         )
 
-        # 2. Create PDF in memory
         pdf_file = HTML(
             string=html_string, base_url=request.build_absolute_uri()
         ).write_pdf()
 
-        # 3. Return as downloadable file
         response = HttpResponse(pdf_file, content_type="application/pdf")
         response["Content-Disposition"] = (
             'inline; filename="nguyen_tran_quang_trung.pdf"'
