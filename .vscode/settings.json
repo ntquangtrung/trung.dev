@@ -1,4 +1,10 @@
 {
     "python.defaultInterpreterPath": "venv/bin/python",
-    "python.terminal.activateEnvironment": true
+    "python.terminal.activateEnvironment": true,
+    "github.copilot.enable": {
+        "*": true,
+        "plaintext": true,
+        ".env": false,
+        ".env.*": false
+    }
 }
