@@ -6,7 +6,7 @@ from apps.blog.views.projects import ProjectsTemplateView
 from apps.blog.views.resume import ResumeView, ResumePreviewView, ResumeDownloadView
 
 app_name = "blog"
-
+# asdasdasd
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
     path("about/", AboutView.as_view(), name="about"),
