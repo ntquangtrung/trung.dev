@@ -1,12 +1,10 @@
 services:
   django:
     depends_on:
-      postgres:
-        condition: service_started
-      tailwind:
-        condition: service_started
-      redis:
-        condition: service_healthy
+      - postgres
+      - tailwind
+      - redis
+      - seaweedfs-filer
 
   tailwind:
     depends_on:

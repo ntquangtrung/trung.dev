@@ -33,6 +33,8 @@ x-app: &default-app
       - FLOWER_USER=${FLOWER_USER}
       - FLOWER_PASSWORD=${FLOWER_PASSWORD}
 
+      - SEAWEEDFS_URL=${SEAWEEDFS_URL}
+
   volumes:
     - .:/app
     - static_volume:/app/staticfiles
@@ -45,6 +47,8 @@ services:
     command: /usr/local/bin/entrypoint.sh
     ports:
       - "8000:8000"
+    networks:
+      - seaweed_network
 
   tailwind:
     <<: *default-app
@@ -128,6 +132,55 @@ services:
     environment:
       - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
 
+  seaweedfs-master:
+    image: chrislusf/seaweedfs:latest
+    container_name: seaweedfs-master
+    command: master -ip=seaweedfs-master -port=9333 -mdir=/data
+    ports:
+      - "9333:9333"
+    volumes:
+      - seaweed_master_data:/data
+    restart: unless-stopped
+    networks:
+      - seaweed_network
+
+  seaweedfs-volume:
+    image: chrislusf/seaweedfs:latest
+    container_name: seaweedfs-volume
+    command: volume -max=5 -mserver="seaweedfs-master:9333" -port=8080 -dir=/data
+    expose:
+      - "8080"
+      - "18080"
+    volumes:
+      - seaweed_volume_data:/data
+    depends_on:
+      - seaweedfs-master
+    restart: unless-stopped
+    networks:
+      - seaweed_network
+
+  seaweedfs-filer:
+    image: chrislusf/seaweedfs:latest
+    container_name: seaweedfs-filer
+    command: filer -master="seaweedfs-master:9333" -port=8888
+    ports:
+      - "8888:8888"    # Filer HTTP API
+    volumes:
+      - seaweed_filer_data:/data
+    depends_on:
+      - seaweedfs-master
+      - seaweedfs-volume
+    restart: unless-stopped
+    networks:
+      - seaweed_network
+
 volumes:
   static_volume:
   redis_data:
+  seaweed_master_data:
+  seaweed_volume_data:
+  seaweed_filer_data:
+
+networks:
+  seaweed_network:
+    driver: bridge
