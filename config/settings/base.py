@@ -64,17 +64,15 @@ INSTALLED_APPS = (
 
 MAX_UPLOAD_SIZE = 2 * 1024 * 1024  # 2 MB
 
+SEAWEEDFS_URL = env.str("SEAWEEDFS_URL")
+SEAWEEDFS_PREFIX = "trungstacks-blog-media"
+
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.s3.S3Storage",
+        "BACKEND": "apps.blog.storage.SeaweedStorage",
         "OPTIONS": {
-            "region_name": env.str("SUPABASE_S3_REGION"),
-            "access_key": env.str("SUPABASE_S3_ACCESS_KEY"),
-            "secret_key": env.str("SUPABASE_S3_SECRET_ACCESS_KEY"),
-            "bucket_name": env.str("SUPABASE_STORAGE_BUCKET_NAME"),
-            "endpoint_url": env.str("SUPABASE_S3_ENDPOINT_URL"),
-            "querystring_auth": False,  # Setting AWS_QUERYSTRING_AUTH to False to remove query parameter authentication from generated URLs. This can be useful if your S3 buckets are public.
-            "custom_domain": env.str("SUPABASE_CUSTOM_DOMAIN"),
+            "base_url": SEAWEEDFS_URL,
+            "prefix": SEAWEEDFS_PREFIX,
         },
     },
     "staticfiles": {
@@ -187,9 +185,6 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = Path(str(BASE_DIR)) / "staticfiles"
 
-MEDIA_URL = "media/"
-MEDIA_ROOT = Path(str(BASE_DIR)) / "media"
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -230,6 +225,7 @@ TINYMCE_DEFAULT_CONFIG = {
     "images_upload_credentials": True,
     "images_upload_handler": tinymce_images_upload_handler,
     "images_file_types": "jpeg,jpg,png,gif,webp,svg",
+    "relative_urls": False,
     "link_default_target": "_blank",
     "codesample_languages": [
         {"text": "HTML/XML", "value": "markup"},

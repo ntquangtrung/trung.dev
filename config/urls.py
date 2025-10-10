@@ -16,12 +16,11 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
-from django.conf.urls.static import static
 from debug_toolbar.toolbar import debug_toolbar_urls
 
-from apps.blog.views import tinymce_upload_image
+from apps.blog.views import tinymce_upload_image, serve_seaweedfs_file
 
 urlpatterns = [
     # Apps URLs
@@ -31,9 +30,14 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     # Third-party URLs
     path("tinymce/", include("tinymce.urls")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
 
 if settings.DEBUG:
     urlpatterns += [
         path("__reload__/", include("django_browser_reload.urls")),
+        re_path(
+            r"^trungstacks-blog-media/(?P<path>.*)$",
+            serve_seaweedfs_file,
+            name="seaweedfs-serve",
+        ),
     ] + debug_toolbar_urls()

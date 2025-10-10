@@ -44,6 +44,5 @@ def tinymce_upload_image(request):
                 f"uploads/{safe_name}", ContentFile(image.read())
             )
 
-        image_url = default_storage.url(path)
-        return JsonResponse({"location": image_url})
+        return JsonResponse({"location": f"/{path}"})
     return JsonResponse({"error": "Invalid request"}, status=400)
