@@ -1,9 +1,9 @@
 from django.contrib import admin
-from apps.blog.forms.notes import NoteAdminForm
+from apps.blog.forms.posts import PostAdminForm
 
 
-class NoteAdmin(admin.ModelAdmin):
-    form = NoteAdminForm
+class PostAdmin(admin.ModelAdmin):
+    form = PostAdminForm
     list_display = ("id", "year", "slug", "status", "title", "created")
     list_editable = ("status",)
     search_fields = ("title", "year")

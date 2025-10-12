@@ -1,10 +1,10 @@
 from django.views.generic.detail import DetailView
-from apps.blog.models import NotesToSelf
+from apps.blog.models import Posts
 
 
-class NoteDetailView(DetailView):
-    model = NotesToSelf
-    template_name = "blog/notes/detail.html"
+class PostDetailView(DetailView):
+    model = Posts
+    template_name = "blog/posts/detail.html"
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()

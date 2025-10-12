@@ -7,9 +7,9 @@ from taggit.models import TaggedItemBase, GenericUUIDTaggedItemBase
 from django.utils.translation import gettext_lazy as _
 
 
-class NotesToSelfManager(models.Manager):
+class PostsManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(status=NotesToSelf.PUBLISHED)
+        return super().get_queryset().filter(status=Posts.PUBLISHED)
 
 
 class UUIDTaggedItem(GenericUUIDTaggedItemBase, TaggedItemBase):
@@ -22,7 +22,7 @@ class UUIDTaggedItem(GenericUUIDTaggedItemBase, TaggedItemBase):
         verbose_name_plural = _("Tags")
 
 
-class NotesToSelf(TimeStampedModel, UUIDModel):
+class Posts(TimeStampedModel, UUIDModel):
     DRAFT = "draft"
     PUBLISHED = "published"
     STATUS_CHOICES = {
@@ -40,13 +40,13 @@ class NotesToSelf(TimeStampedModel, UUIDModel):
     year = models.PositiveIntegerField()
     slug = models.SlugField(max_length=255, unique=True)
     author = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notes"
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="posts"
     )
     tags = TaggableManager(through=UUIDTaggedItem)
     table_of_contents = HTMLField(blank=True, null=True)
 
     objects = models.Manager()  # Default manager (shows all records, including drafts)
-    published = NotesToSelfManager()  # Custom manager for published notes only
+    published = PostsManager()  # Custom manager for published posts only
 
     def __str__(self):
         return self.title
@@ -54,11 +54,11 @@ class NotesToSelf(TimeStampedModel, UUIDModel):
     def get_absolute_url(self):
         from django.urls import reverse
 
-        return reverse("blog:notes_detail", kwargs={"slug": self.slug})
+        return reverse("blog:post_detail", kwargs={"slug": self.slug})
 
     class Meta:
         indexes = [
-            models.Index(fields=["title", "year"], name="notes_title_year_idx"),
-            models.Index(fields=["slug"], name="notes_slug_idx"),
+            models.Index(fields=["title", "year"], name="posts_title_year_idx"),
+            models.Index(fields=["slug"], name="posts_slug_idx"),
         ]
         ordering = ["-year"]

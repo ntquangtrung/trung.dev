@@ -35,9 +35,9 @@
             <nav class="md:block hidden">
                 <ul class="flex gap-4 items-center h-full header-actions">
                     <li>
-                        <a href="{% url 'blog:notes' %}" class="btn-nav {% active_link 'blog:notes || blog:notes_detail' strict=True %}">
-                            <img src="{% static 'icons/notes.svg' %}" alt="notes">
-                            Notes
+                        <a href="{% url 'blog:posts' %}" class="btn-nav {% active_link 'blog:posts || blog:post_detail' strict=True %}">
+                            <img src="{% static 'icons/posts.svg' %}" alt="posts">
+                            Posts
                         </a>
                     </li>
                     <li>

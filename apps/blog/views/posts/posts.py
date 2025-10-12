@@ -2,13 +2,13 @@ from django.views.generic import ListView
 from django.db.models import Count
 from collections import defaultdict
 
-from apps.blog.models import NotesToSelf
+from apps.blog.models import Posts
 
 
-class NoteListView(ListView):
-    model: NotesToSelf = NotesToSelf
-    template_name = "blog/notes/index.html"
-    context_object_name = "notes"
+class PostListView(ListView):
+    model: Posts = Posts
+    template_name = "blog/posts/index.html"
+    context_object_name = "posts"
 
     def get_queryset(self):
         year = (
@@ -30,7 +30,7 @@ class NoteListView(ListView):
                 {
                     "year": year_value,
                     "year_count": year_count,
-                    "note_posts": default[year_value],
+                    "blog_post": default[year_value],
                 }
             )
 
