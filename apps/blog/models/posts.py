@@ -45,6 +45,22 @@ class Posts(TimeStampedModel, UUIDModel):
     tags = TaggableManager(through=UUIDTaggedItem)
     table_of_contents = HTMLField(blank=True, null=True)
 
+    thumbnail = models.ImageField(upload_to="posts/thumbnails/", blank=True, null=True)
+
+    meta_title = models.CharField(
+        max_length=70, blank=True, help_text="Custom title tag for SEO (max 70 chars)"
+    )
+    meta_description = models.CharField(
+        max_length=160,
+        blank=True,
+        help_text="Meta description for search engines (max 160 chars)",
+    )
+    canonical_url = models.URLField(
+        blank=True,
+        null=True,
+        help_text="Canonical URL to avoid duplicate content issues",
+    )
+
     objects = models.Manager()  # Default manager (shows all records, including drafts)
     published = PostsManager()  # Custom manager for published posts only
 
@@ -62,3 +78,8 @@ class Posts(TimeStampedModel, UUIDModel):
             models.Index(fields=["slug"], name="posts_slug_idx"),
         ]
         ordering = ["-year"]
+
+    def save(self, *args, **kwargs):
+        if not self.meta_title:
+            self.meta_title = self.title[:70]
+        super().save(*args, **kwargs)
