@@ -1,0 +1,15 @@
+version: 2
+updates:
+  # Enable version updates for pip (Python)
+  - package-ecosystem: "pip"
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "weekly" # Check for updates weekly
+    open-pull-requests-limit: 5 # Max number of open PRs
+    reviewers:
+      - "ntquangtrung" # You'll be assigned as reviewer
+    assignees:
+      - "ntquangtrung" # You'll be assigned to PRs
+    labels:
+      - "dependencies"
+      - "python"
