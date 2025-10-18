@@ -20,7 +20,7 @@ click-repl==0.3.0
 cron-descriptor==1.4.5
 cssselect2==0.8.0
 defusedxml==0.7.1
-discord.py==2.6.0
+discord.py==2.6.4
 dj-database-url==3.0.0
 Django==5.2.1
 django-active-link==0.2.2
