@@ -7,7 +7,7 @@ attrs==25.3.0
 audioop-lts==0.2.2
 billiard==4.2.1
 boto3==1.39.3
-botocore==1.39.3
+botocore==1.39.17
 Brotli==1.1.0
 celery==5.5.3
 certifi==2025.8.3
@@ -20,9 +20,9 @@ click-repl==0.3.0
 cron-descriptor==1.4.5
 cssselect2==0.8.0
 defusedxml==0.7.1
-discord.py==2.6.0
+discord.py==2.6.4
 dj-database-url==3.0.0
-Django==5.2.1
+Django==5.2.7
 django-active-link==0.2.2
 django-browser-reload==1.18.0
 django-celery-beat==2.8.1
@@ -47,7 +47,7 @@ humanize==4.12.3
 idna==3.10
 jmespath==1.0.1
 kombu==5.5.4
-Markdown==3.8.2
+Markdown==3.9
 multidict==6.6.4
 packaging==25.0
 pillow==11.3.0
@@ -78,6 +78,6 @@ vine==5.1.0
 wcwidth==0.2.13
 weasyprint==66.0
 webencodings==0.5.1
-whitenoise==6.9.0
+whitenoise==6.11.0
 yarl==1.20.1
 zopfli==0.2.3.post1
