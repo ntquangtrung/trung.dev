@@ -54,7 +54,7 @@ def tinymce_upload_image(request):
                     {"error": f"Image conversion failed: {error_msg}"}, status=400
                 )
 
-            unique_name = f"{uuid.uuid4()}.webp"
+            unique_name = f"{uuid.uuid4().hex}.webp"
             safe_name = get_valid_filename(unique_name)
             path = default_storage.save(
                 f"{settings.DEFAULT_UPLOAD_PREFIX}{safe_name}", ContentFile(webp_bytes)

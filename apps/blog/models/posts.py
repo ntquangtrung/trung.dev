@@ -5,6 +5,7 @@ from model_utils.models import TimeStampedModel, UUIDModel
 from taggit.managers import TaggableManager
 from taggit.models import TaggedItemBase, GenericUUIDTaggedItemBase
 from django.utils.translation import gettext_lazy as _
+from apps.blog.models.abstract.webp_image_field import WebPImageField
 
 
 class PostsManager(models.Manager):
@@ -45,7 +46,7 @@ class Posts(TimeStampedModel, UUIDModel):
     tags = TaggableManager(through=UUIDTaggedItem)
     table_of_contents = HTMLField(blank=True, null=True)
 
-    thumbnail = models.ImageField(upload_to="posts/thumbnails/", blank=True, null=True)
+    thumbnail = WebPImageField(upload_to="posts/thumbnails/", blank=True, null=True)
 
     meta_title = models.CharField(
         max_length=70, blank=True, help_text="Custom title tag for SEO (max 70 chars)"

@@ -54,5 +54,4 @@ class SeaweedStorage(Storage):
         """
         Return public URL.
         """
-        name = f"{self.prefix}/{name}"
         return self.client.get_file_url(name)
