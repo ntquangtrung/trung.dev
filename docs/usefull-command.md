@@ -42,6 +42,30 @@
    pip uninstall -r requirements.txt -y
    ```
 
+7. _(Poetry)_ Install project dependencies:
+
+   ```bash
+   poetry install
+   ```
+
+8. _(Poetry)_ Upgrade dependencies interactively:
+
+   ```bash
+   poetry upgrade --interactive
+   ```
+
+9. _(Poetry)_ Add a new dependency:
+
+    ```bash
+    poetry add <package-name>
+    ```
+
+10. _(Poetry)_ Remove a dependency:
+
+    ```bash
+    poetry remove <package-name>
+    ```
+
 ---
 
 ## 2. Initialize Project
