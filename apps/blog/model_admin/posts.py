@@ -1,4 +1,5 @@
 from django.contrib import admin
+
 from apps.blog.forms.posts import PostAdminForm
 
 

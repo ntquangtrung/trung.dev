@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
 from apps.blog.forms.profile import ProfileAdminForm
-from apps.blog.models import Profile
 from apps.blog.model_admin.abstracts import PrismAdmin
+from apps.blog.models import Profile
 
 
 class ProfileInline(admin.StackedInline):
@@ -14,7 +14,7 @@ class ProfileInline(admin.StackedInline):
     verbose_name_plural = "Profile"
 
     class Media:
-        css = {"all": []}  # Add custom CSS if needed
+        css = {"all": [""]}  # Add custom CSS if needed
 
 
 class CustomUserAdmin(UserAdmin):

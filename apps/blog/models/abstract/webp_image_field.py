@@ -2,8 +2,8 @@ import logging
 import os
 import uuid
 
-from django.db import models
 from django.core.files.base import ContentFile
+from django.db import models
 from django.db.models.fields.files import ImageFieldFile
 
 from utilities.convert_image_to_webp import convert_image_to_webp

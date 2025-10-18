@@ -1,9 +1,9 @@
 from django.urls import path
 
 from apps.blog.views import AboutView, HomeView
-from apps.blog.views.posts import PostListView, PostDetailView
+from apps.blog.views.posts import PostDetailView, PostListView
 from apps.blog.views.projects import ProjectsTemplateView
-from apps.blog.views.resume import ResumeView, ResumePreviewView, ResumeDownloadView
+from apps.blog.views.resume import ResumeDownloadView, ResumePreviewView, ResumeView
 
 app_name = "blog"
 

@@ -1,11 +1,12 @@
 from django import forms
 from tinymce.widgets import AdminTinyMCE
+
 from apps.blog.models.resume import (
-    Resume,
-    WorkExperience,
+    Certification,
     Education,
     Projects,
-    Certification,
+    Resume,
+    WorkExperience,
 )
 
 

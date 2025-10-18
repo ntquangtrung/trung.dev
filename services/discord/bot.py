@@ -1,6 +1,10 @@
+import logging
 import os
+
 import discord
 from discord.ext import commands
+
+logger = logging.getLogger(__name__)
 
 
 class DiscordBot(commands.Bot):
@@ -21,12 +25,11 @@ class DiscordBot(commands.Bot):
                 ext = f"cogs.{filename[:-3]}"
                 try:
                     await self.load_extension(ext)
-                    print(f"✅ Loaded {ext}")
-                except Exception as e:
-                    print(f"❌ Failed to load {ext}: {e}")
+                except Exception as _e:
+                    logger.exception("Failed to load %s", ext)
 
     async def on_ready(self):
-        print(f"✅ Logged in as {self.user}")
+        pass
 
     async def send_message(self, channel_id: int, message: str):
         """Send a message to a specific channel."""
@@ -35,7 +38,7 @@ class DiscordBot(commands.Bot):
         if channel:
             await channel.send(message)
         else:
-            print(f"Channel with ID {channel_id} not found.")
+            logger.error("Channel with ID %s not found.", channel_id)
 
     def run_bot(self):
         """Start the bot (blocking)."""

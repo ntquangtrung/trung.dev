@@ -1,10 +1,11 @@
 from django.conf import settings
 from django.db import models
-from tinymce.models import HTMLField
+from django.utils.translation import gettext_lazy as _
 from model_utils.models import TimeStampedModel, UUIDModel
 from taggit.managers import TaggableManager
-from taggit.models import TaggedItemBase, GenericUUIDTaggedItemBase
-from django.utils.translation import gettext_lazy as _
+from taggit.models import GenericUUIDTaggedItemBase, TaggedItemBase
+from tinymce.models import HTMLField
+
 from apps.blog.models.abstract.webp_image_field import WebPImageField
 
 
@@ -74,11 +75,12 @@ class Posts(TimeStampedModel, UUIDModel):
         return reverse("blog:post_detail", kwargs={"slug": self.slug})
 
     class Meta:
-        indexes = [
+        indexes = (
             models.Index(fields=["title", "year"], name="posts_title_year_idx"),
             models.Index(fields=["slug"], name="posts_slug_idx"),
-        ]
-        ordering = ["-year"]
+        )
+
+        ordering = ("-year",)
 
     def save(self, *args, **kwargs):
         if not self.meta_title:

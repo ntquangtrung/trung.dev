@@ -4,6 +4,7 @@
 - This is a Django-based personal portfolio site, styled with Tailwind CSS, and containerized using Docker.
 - Continuous deployment is managed via GitHub Actions.
 - The project structure is modular, with apps located in `apps/` and configuration in `config/`.
+- Code quality is maintained using **Ruff** for linting and formatting.
 
 ## Architecture & Key Components
 - **Django Apps:** All main features are implemented as Django apps under `apps/`. Example: `apps/blog/` for blog functionality.
@@ -17,8 +18,14 @@
 - **Build & Deploy:** Use Docker for containerization. Deployment is automated via GitHub Actions.
 - **Testing:** Tests are in `tests/` and within app folders (e.g., `apps/blog/tests.py`). Run with `python manage.py test`.
 - **Static Assets:** Tailwind and other frontend assets are managed in `theme/static_src/` and built via Node.js scripts.
+- **Code Quality:** 
+  - Run `ruff check .` to lint Python code and identify issues.
+  - Run `ruff check --fix .` to automatically fix auto-fixable issues.
+  - Run `ruff format .` to format Python code according to project standards.
+  - Ruff is configured in `pyproject.toml` and should be run before committing code.
 
 ## Conventions & Patterns
+- **Code Style:** All Python code must follow Ruff's linting and formatting rules. Run Ruff before committing.
 - **App Structure:** Each app follows Django conventions, but may have extra folders like `forms/`, `model_admin/`, `tasks/`, and `context/` for separation of concerns.
 - **Settings Import:** Always import settings from `config.settings`.
 - **Service Adapters:** Integrations are abstracted in `adapters/` and `services/` for maintainability.

@@ -1,7 +1,7 @@
-from django.views.generic import TemplateView
-from apps.blog.models import User
 from django.http import Http404
+from django.views.generic import TemplateView
 
+from apps.blog.models import User
 from utilities.resolve_variables import VariableResolver
 
 
@@ -14,7 +14,7 @@ class AboutView(TemplateView):
             kwargs.update(self.extra_context)
         return kwargs
 
-    def get(self, request, *args, **kwargs):
+    def get(self, _request, *_args, **kwargs):
         user = User.objects.select_related("profile").first()
         if user is None:
             raise Http404("User not found")

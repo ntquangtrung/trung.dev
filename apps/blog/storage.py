@@ -1,6 +1,7 @@
 import requests
-from django.core.files.storage import Storage
 from django.core.files.base import ContentFile
+from django.core.files.storage import Storage
+
 from services.seaweedfs import SeaweedFSClient
 
 
@@ -29,7 +30,7 @@ class SeaweedStorage(Storage):
         self.client.upload_file(name, file_data)
         return name
 
-    def _open(self, name, mode="rb"):
+    def _open(self, name, _mode="rb"):
         """
         Retrieve file from SeaweedFS.
         """

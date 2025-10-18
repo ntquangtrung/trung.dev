@@ -1,10 +1,9 @@
 from django.contrib import admin
 
 from apps.blog.model_admin.posts import PostAdmin
-from apps.blog.model_admin.user import CustomUserAdmin, ProfileAdmin
 from apps.blog.model_admin.resume import ResumeAdmin
-
-from apps.blog.models import User, Posts, Profile, Resume
+from apps.blog.model_admin.user import CustomUserAdmin, ProfileAdmin
+from apps.blog.models import Posts, Profile, Resume, User
 
 admin.site.site_header = "Blog Admin"
 admin.site.site_title = "Blog Admin"  # This is the HTML <title>

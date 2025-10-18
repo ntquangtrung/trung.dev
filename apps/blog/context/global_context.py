@@ -1,7 +1,7 @@
 from apps.blog.models import User
 
 
-def shared(request):
+def shared(_request):
     """
     Global context processor to add common variables to all templates.
     """

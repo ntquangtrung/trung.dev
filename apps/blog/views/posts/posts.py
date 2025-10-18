@@ -1,6 +1,7 @@
-from django.views.generic import ListView
-from django.db.models import Count
 from collections import defaultdict
+
+from django.db.models import Count
+from django.views.generic import ListView
 
 from apps.blog.models import Posts
 

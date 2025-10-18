@@ -1,9 +1,9 @@
-from django.conf import settings
-from django.http import HttpResponse, Http404
 import requests
+from django.conf import settings
+from django.http import Http404, HttpResponse
 
 
-def serve_seaweedfs_file(request, path):
+def serve_seaweedfs_file(_request, path):
     # Construct SeaweedFS filer URL
     filer_url = (
         f"{settings.SEAWEEDFS_URL}/{settings.SEAWEEDFS_PREFIX}/{path.rstrip('/')}"

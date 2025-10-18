@@ -1,18 +1,18 @@
 from django.contrib import admin
 
-from apps.blog.models.resume import (
-    Resume,
-    WorkExperience,
-    Education,
-    Projects,
-    Certification,
-)
 from apps.blog.forms.resume import (
-    ResumeAdminForm,
-    WorkExperienceAdminForm,
+    CertificationAdminForm,
     EducationAdminForm,
     ProjectsAdminForm,
-    CertificationAdminForm,
+    ResumeAdminForm,
+    WorkExperienceAdminForm,
+)
+from apps.blog.models.resume import (
+    Certification,
+    Education,
+    Projects,
+    Resume,
+    WorkExperience,
 )
 
 

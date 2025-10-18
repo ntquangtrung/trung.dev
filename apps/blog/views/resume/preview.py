@@ -4,6 +4,7 @@ from django.views.decorators.clickjacking import (
     xframe_options_exempt,
     xframe_options_sameorigin,
 )
+
 from apps.blog.views.resume.base import ResumePreviewBaseView
 
 

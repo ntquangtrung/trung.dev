@@ -1,6 +1,4 @@
 from django.views.generic import TemplateView
-from services.github_service import GitHubService
-from apps.blog.models import GithubRepository
 
 
 class ProjectsTemplateView(TemplateView):

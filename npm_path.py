@@ -3,7 +3,6 @@ import subprocess
 
 def get_npm_path():
     try:
-        npm_path = subprocess.check_output(["which", "npm"]).decode("utf-8").strip()
-        return npm_path
+        return subprocess.check_output(["which", "npm"]).decode("utf-8").strip()
     except (subprocess.CalledProcessError, FileNotFoundError):
         return None

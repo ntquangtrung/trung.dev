@@ -1,11 +1,12 @@
+from zoneinfo import ZoneInfo
+
 from django.conf import settings
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 from django.utils import timezone
-from zoneinfo import ZoneInfo
 
-from apps.blog.views.resume.base import ResumePreviewBaseView
 from apps.blog.context.global_context import shared
+from apps.blog.views.resume.base import ResumePreviewBaseView
 from services.redis import ResumeCache
 
 
@@ -17,11 +18,11 @@ class ResumeDownloadView(ResumePreviewBaseView):
         context.update(shared(self.request))
         return context
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request, *_args, **_kwargs):
         # WeasyPrint is only used in PDF generation and requires heavy system dependencies
         # (Cairo, Pango, etc.) that are not installed in local dev environments.
         # To avoid breaking commands like `makemigrations` locally, we import it lazily
-        # inside the function where it’s needed. This ensures Docker/prod environments
+        # inside the function where it's needed. This ensures Docker/prod environments
         # still have full PDF functionality without forcing all developers to install
         # the extra dependencies locally.
         from weasyprint import HTML

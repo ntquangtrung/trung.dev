@@ -1,0 +1,164 @@
+# Ruff configuration for Django project
+# https://docs.astral.sh/ruff/
+
+# Exclude common directories
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+    "migrations",
+    "staticfiles",
+    "static",
+    "tests",
+]
+
+# Line length to match Black's default
+line-length = 88
+
+# Indentation width (4 spaces)
+indent-width = 4
+
+# Target Python version
+target-version = "py311"
+
+[lint]
+# Enable these rule sets
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort (import sorting)
+    "N",      # pep8-naming
+    "UP",     # pyupgrade
+    "B",      # flake8-bugbear (catch common mistakes)
+    "C4",     # flake8-comprehensions
+    "DJ",     # flake8-django
+    "DTZ",    # flake8-datetimez
+    "T10",    # flake8-debugger
+    "T20",    # flake8-print (disallow print statements)
+    "EM",     # flake8-errmsg
+    "ICN",    # flake8-import-conventions
+    "PIE",    # flake8-pie
+    "PT",     # flake8-pytest-style
+    "Q",      # flake8-quotes
+    "RSE",    # flake8-raise
+    "RET",    # flake8-return
+    "SIM",    # flake8-simplify
+    "TID",    # flake8-tidy-imports
+    "TCH",    # flake8-type-checking
+    "ARG",    # flake8-unused-arguments
+    "PL",     # pylint
+    "TRY",    # tryceratops
+    "RUF",    # Ruff-specific rules
+]
+
+# Ignore specific rules
+ignore = [
+    "E402",    # Module level import not at top of file
+    "E501",    # line too long (handled by formatter)
+    "EM",      # flake8-errmsg - Allow string literals in exceptions
+    "UP",      # pyupgrade - Allow outdated Python syntax
+    "SIM108",  # Use ternary operator instead of if-else-block
+    "TRY003",  # Avoid specifying long messages outside exception class
+    "TRY300",  # Consider moving this statement to an else block
+    "TRY401",  # Redundant exception object in logging.exception call
+    "PLC0415", # Import should be at the top-level of a file
+    "PLR0911", # Too many return statements
+    "PLR0913", # Too many arguments to function call
+    "PLR2004", # Magic value used in comparison
+    "RUF012",  # Mutable class attributes should be annotated with typing.ClassVar
+    "DJ001",   # Avoid using null=True on string-based fields
+    "DJ007",   # Do not use __all__ with ModelForm, use fields instead
+]
+
+# Allow fix for all enabled rules (when `--fix` is provided)
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[lint.per-file-ignores]
+# Ignore certain rules in specific files
+"__init__.py" = ["F401"]  # Allow unused imports in __init__.py
+"**/tests/**" = ["ARG", "PLR2004"]  # Test files can have magic values
+"**/migrations/**" = ["ALL"]  # Ignore all rules in migrations
+"manage.py" = ["T201"]  # Allow print statements in manage.py
+"utilities/query_debugger.py" = ["T201"]  # Allow print statements for debugging
+"config/settings/**" = ["F403", "F405"]  # Allow star imports and undefined names in settings
+
+[lint.isort]
+# isort configuration for import sorting
+combine-as-imports = true
+force-wrap-aliases = true
+known-first-party = ["apps", "config", "services", "adapters", "utilities", "theme"]
+section-order = [
+    "future",
+    "standard-library",
+    "third-party",
+    "first-party",
+    "local-folder",
+]
+
+[lint.isort.sections]
+# Django should come before other third-party packages
+"django" = ["django"]
+
+[lint.flake8-quotes]
+# Use double quotes
+docstring-quotes = "double"
+inline-quotes = "double"
+multiline-quotes = "double"
+
+[lint.pylint]
+# Pylint-specific settings
+max-args = 6
+max-branches = 15
+max-returns = 6
+max-statements = 50
+
+[lint.mccabe]
+# Maximum cyclomatic complexity
+max-complexity = 10
+
+[format]
+# Formatting configuration
+
+# Use double quotes for strings
+quote-style = "double"
+
+# Use 4-space indentation
+indent-style = "space"
+
+# Respect magic trailing comma
+skip-magic-trailing-comma = false
+
+# Line endings
+line-ending = "auto"
+
+# Format docstrings
+docstring-code-format = true
+docstring-code-line-length = "dynamic"

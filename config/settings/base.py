@@ -10,8 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-import environ
 from pathlib import Path
+
+import environ
 
 env = environ.Env()
 
@@ -49,18 +50,16 @@ THIRD_PARTY_APPS = [
     "django_celery_beat",
 ]
 
-INSTALLED_APPS = (
-    [
-        "django.contrib.admin",
-        "django.contrib.auth",
-        "django.contrib.contenttypes",
-        "django.contrib.sessions",
-        "django.contrib.messages",
-        "django.contrib.staticfiles",
-    ]
-    + THIRD_PARTY_APPS
-    + LOCAL_APPS
-)
+INSTALLED_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    *THIRD_PARTY_APPS,
+    *LOCAL_APPS,
+]
 
 MAX_UPLOAD_SIZE = 10 * 1024 * 1024  # 10 MB
 

@@ -1,10 +1,12 @@
-from tinymce.widgets import AdminTinyMCE
+from pathlib import Path
+
 from django import forms
+from django.conf import settings
 from taggit.forms import TagField
 from taggit_labels.widgets import LabelWidget
+from tinymce.widgets import AdminTinyMCE
+
 from apps.blog.models import Posts
-from django.conf import settings
-from pathlib import Path
 
 path_to_share_anchor = Path(str(settings.BASE_DIR)) / "static" / "js/share_anchor.js"
 

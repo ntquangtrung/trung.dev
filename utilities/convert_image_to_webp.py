@@ -1,6 +1,5 @@
 import io
 import logging
-from typing import Tuple, Optional
 
 from PIL import Image
 
@@ -10,9 +9,9 @@ logger = logging.getLogger(__name__)
 def convert_image_to_webp(
     image_data: bytes,
     quality: int = 85,
-    max_width: Optional[int] = None,
-    max_height: Optional[int] = None,
-) -> Tuple[Optional[bytes], Optional[str]]:
+    max_width: int | None = None,
+    max_height: int | None = None,
+) -> tuple[bytes | None, str | None]:
     """
     Convert an image to WebP format using Pillow.
 
@@ -81,25 +80,25 @@ def convert_image_to_webp(
 
     except Image.UnidentifiedImageError:
         error_msg = "Unable to identify image format. The file may be corrupted or not a valid image."
-        logger.error(error_msg)
+        logger.exception(error_msg)
         return None, error_msg
 
     except Image.DecompressionBombError:
         error_msg = "Image is too large and may be a decompression bomb attack."
-        logger.error(error_msg)
+        logger.exception(error_msg)
         return None, error_msg
 
     except OSError as e:
-        error_msg = f"OS error while processing image: {str(e)}"
-        logger.error(error_msg)
+        error_msg = f"OS error while processing image: {e!s}"
+        logger.exception(error_msg)
         return None, error_msg
 
     except MemoryError:
         error_msg = "Not enough memory to process the image."
-        logger.error(error_msg)
+        logger.exception(error_msg)
         return None, error_msg
 
     except Exception as e:
-        error_msg = f"Unexpected error converting image to WebP: {str(e)}"
+        error_msg = f"Unexpected error converting image to WebP: {e!s}"
         logger.exception(error_msg)
         return None, error_msg

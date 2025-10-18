@@ -1,6 +1,7 @@
+from dataclasses import asdict, dataclass, fields
+from typing import Any, Dict, List, Optional
+
 import requests
-from typing import Optional, Dict, Any, List
-from dataclasses import dataclass, asdict, fields
 from django.conf import settings
 
 

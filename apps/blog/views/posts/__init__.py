@@ -1,7 +1,7 @@
-from apps.blog.views.posts.posts import PostListView
 from apps.blog.views.posts.detail import PostDetailView
+from apps.blog.views.posts.posts import PostListView
 
 __all__ = [
-    "PostListView",
     "PostDetailView",
+    "PostListView",
 ]

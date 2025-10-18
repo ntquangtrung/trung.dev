@@ -1,14 +1,14 @@
-import uuid
 import os
+import uuid
 
-from django.core.files.storage import default_storage
+from django.conf import settings
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.http import JsonResponse
 from django.utils.text import get_valid_filename
-from django.conf import settings
 
-from utilities.defused_svg import is_safe_svg
 from utilities.convert_image_to_webp import convert_image_to_webp
+from utilities.defused_svg import is_safe_svg
 
 
 def tinymce_upload_image(request):
@@ -31,7 +31,6 @@ def tinymce_upload_image(request):
 
         ext = os.path.splitext(image.name)[1]
 
-        # Special handling for SVG
         if image.content_type == "image/svg+xml" or ext.lower() == ".svg":
             svg_bytes = image.read()
             is_safe, error_msg = is_safe_svg(svg_bytes)

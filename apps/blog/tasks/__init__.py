@@ -1,7 +1,8 @@
-from celery import current_app
 from datetime import timedelta
 
-from .notify_downloads_resume import *
+from celery import current_app
+
+from .notify_downloads_resume import *  # noqa: F403
 
 current_app.conf.beat_schedule = {
     # "<schedule-name>": {

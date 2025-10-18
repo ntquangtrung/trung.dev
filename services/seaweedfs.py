@@ -1,5 +1,6 @@
-import requests
 from urllib.parse import urljoin
+
+import requests
 
 
 class SeaweedFSClient:
@@ -24,7 +25,7 @@ class SeaweedFSClient:
 
     def get_file(self, file_path: str):
         """
-        Retrieve a file’s content as bytes.
+        Retrieve a file's content as bytes.
         """
         url = urljoin(f"{self.base_url}/", file_path)
         response = requests.get(url)

@@ -1,18 +1,18 @@
-from .user import User, Profile
-from .posts import Posts
-from .github import GithubRepository
-from .resume import Resume, WorkExperience, Education, Certification, Projects
 from .click_log import ClickLog
+from .github import GithubRepository
+from .posts import Posts
+from .resume import Certification, Education, Projects, Resume, WorkExperience
+from .user import Profile, User
 
 __all__ = [
-    "User",
-    "Profile",
-    "Posts",
-    "GithubRepository",
-    "Resume",
-    "WorkExperience",
-    "Education",
     "Certification",
-    "Projects",
     "ClickLog",
+    "Education",
+    "GithubRepository",
+    "Posts",
+    "Profile",
+    "Projects",
+    "Resume",
+    "User",
+    "WorkExperience",
 ]

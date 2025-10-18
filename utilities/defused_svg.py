@@ -1,5 +1,9 @@
-from defusedxml.ElementTree import fromstring, ParseError
-import re  # For a more robust check of 'on' attributes
+import logging
+import re
+
+from defusedxml.ElementTree import ParseError, fromstring
+
+logger = logging.getLogger(__name__)
 
 
 def is_safe_svg(file_content_bytes):
@@ -57,13 +61,13 @@ def is_safe_svg(file_content_bytes):
                         # and check its scheme, but catching any url() is a good start if not expected
                         # More specific checks for url(javascript:...) would be more robust.
                         pass  # For now, allow url() but be aware of its potential danger if unsanitized.
-
         return True, ""  # SVG is considered safe
+
     except ParseError as e:
         # This catches XML parsing errors (e.g., malformed XML, XML bombs, XXE attempts)
-        print(f"DefusedXML Parse Error for SVG: {e}")
+        logger.exception("DefusedXML Parse Error for SVG: %s", e)
         return False, "Invalid or malicious XML structure detected in SVG."
     except Exception as e:
         # Catch any other unexpected errors during SVG processing
-        print(f"An unexpected error occurred during SVG safety check: {e}")
+        logger.exception("An unexpected error occurred during SVG safety check: %s", e)
         return False, "Failed to perform SVG safety checks."

@@ -1,14 +1,13 @@
 import re
-from typing import Any, Dict, Optional
+from typing import Any
 
 
 class VariableResolver:
-
-    def __init__(self, input_string: str, lookup_dict: Dict[str, Any]):
+    def __init__(self, input_string: str, lookup_dict: dict[str, Any]):
         if not isinstance(input_string, str) or not input_string.strip():
             raise ValueError("Input string must be a non-empty string.")
         if not isinstance(lookup_dict, dict):
-            raise ValueError("Lookup dictionary must be a valid dictionary.")
+            raise TypeError("Lookup dictionary must be a valid dictionary.")
 
         self.input_string = input_string
         self.lookup_dict = lookup_dict
@@ -26,7 +25,7 @@ class VariableResolver:
         value = self._get_nested_value(self.lookup_dict, keys)
         return str(value) if value is not None else match.group(0)
 
-    def _get_nested_value(self, current: Any, keys: list[str]) -> Optional[Any]:
+    def _get_nested_value(self, current: Any, keys: list[str]) -> Any | None:
         for key in keys:
             lower_key = key.lower()
             if not isinstance(current, dict) or lower_key not in current:

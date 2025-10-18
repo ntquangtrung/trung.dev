@@ -1,7 +1,8 @@
-import os
 import logging
-from django.conf import settings
+import os
+
 from django import template
+from django.conf import settings
 from django.utils.safestring import mark_safe
 
 register = template.Library()
@@ -28,5 +29,5 @@ def render_svg(path, tailwind_css_color=""):
         logger.warning(f"SVG not found: {full_path}")
         return mark_safe(f"<!-- SVG not found: {path} -->")
     except Exception as e:
-        logger.error(f"Error rendering SVG '{path}': {e}")
+        logger.exception(f"Error rendering SVG '{path}': {e}")
         return mark_safe(f"<!-- Error rendering SVG: {path} -->")

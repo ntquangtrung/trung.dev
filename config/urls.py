@@ -15,12 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('config/', include('config.urls'))
 """
 
-from django.contrib import admin
-from django.urls import path, include, re_path
-from django.conf import settings
 from debug_toolbar.toolbar import debug_toolbar_urls
+from django.conf import settings
+from django.contrib import admin
+from django.urls import include, path, re_path
 
-from apps.blog.views import tinymce_upload_image, serve_seaweedfs_file
+from apps.blog.views import serve_seaweedfs_file, tinymce_upload_image
 
 urlpatterns = [
     # Apps URLs
@@ -40,4 +40,5 @@ if settings.DEBUG:
             serve_seaweedfs_file,
             name="seaweedfs-serve",
         ),
-    ] + debug_toolbar_urls()
+        *debug_toolbar_urls(),
+    ]
