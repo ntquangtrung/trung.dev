@@ -48,22 +48,27 @@
    poetry install
    ```
 
-8. _(Poetry)_ Upgrade dependencies interactively:
-
-   ```bash
-   poetry upgrade --interactive
-   ```
-
-9. _(Poetry)_ Add a new dependency:
+8. _(Poetry)_ Add a new dependency:
 
     ```bash
     poetry add <package-name>
     ```
 
-10. _(Poetry)_ Remove a dependency:
+9. _(Poetry)_ Remove a dependency:
 
     ```bash
     poetry remove <package-name>
+    ```
+10. _(Poetry)_ Show outdated packages:
+
+    ```bash
+    poetry show --outdated
+    ```
+
+11. _(Poetry)_ Update packages:
+
+    ```bash
+    poetry update <package-A> <package-B>
     ```
 
 ---
