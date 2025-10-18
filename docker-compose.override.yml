@@ -4,7 +4,6 @@ services:
       - postgres
       - tailwind
       - redis
-      - seaweedfs-filer
 
   tailwind:
     depends_on:
