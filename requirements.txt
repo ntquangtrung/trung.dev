@@ -22,7 +22,7 @@ cssselect2==0.8.0
 defusedxml==0.7.1
 discord.py==2.6.0
 dj-database-url==3.0.0
-Django==5.2.1
+Django==5.2.7
 django-active-link==0.2.2
 django-browser-reload==1.18.0
 django-celery-beat==2.8.1
