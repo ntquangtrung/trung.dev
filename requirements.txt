@@ -47,7 +47,7 @@ humanize==4.12.3
 idna==3.10
 jmespath==1.0.1
 kombu==5.5.4
-Markdown==3.8.2
+Markdown==3.9
 multidict==6.6.4
 packaging==25.0
 pillow==11.3.0
