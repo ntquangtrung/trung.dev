@@ -190,7 +190,7 @@
 5. Build for production
 
    ```bash
-   docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
+   docker compose --env-file .env.prod -f docker-compose.yml -f docker-compose.prod.yml up --build -d
    ```
 
 ---

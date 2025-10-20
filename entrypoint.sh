@@ -29,7 +29,7 @@ fi
 
 if [ "$ENVIRONMENT" = "production" ]; then
   echo "Starting Gunicorn server..."
-  poetry run gunicorn config.wsgi:application --bind 0.0.0.0:8000
+  poetry run gunicorn config.wsgi:application --config gunicorn.conf.py
 else
   echo "Starting Django development server..."
   poetry run python manage.py runserver 0.0.0.0:8000

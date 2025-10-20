@@ -5,7 +5,6 @@ x-app: &default-app
     context: .
     # We are not using env_file here because Dockerfile build args do not receive values from env_file; instead, we must pass environment variables directly via args in the docker-compose file.
     args:
-      - DEBUG=${DEBUG}
       - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
 
       - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
@@ -29,6 +28,12 @@ x-app: &default-app
 
       - SEAWEEDFS_URL=${SEAWEEDFS_URL}
 
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+
   volumes:
     - .:/app
     - static_volume:/app/staticfiles
@@ -47,12 +52,12 @@ services:
     image: django-blog-image
     container_name: django-tailwind-container
     command: >
-      sh -c 'if [ "$DEBUG" = "True" ]; then
-        echo "Starting Tailwind in development mode";
-        poetry run python manage.py tailwind start;
-      else
+      sh -c 'if [ "$ENVIRONMENT" = "production" ]; then
         echo "Starting Tailwind in production mode";
         poetry run python manage.py tailwind build;
+      else
+        echo "Starting Tailwind in development mode";
+        poetry run python manage.py tailwind start;
       fi'
     tty: true
 

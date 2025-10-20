@@ -7,6 +7,12 @@
         ".env": false,
         ".env.*": false
     },
+    "files.associations": {
+        "*.dbclient-js": "javascript",
+        ".env.local": "dotenv",
+        ".env.dev": "dotenv",
+        ".env.prod": "dotenv",
+    },
     "[python]": {
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {

@@ -1,7 +1,9 @@
 services:
   django:
-    command: /usr/local/bin/entrypoint.sh
-    # volumes: []  # 🚫 This removes the volumes inherited from base
+    volumes: []  # Remove bind mounts from base config - use built-in static files
+    depends_on:
+      - tailwind
+      - redis
 
   nginx-proxy:
     image: nginx:latest

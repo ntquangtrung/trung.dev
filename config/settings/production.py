@@ -4,9 +4,9 @@ DATABASE_URL = f"postgres://{env.str('POSTGRES_USER', 'postgres')}:{env.str('POS
 
 DATABASES["default"] = env.db_url_config(DATABASE_URL)
 
-SECRET_KEY = env.str("SECRET_KEY", default="your-secret-key")
+SECRET_KEY = env.str("DJANGO_SECRET_KEY", default="your-secret-key")
 
-DEBUG = env.bool("DEBUG", default=False)
+DEBUG = False
 
 ALLOWED_HOSTS = ALLOWED_HOSTS + env.list("DJANGO_ALLOWED_HOSTS", default=[])
 

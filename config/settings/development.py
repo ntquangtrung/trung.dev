@@ -13,7 +13,7 @@ MIDDLEWARE += [
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
-DEBUG = env.bool("DEBUG", default=True)
+DEBUG = True
 
 ALLOWED_HOSTS = ALLOWED_HOSTS + env.list("DJANGO_ALLOWED_HOSTS", default=["localhost"])
 
