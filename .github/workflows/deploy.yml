@@ -1,4 +1,4 @@
-name: Manual Deploy to EC2
+name: Manual Deploy to Ubuntu Server
 
 on:
   workflow_dispatch:  # Manual trigger only
@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   deploy:
-    name: Deploy to EC2
+    name: Deploy to Ubuntu Server
     runs-on: ubuntu-latest
     environment: production
 
@@ -16,13 +16,30 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v4
 
+    - name: Setup Tailscale
+      uses: tailscale/github-action@v4
+      with:
+        oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+        oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+        tags: tag:ci
+
     - name: Setup SSH
       uses: webfactory/ssh-agent@v0.9.1
       with:
-        ssh-private-key: ${{ secrets.EC2_SSH_KEY }}
+        ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
+
+    - name: Add server to known_hosts
+      env:
+        SERVER_HOST: ${{ vars.SERVER_HOST }}
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
 
     - name: Deploy via SSH
       env:
+        SERVER_USER: ${{ vars.SERVER_USER }}  # e.g., 'ubuntu' or your username
+        SERVER_HOST: ${{ vars.SERVER_HOST }}  # Tailscale hostname or IP (e.g., 100.x.x.x)
+        DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}  # e.g., '/home/ubuntu/django-app'
         REPO_URL: https://${{ secrets.DEPLOY_PAT_TOKEN }}@github.com/${{ github.repository }}.git
         BRANCH: ${{ github.ref_name }}
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
@@ -31,31 +48,30 @@ jobs:
         POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
         POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         ENVIRONMENT: ${{ vars.ENVIRONMENT }}
-        DEBUG: ${{ vars.DEBUG }}
         DJANGO_SETTINGS_MODULE: config.settings.${{ vars.ENVIRONMENT }}
         DJANGO_ALLOWED_HOSTS: ${{ vars.DJANGO_ALLOWED_HOSTS }}
         DJANGO_CSRF_TRUSTED_ORIGINS: ${{ vars.DJANGO_CSRF_TRUSTED_ORIGINS }}
         DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-        GITHUB_PERSONAL_ACCESS_TOKEN=${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
-        GITHUB_BASE_URL=${{ secrets.GITHUB_BASE_URL }}
-        GITHUB_API_VERSION=${{ secrets.GITHUB_API_VERSION }}
-        REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}
-        REDIS_HOST=${{ vars.REDIS_HOST }}
-        REDIS_PORT=${{ vars.REDIS_PORT }}
-        REDIS_DB_INDEX=${{ vars.REDIS_DB_INDEX }}
-        CELERY_BROKER_REDIS_DB_INDEX=${{ vars.CELERY_BROKER_REDIS_DB_INDEX }}
-        CELERY_BACKEND_REDIS_DB_INDEX=${{ vars.CELERY_BACKEND_REDIS_DB_INDEX }}
-        FLOWER_USER=${{ vars.FLOWER_USER }}
-        FLOWER_PASSWORD=${{ vars.FLOWER_PASSWORD }}
+        GITHUB_PERSONAL_ACCESS_TOKEN: ${{ secrets.GITHUB_PERSONAL_ACCESS_TOKEN }}
+        GITHUB_BASE_URL: ${{ secrets.GITHUB_BASE_URL }}
+        GITHUB_API_VERSION: ${{ secrets.GITHUB_API_VERSION }}
+        REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+        REDIS_HOST: ${{ vars.REDIS_HOST }}
+        REDIS_PORT: ${{ vars.REDIS_PORT }}
+        REDIS_DB_INDEX: ${{ vars.REDIS_DB_INDEX }}
+        CELERY_BROKER_REDIS_DB_INDEX: ${{ vars.CELERY_BROKER_REDIS_DB_INDEX }}
+        CELERY_BACKEND_REDIS_DB_INDEX: ${{ vars.CELERY_BACKEND_REDIS_DB_INDEX }}
+        FLOWER_USER: ${{ vars.FLOWER_USER }}
+        FLOWER_PASSWORD: ${{ vars.FLOWER_PASSWORD }}
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@ec2-16-176-172-255.ap-southeast-2.compute.amazonaws.com << EOF
+        ssh $SERVER_USER@$SERVER_HOST << EOF
           set -e
           # Clone or pull repo------------------
-          if [ ! -d "django-app" ]; then
-            git clone $REPO_URL django-app
+          if [ ! -d "$DEPLOY_PATH" ]; then
+            git clone $REPO_URL $DEPLOY_PATH
           fi
           # Change to the app directory------------------
-          cd django-app
+          cd $DEPLOY_PATH
           git pull --rebase origin $BRANCH
           # Write environment variables------------------
           cat <<EOT > .env
@@ -65,7 +81,6 @@ jobs:
           POSTGRES_HOST=$POSTGRES_HOST
           POSTGRES_PORT=$POSTGRES_PORT
           ENVIRONMENT=$ENVIRONMENT
-          DEBUG=$DEBUG
           DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
           DJANGO_ALLOWED_HOSTS=$DJANGO_ALLOWED_HOSTS
           DJANGO_CSRF_TRUSTED_ORIGINS=$DJANGO_CSRF_TRUSTED_ORIGINS
