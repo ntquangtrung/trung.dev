@@ -87,6 +87,7 @@ jobs:
       DJANGO_SECRET_KEY: test-secret-key-for-ci-only
       DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
       DJANGO_CSRF_TRUSTED_ORIGINS: http://localhost,http://127.0.0.1
+      SEAWEEDFS_URL: http://localhost:8888
 
     steps:
     - name: Checkout code
