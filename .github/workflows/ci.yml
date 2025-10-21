@@ -81,12 +81,14 @@ jobs:
       POSTGRES_PORT: 5432
       REDIS_HOST: localhost
       REDIS_PORT: 6379
+      REDIS_PASSWORD: redispassword
       REDIS_DB_INDEX: 0
       CELERY_BROKER_REDIS_DB_INDEX: 1
       CELERY_BACKEND_REDIS_DB_INDEX: 2
       DJANGO_SECRET_KEY: test-secret-key-for-ci-only
       DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
       DJANGO_CSRF_TRUSTED_ORIGINS: http://localhost,http://127.0.0.1
+      SEAWEEDFS_URL: http://localhost:8888
 
     steps:
     - name: Checkout code
@@ -97,13 +99,18 @@ jobs:
       with:
         python-version: '3.13'
 
-    - name: Cache pip packages
+    - name: Install Poetry
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Cache Poetry dependencies
       uses: actions/cache@v4
       with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+        path: ~/.cache/pypoetry
+        key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
         restore-keys: |
-          ${{ runner.os }}-pip-
+          ${{ runner.os }}-poetry-
 
     - name: Install system dependencies
       run: |
@@ -120,18 +127,39 @@ jobs:
           shared-mime-info
 
     - name: Install Python dependencies
+      run: poetry install --only main --no-root
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+
+    - name: Cache npm packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('theme/static_src/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Install Node dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        cd theme/static_src
+        npm ci
+
+    - name: Build Tailwind CSS
+      run: |
+        cd theme/static_src
+        npm run build
 
     - name: Run migrations
-      run: python manage.py migrate --noinput
+      run: poetry run python manage.py migrate --noinput
 
     - name: Collect static files
-      run: python manage.py collectstatic --noinput
+      run: poetry run python manage.py collectstatic --noinput
 
     - name: Check for missing migrations
-      run: python manage.py makemigrations --check --dry-run --noinput
+      run: poetry run python manage.py makemigrations --check --dry-run --noinput
 
   security:
     name: Security Checks
@@ -183,3 +211,19 @@ jobs:
         tags: trung-dev:ci-${{ github.sha }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
+        build-args: |
+          DJANGO_SETTINGS_MODULE=config.settings.production
+          DJANGO_ALLOWED_HOSTS=localhost
+          DJANGO_CSRF_TRUSTED_ORIGINS=http://localhost
+          SEAWEEDFS_URL=http://localhost:8888
+          REDIS_HOST=redis
+          REDIS_PORT=6379
+          REDIS_PASSWORD=dummy
+          REDIS_DB_INDEX=0
+          CELERY_BROKER_REDIS_DB_INDEX=1
+          CELERY_BACKEND_REDIS_DB_INDEX=2
+          POSTGRES_DB=postgres
+          POSTGRES_USER=postgres
+          POSTGRES_PASSWORD=postgres
+          POSTGRES_HOST=postgres
+          POSTGRES_PORT=5432

@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     gnupg \
     ca-certificates \
-    ibpango-1.0-0 \
+    libpango-1.0-0 \
     libpangoft2-1.0-0 \
     libharfbuzz-subset0 \
     libjpeg-dev \

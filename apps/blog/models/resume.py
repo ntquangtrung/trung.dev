@@ -25,7 +25,9 @@ class Resume(TimeStampedModel, UUIDModel):
     )
 
     class Meta:
-        ordering = ("-id",)
+        ordering = [
+            "-id",
+        ]
 
     def __str__(self):
         return self.title
@@ -57,7 +59,9 @@ class WorkExperience(models.Model):
     )
 
     class Meta:
-        ordering = ("-start_date",)
+        ordering = [
+            "-start_date",
+        ]
 
     def __str__(self):
         return f"{self.job_title} at {self.company}"
@@ -77,7 +81,7 @@ class Education(models.Model):
     )
 
     class Meta:
-        ordering = ("-start_date",)
+        ordering = ["-start_date"]
 
     def __str__(self):
         return f"{self.degree} - {self.institution}"

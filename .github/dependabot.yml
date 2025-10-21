@@ -1,11 +1,12 @@
 version: 2
 updates:
-  # Enable version updates for pip (Python)
+  # Enable version updates for Poetry (pyproject.toml)
   - package-ecosystem: "pip"
-    directory: "/" # Location of package manifests
+    directory: "/" # Location of pyproject.toml
     schedule:
       interval: "weekly" # Check for updates weekly
-    open-pull-requests-limit: 5 # Max number of open PRs
+    open-pull-requests-limit: 10 # Max number of open PRs
+    versioning-strategy: "lockfile-only" # Only update poetry.lock, not pyproject.toml constraints
     reviewers:
       - "ntquangtrung" # You'll be assigned as reviewer
     assignees:
@@ -13,3 +14,4 @@ updates:
     labels:
       - "dependencies"
       - "python"
+      - "poetry"
