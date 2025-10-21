@@ -234,3 +234,37 @@
    ```
 
    Confirm all tests in files matching `*.test.py` are discovered and executed.
+
+   ---
+
+   ## 7. Ruff - Linting & Formatting
+
+   1. **Check code for linting issues:**
+
+      ```bash
+      ruff check .
+      ```
+
+   2. **Auto-fix linting issues:**
+
+      ```bash
+      ruff check --fix .
+      ```
+
+   3. **Format code:**
+
+      ```bash
+      ruff format --check .
+      ```
+
+   4. **Check specific files or directories:**
+
+      ```bash
+      ruff check path/to/file_or_directory
+      ```
+
+   5. **Show configuration:**
+
+      ```bash
+      ruff check --show-settings
+      ```

@@ -80,7 +80,9 @@ class Posts(TimeStampedModel, UUIDModel):
             models.Index(fields=["slug"], name="posts_slug_idx"),
         )
 
-        ordering = ("-year",)
+        ordering = [
+            "-year",
+        ]
 
     def save(self, *args, **kwargs):
         if not self.meta_title:
