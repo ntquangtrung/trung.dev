@@ -34,7 +34,7 @@ django-redis==6.0.0
 django-storages==1.14.6
 django-taggit==6.1.0
 django-taggit-labels==0.7.0
-django-tailwind==4.0.1
+django-tailwind==4.2.0
 django-timezone-field==7.1
 django-tinymce==4.1.0
 django_celery_results==2.6.0
@@ -50,7 +50,7 @@ kombu==5.5.4
 Markdown==3.9
 multidict==6.6.4
 packaging==25.0
-pillow==11.3.0
+pillow==12.0.0
 prometheus_client==0.22.1
 prompt_toolkit==3.0.51
 propcache==0.3.2

@@ -151,7 +151,6 @@ poetry run python manage.py migrate
 ### Update Requirements
 ```bash
 poetry add <package>
-poetry export -f requirements.txt --output requirements.txt --without-hashes
 ```
 
 ## Key Files Reference
