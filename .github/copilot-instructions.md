@@ -1,53 +1,168 @@
 # Copilot Instructions for trung-dev
 
 ## Project Overview
-- This is a Django-based personal portfolio site, styled with Tailwind CSS, and containerized using Docker.
-- Continuous deployment is managed via GitHub Actions.
-- The project structure is modular, with apps located in `apps/` and configuration in `config/`.
-- Code quality is maintained using **Ruff** for linting and formatting.
+Django 5.2+ personal portfolio site with Tailwind CSS 4.x, containerized with Docker. Uses **Poetry** for dependency management (not pip directly). CI/CD via GitHub Actions.
 
 ## Architecture & Key Components
-- **Django Apps:** All main features are implemented as Django apps under `apps/`. Example: `apps/blog/` for blog functionality.
-- **Settings:** Environment-specific settings are split into `config/settings/base.py`, `development.py`, and `production.py`.
-- **Static & Templates:** Static files are in `static/`, templates in `templates/` and app-specific templates in `apps/*/templates/`.
-- **Services:** External integrations (e.g., GitHub, Redis, Discord) are in `services/` and `adapters/`.
-- **Theme:** Custom theme logic and assets are in `theme/`.
+
+### Project Structure
+- **Apps:** `apps/blog/` contains all main features (posts, resume, user models)
+- **Config:** `config/settings/{base,development,production}.py` for environment-specific settings
+- **Admin:** Custom admin classes in `apps/blog/model_admin/*.py` registered in `apps/blog/admin.py`
+- **Models:** Split across `apps/blog/models/*.py` with `__init__.py` exporting all models
+- **Services:** External integrations abstracted in `services/` (SeaweedFS, Redis, GitHub, Discord)
+- **Adapters:** API clients in `adapters/` (e.g., `github_adapter.py`)
+- **Utilities:** Reusable helpers in `utilities/` (e.g., `VariableResolver` for template variable substitution)
+
+### Storage Architecture
+- **Custom Storage Backend:** `apps.blog.storage.SeaweedStorage` implements Django's Storage API for SeaweedFS
+- **SeaweedFS Client:** `services/seaweedfs.SeaweedFSClient` provides REST API wrapper
+- **Configuration:** Set `SEAWEEDFS_URL` and `SEAWEEDFS_PREFIX` in settings; used in `STORAGES['default']`
+- Files are uploaded with prefix: `{SEAWEEDFS_PREFIX}/{filename}`
+
+### Async Tasks
+- **Celery + Redis:** Background tasks configured in `config/celery.py`
+- **Task Location:** `apps/blog/tasks/` (e.g., `notify_downloads_resume.py`)
+- **Broker:** Redis with separate DB indices for broker (`CELERY_BROKER_REDIS_DB_INDEX`) and backend (`CELERY_BACKEND_REDIS_DB_INDEX`)
+- **Beat Scheduler:** Uses `django_celery_beat` for periodic tasks stored in database
 
 ## Developer Workflows
-- **Run locally:** Use `manage.py` for Django commands. For development, use `python manage.py runserver` or Docker Compose (`docker-compose up`).
-- **Build & Deploy:** Use Docker for containerization. Deployment is automated via GitHub Actions.
-- **Testing:** Tests are in `tests/` and within app folders (e.g., `apps/blog/tests.py`). Run with `python manage.py test`.
-- **Static Assets:** Tailwind and other frontend assets are managed in `theme/static_src/` and built via Node.js scripts.
-- **Code Quality:** 
-  - Run `ruff check .` to lint Python code and identify issues.
-  - Run `ruff check --fix .` to automatically fix auto-fixable issues.
-  - Run `ruff format .` to format Python code according to project standards.
-  - Ruff is configured in `pyproject.toml` and should be run before committing code.
+
+### Running Commands (Poetry-based)
+```bash
+# Django commands - ALWAYS use poetry run
+poetry run python manage.py migrate
+poetry run python manage.py createsuperuser
+poetry run python manage.py runserver
+
+# Celery worker
+poetry run celery -A config worker --loglevel=info
+
+# Celery beat scheduler
+poetry run celery -A config beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+```
+
+### Docker Development
+```bash
+# Start all services (Django, Tailwind, Redis, Postgres, Celery)
+docker-compose up
+
+# Production build (uses docker-compose.prod.yml overlay)
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+```
+
+### Tailwind CSS
+- **Source:** `theme/static_src/src/styles.css`
+- **Output:** `theme/static/css/dist/styles.css`
+- **Build:** `cd theme/static_src && npm run build` (production)
+- **Watch:** `cd theme/static_src && npm run dev` (development)
+- **Django Integration:** Use `python manage.py tailwind start` for hot reload
+
+### Static Files
+```bash
+# Collect static files (run after Tailwind build)
+poetry run python manage.py collectstatic --noinput
+```
+
+### Code Quality
+```bash
+# Lint and format (REQUIRED before commit)
+ruff check .
+ruff format .
+
+# Auto-fix issues
+ruff check --fix .
+```
+
+### CI/CD
+- **CI:** `.github/workflows/ci.yml` runs on push/PR - linting, migrations, static collection, Docker build
+- **Deploy:** `.github/workflows/deploy.yml` manual trigger for production deployment
+- **Tests:** CI runs `poetry run python manage.py test apps` (excludes `/tests` folder)
 
 ## Conventions & Patterns
-- **Code Style:** All Python code must follow Ruff's linting and formatting rules. Run Ruff before committing.
-- **App Structure:** Each app follows Django conventions, but may have extra folders like `forms/`, `model_admin/`, `tasks/`, and `context/` for separation of concerns.
-- **Settings Import:** Always import settings from `config.settings`.
-- **Service Adapters:** Integrations are abstracted in `adapters/` and `services/` for maintainability.
-- **Environment Variables:** Sensitive config is managed via environment variables and `.env` files (not committed).
+
+### Admin Registration Pattern
+- Admin classes defined in `apps/blog/model_admin/*.py` (e.g., `PostAdmin`, `ResumeAdmin`)
+- Import and register in `apps/blog/admin.py`: `admin.site.register(Model, AdminClass)`
+- Use `form = CustomForm` for admin form customization
+- Split fieldsets for organization (Basic Info, SEO Settings, Timestamps)
+
+### Model Organization
+- Models split by domain: `posts.py`, `resume.py`, `user.py`, `github.py`, `click_log.py`
+- All models exported via `models/__init__.py` `__all__` list
+- Use `django-model-utils` for common patterns (TimeStampedModel)
+
+### Settings Pattern
+- Base settings in `config/settings/base.py`
+- Environment variables loaded via `django-environ`: `env = environ.Env()`
+- Override in `development.py` or `production.py`
+- Import settings: `from django.conf import settings` (NOT `from config.settings`)
+
+### Entrypoint Behavior
+- `entrypoint.sh` runs migrations automatically on container start
+- Creates superuser if `DJANGO_SUPERUSER_*` env vars are set
+- Production: starts Gunicorn (`ENVIRONMENT=production`)
+- Development: starts `runserver` on `0.0.0.0:8000`
 
 ## Integration Points
-- **GitHub:** Automated deployments and some features use GitHub APIs (see `adapters/github_adapter.py`, `services/github_service.py`).
-- **Redis:** Used for caching or async tasks (see `services/redis.py`).
-- **Discord Bot:** Custom bot logic in `services/discord/bot.py`.
 
-## Examples
-- To add a new Django app: `python manage.py startapp <appname>` and register in `config/settings/base.py`.
-- To run tests: `python manage.py test` or use Docker Compose for isolated environments.
-- To build static assets: Run Node.js scripts in `theme/static_src/` (see `package.json`).
+### SeaweedFS Storage
+- Custom storage backend at `apps.blog.storage.SeaweedStorage`
+- Client wrapper: `services.seaweedfs.SeaweedFSClient`
+- Upload: POST to `{SEAWEEDFS_URL}/{prefix}/{filename}`
+- Retrieve: GET from `{SEAWEEDFS_URL}/{filepath}`
+- Delete: DELETE to `{SEAWEEDFS_URL}/{filepath}`
 
-## References
-- Key files: `manage.py`, `config/settings/`, `apps/`, `services/`, `adapters/`, `theme/`, `static/`, `templates/`
-- For more details, see the README.md and comments in config files.
+### GitHub API
+- Adapter: `adapters/github_adapter.py`
+- Service: `services/github_service.py`
+- Model: `apps.blog.models.GithubRepository` stores repo metadata
+
+### Discord Bot
+- Bot logic: `services/discord/bot.py`
+- Uses `discord.py` library
+- Cogs pattern for command organization: `services/discord/cogs/`
+
+### Variable Resolver Utility
+- `utilities.resolve_variables.VariableResolver` replaces `{variable.KEY}` patterns
+- Supports nested keys: `{variable.PROFILE.SOCIAL.GITHUB.URL}`
+- Case-insensitive lookup dict, case-sensitive pattern matching
+- Used for dynamic content substitution
+
+## Common Tasks
+
+### Add New Django App
+```bash
+poetry run python manage.py startapp <appname> apps/<appname>
+# Register in config/settings/base.py LOCAL_APPS
+```
+
+### Create Migration
+```bash
+poetry run python manage.py makemigrations
+poetry run python manage.py migrate
+```
+
+### Add Celery Task
+1. Create task in `apps/blog/tasks/<taskname>.py`
+2. Use `@shared_task` decorator
+3. Task autodiscovered via `config/celery.py`
+
+### Update Requirements
+```bash
+poetry add <package>
+poetry export -f requirements.txt --output requirements.txt --without-hashes
+```
+
+## Key Files Reference
+- **Entry:** `manage.py`, `entrypoint.sh`
+- **Settings:** `config/settings/base.py`, `pyproject.toml`
+- **Models:** `apps/blog/models/__init__.py`
+- **Admin:** `apps/blog/admin.py`, `apps/blog/model_admin/*.py`
+- **Storage:** `apps/blog/storage.py`, `services/seaweedfs.py`
+- **Async:** `config/celery.py`, `apps/blog/tasks/`
+- **CI/CD:** `.github/workflows/ci.yml`, `.github/workflows/deploy.yml`
+- **Docker:** `Dockerfile`, `docker-compose.yml`, `docker-compose.override.yml`, `docker-compose.prod.yml`
 
 ---
-If any section is unclear or missing, please provide feedback to improve these instructions.
-
-## Github repository
-username: <your-github-username>
-repository: <your-repo-name>
+**Note:** This project uses Poetry exclusively - always prefix Python/Django commands with `poetry run`. Never use `pip install` directly.
