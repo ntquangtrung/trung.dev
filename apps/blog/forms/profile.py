@@ -4,7 +4,6 @@ from apps.blog.models import Profile
 
 
 class ProfileAdminForm(forms.ModelForm):
-
     class Meta:
         model = Profile
         fields = "__all__"
