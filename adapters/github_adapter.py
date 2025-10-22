@@ -7,9 +7,9 @@ from django.conf import settings
 
 class GitHubAdapter:
     def __init__(self):
-        self.token = settings.GITHUB_PERSONAL_ACCESS_TOKEN
-        self.base_url = settings.GITHUB_BASE_URL
-        self.api_version = settings.GITHUB_API_VERSION
+        self.token = settings.CLIENT_GITHUB_TOKEN
+        self.base_url = settings.CLIENT_GITHUB_BASE_URL
+        self.api_version = settings.CLIENT_GITHUB_API_VERSION
 
     def _headers(self):
         return {
