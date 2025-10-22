@@ -1,0 +1,32 @@
+name: Orchestrator - CI, Test, and Deploy
+
+on:
+  workflow_dispatch:  # Manual trigger
+  push:
+    branches: [ master ]  # Auto-run on main/master pushes
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: Run CI Pipeline
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+
+  tailscale-connection:
+    name: Test Server Connection
+    needs: ci
+    uses: ./.github/workflows/tailscale-connection.yml
+    secrets: inherit
+    permissions:
+      contents: read
+
+  deploy:
+    name: Deploy to Production
+    needs: tailscale-connection
+    uses: ./.github/workflows/deploy.yml
+    secrets: inherit
+    permissions:
+      contents: read

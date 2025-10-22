@@ -1,6 +1,7 @@
 name: Manual Deploy to Ubuntu Server
 
 on:
+  workflow_call:  # Allow this workflow to be called by other workflows
   workflow_dispatch:  # Manual trigger only
 
 permissions:
@@ -16,29 +17,20 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v4
 
-    - name: Setup Tailscale
-      uses: tailscale/github-action@v4
+    - name: Setup Tailscale and SSH
+      uses: ./.github/actions/setup-tailscale-ssh
       with:
         oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
         oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
-        tags: tag:ci
-
-    - name: Setup SSH
-      uses: webfactory/ssh-agent@v0.9.1
-      with:
         ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
-
-    - name: Add server to known_hosts
-      env:
-        SERVER_HOST: ${{ vars.SERVER_HOST }}
-      run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
+        server-host: ${{ secrets.SERVER_HOST }}
+        server-user: ${{ secrets.SERVER_USER }}
+        skip-ping: 'true'
 
     - name: Deploy via SSH
       env:
-        SERVER_USER: ${{ vars.SERVER_USER }}  # e.g., 'ubuntu' or your username
-        SERVER_HOST: ${{ vars.SERVER_HOST }}  # Tailscale hostname or IP (e.g., 100.x.x.x)
+        SERVER_USER: ${{ secrets.SERVER_USER }}  # e.g., 'ubuntu' or your username
+        SERVER_HOST: ${{ secrets.SERVER_HOST }}  # Tailscale hostname or IP (e.g., 100.x.x.x)
         DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}  # e.g., '/home/ubuntu/django-app'
         REPO_URL: https://${{ secrets.DEPLOY_PAT_TOKEN }}@github.com/${{ github.repository }}.git
         BRANCH: ${{ github.ref_name }}
@@ -62,13 +54,23 @@ jobs:
         CELERY_BROKER_REDIS_DB_INDEX: ${{ vars.CELERY_BROKER_REDIS_DB_INDEX }}
         CELERY_BACKEND_REDIS_DB_INDEX: ${{ vars.CELERY_BACKEND_REDIS_DB_INDEX }}
         FLOWER_USER: ${{ vars.FLOWER_USER }}
-        FLOWER_PASSWORD: ${{ vars.FLOWER_PASSWORD }}
+        FLOWER_PASSWORD: ${{ secrets.FLOWER_PASSWORD }}
       run: |
-        ssh $SERVER_USER@$SERVER_HOST << EOF
+        ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST << EOF
           set -e
-          # Clone or pull repo------------------
-          if [ ! -d "$DEPLOY_PATH" ]; then
-            git clone $REPO_URL $DEPLOY_PATH
+          # Check if parent directory exists------------------
+          EXPANDED_DEPLOY_PATH=$(eval echo "$DEPLOY_PATH")
+          PARENT_DIR=$(dirname "$EXPANDED_DEPLOY_PATH")
+          if [ ! -d "$PARENT_DIR" ]; then
+            echo "❌ Error: Parent directory '$PARENT_DIR' does not exist on server"
+            echo "Please create the parent directory first or update DEPLOY_PATH variable"
+            exit 1
+          fi
+          exit 1
+          # Clone or pull repo
+          if [ ! -d "$EXPANDED_DEPLOY_PATH" ]; then
+            echo "📦 Cloning repository to $EXPANDED_DEPLOY_PATH..."
+            git clone "$REPO_URL" "$EXPANDED_DEPLOY_PATH"
           fi
           # Change to the app directory------------------
           cd $DEPLOY_PATH
@@ -98,7 +100,7 @@ jobs:
           FLOWER_PASSWORD=$FLOWER_PASSWORD
         EOT
           # Run Docker Compose------------------
-          docker compose down
-          docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.prod.yml up --build -d
+          docker compose down --remove-orphans
+          docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
           docker image prune -f --filter "dangling=true" # Clean up dangling images
         EOF

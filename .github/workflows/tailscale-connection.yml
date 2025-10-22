@@ -1,44 +1,31 @@
 name: Test SSH Connection via Tailscale
 
 on:
+  workflow_call:  # Allow this workflow to be called by other workflows
   workflow_dispatch:  # Manual trigger only
 
 permissions:
   contents: read
 
 jobs:
-  test-connection:
+  tailscale-connection:
     name: Test Connection to Ubuntu Server
     runs-on: ubuntu-latest
     environment: production
 
     steps:
-    - name: Setup Tailscale
-      uses: tailscale/github-action@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Tailscale and SSH
+      uses: ./.github/actions/setup-tailscale-ssh
       with:
         oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
         oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
-        tags: tag:ci
-
-    - name: Setup SSH
-      uses: webfactory/ssh-agent@v0.9.1
-      with:
         ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
-
-    - name: Add server to known_hosts
-      env:
-        SERVER_HOST: ${{ secrets.SERVER_HOST }}
-      run: |
-        mkdir -p ~/.ssh
-        ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
-
-    - name: Test Tailscale Connection
-      env:
-        SERVER_HOST: ${{ secrets.SERVER_HOST }}
-      run: |
-        echo "Testing Tailscale connection..."
-        echo "Server Host: $SERVER_HOST"
-        tailscale ping $SERVER_HOST
+        server-host: ${{ secrets.SERVER_HOST }}
+        server-user: ${{ secrets.SERVER_USER }}
+        skip-ping: 'false'
 
     - name: Test SSH Connection
       env:
@@ -49,6 +36,7 @@ jobs:
         echo "Testing SSH connection to $SERVER_HOST..."
         echo "================================================"
         ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST << 'EOF'
+          set -e
           echo ""
           echo "✅ SSH Connection Successful!"
           echo "================================================"
