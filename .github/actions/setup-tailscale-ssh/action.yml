@@ -1,0 +1,56 @@
+name: 'Setup Tailscale and SSH'
+description: 'Sets up Tailscale connection, SSH agent, and tests connectivity to the server'
+
+inputs:
+  oauth-client-id:
+    description: 'Tailscale OAuth client ID'
+    required: true
+  oauth-secret:
+    description: 'Tailscale OAuth secret'
+    required: true
+  ssh-private-key:
+    description: 'SSH private key for server authentication'
+    required: true
+  server-host:
+    description: 'Server hostname or IP (Tailscale address)'
+    required: true
+  server-user:
+    description: 'SSH username for the server'
+    required: true
+  skip-ping:
+    description: 'Skip the Tailscale ping test'
+    required: false
+    default: 'false'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Tailscale
+      uses: tailscale/github-action@v4
+      with:
+        oauth-client-id: ${{ inputs.oauth-client-id }}
+        oauth-secret: ${{ inputs.oauth-secret }}
+        tags: tag:ci
+
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.9.1
+      with:
+        ssh-private-key: ${{ inputs.ssh-private-key }}
+
+    - name: Add server to known_hosts
+      shell: bash
+      env:
+        SERVER_HOST: ${{ inputs.server-host }}
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -H $SERVER_HOST >> ~/.ssh/known_hosts
+
+    - name: Test Tailscale Connection
+      if: inputs.skip-ping != 'true'
+      shell: bash
+      env:
+        SERVER_HOST: ${{ inputs.server-host }}
+      run: |
+        echo "Testing Tailscale connection..."
+        echo "Server Host: $SERVER_HOST"
+        tailscale ping $SERVER_HOST
