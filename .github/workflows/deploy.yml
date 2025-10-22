@@ -33,6 +33,7 @@ jobs:
         SERVER_HOST: ${{ secrets.SERVER_HOST }}  # Tailscale hostname or IP (e.g., 100.x.x.x)
         DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}  # e.g., '/home/ubuntu/django-app'
         REPO_URL: https://${{ secrets.DEPLOY_PAT_TOKEN }}@github.com/${{ github.repository }}.git
+        REPO: ${{ github.repository }}
         BRANCH: ${{ github.ref_name }}
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
@@ -59,21 +60,20 @@ jobs:
         ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST << EOF
           set -e
           # Check if parent directory exists------------------
-          EXPANDED_DEPLOY_PATH=$(eval echo "$DEPLOY_PATH")
-          PARENT_DIR=$(dirname "$EXPANDED_DEPLOY_PATH")
-          if [ ! -d "$PARENT_DIR" ]; then
-            echo "❌ Error: Parent directory '$PARENT_DIR' does not exist on server"
+          EXPANDED_DEPLOY_PATH=\$(eval echo "$DEPLOY_PATH")
+          PARENT_DIR=\$(dirname "\$EXPANDED_DEPLOY_PATH")
+          if [ ! -d "\$PARENT_DIR" ]; then
+            echo "❌ Error: Parent directory '\$PARENT_DIR' does not exist on server"
             echo "Please create the parent directory first or update DEPLOY_PATH variable"
             exit 1
           fi
-          exit 1
           # Clone or pull repo
-          if [ ! -d "$EXPANDED_DEPLOY_PATH" ]; then
-            echo "📦 Cloning repository to $EXPANDED_DEPLOY_PATH..."
-            git clone "$REPO_URL" "$EXPANDED_DEPLOY_PATH"
+          if [ ! -d "\$EXPANDED_DEPLOY_PATH" ]; then
+            echo "📦 Cloning repository to \$EXPANDED_DEPLOY_PATH..."
+            git clone "$REPO_URL" "\$EXPANDED_DEPLOY_PATH"
           fi
           # Change to the app directory------------------
-          cd $DEPLOY_PATH
+          cd "\$EXPANDED_DEPLOY_PATH"
           git pull --rebase origin $BRANCH
           # Write environment variables------------------
           cat <<EOT > .env
