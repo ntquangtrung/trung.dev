@@ -260,9 +260,11 @@ TINYMCE_DEFAULT_CONFIG = {
     ],
 }
 
-GITHUB_PERSONAL_ACCESS_TOKEN = env.str("GITHUB_PERSONAL_ACCESS_TOKEN", default="")
-GITHUB_BASE_URL = env.str("GITHUB_BASE_URL", default="https://api.github.com")
-GITHUB_API_VERSION = env.str("GITHUB_API_VERSION", default="2022-11-28")
+CLIENT_GITHUB_TOKEN = env.str("CLIENT_GITHUB_TOKEN", default="")
+CLIENT_GITHUB_BASE_URL = env.str(
+    "CLIENT_GITHUB_BASE_URL", default="https://api.github.com"
+)
+CLIENT_GITHUB_API_VERSION = env.str("CLIENT_GITHUB_API_VERSION", default="2022-11-28")
 
 CELERY_REDIS_URL = (
     f"redis://:{env.str('REDIS_PASSWORD')}@redis:{env.str('REDIS_PORT')}/"
