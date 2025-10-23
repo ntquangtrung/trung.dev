@@ -33,7 +33,6 @@ jobs:
         SERVER_HOST: ${{ secrets.SERVER_HOST }}  # Tailscale hostname or IP (e.g., 100.x.x.x)
         DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}  # e.g., '/home/ubuntu/django-app'
         REPO_URL: https://${{ secrets.DEPLOY_PAT_TOKEN }}@github.com/${{ github.repository }}.git
-        REPO: ${{ github.repository }}
         BRANCH: ${{ github.ref_name }}
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
@@ -56,6 +55,8 @@ jobs:
         CELERY_BACKEND_REDIS_DB_INDEX: ${{ vars.CELERY_BACKEND_REDIS_DB_INDEX }}
         FLOWER_USER: ${{ vars.FLOWER_USER }}
         FLOWER_PASSWORD: ${{ secrets.FLOWER_PASSWORD }}
+        DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+        SEAWEEDFS_URL: ${{ secrets.SEAWEEDFS_URL }}
       run: |
         ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST << EOF
           set -e
@@ -76,29 +77,29 @@ jobs:
           cd "\$EXPANDED_DEPLOY_PATH"
           git pull --rebase origin $BRANCH
           # Write environment variables------------------
-          cat <<EOT > .env
-          POSTGRES_DB=$POSTGRES_DB
-          POSTGRES_USER=$POSTGRES_USER
-          POSTGRES_PASSWORD=$POSTGRES_PASSWORD
-          POSTGRES_HOST=$POSTGRES_HOST
-          POSTGRES_PORT=$POSTGRES_PORT
-          ENVIRONMENT=$ENVIRONMENT
-          DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
-          DJANGO_ALLOWED_HOSTS=$DJANGO_ALLOWED_HOSTS
-          DJANGO_CSRF_TRUSTED_ORIGINS=$DJANGO_CSRF_TRUSTED_ORIGINS
-          DJANGO_SECRET_KEY="$DJANGO_SECRET_KEY"
-          CLIENT_GITHUB_TOKEN=$CLIENT_GITHUB_TOKEN
-          CLIENT_GITHUB_BASE_URL=$CLIENT_GITHUB_BASE_URL
-          CLIENT_GITHUB_API_VERSION=$CLIENT_GITHUB_API_VERSION
-          REDIS_PASSWORD=$REDIS_PASSWORD
-          REDIS_HOST=$REDIS_HOST
-          REDIS_PORT=$REDIS_PORT
-          REDIS_DB_INDEX=$REDIS_DB_INDEX
-          CELERY_BROKER_REDIS_DB_INDEX=$CELERY_BROKER_REDIS_DB_INDEX
-          CELERY_BACKEND_REDIS_DB_INDEX=$CELERY_BACKEND_REDIS_DB_INDEX
-          FLOWER_USER=$FLOWER_USER
-          FLOWER_PASSWORD=$FLOWER_PASSWORD
-        EOT
+          echo "POSTGRES_DB=$POSTGRES_DB" > .env
+          echo "POSTGRES_USER=$POSTGRES_USER" >> .env
+          echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" >> .env
+          echo "POSTGRES_HOST=$POSTGRES_HOST" >> .env
+          echo "POSTGRES_PORT=$POSTGRES_PORT" >> .env
+          echo "ENVIRONMENT=$ENVIRONMENT" >> .env
+          echo "DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE" >> .env
+          echo "DJANGO_ALLOWED_HOSTS=$DJANGO_ALLOWED_HOSTS" >> .env
+          echo "DJANGO_CSRF_TRUSTED_ORIGINS=$DJANGO_CSRF_TRUSTED_ORIGINS" >> .env
+          echo "DJANGO_SECRET_KEY=\"$DJANGO_SECRET_KEY\"" >> .env
+          echo "CLIENT_GITHUB_TOKEN=$CLIENT_GITHUB_TOKEN" >> .env
+          echo "CLIENT_GITHUB_BASE_URL=$CLIENT_GITHUB_BASE_URL" >> .env
+          echo "CLIENT_GITHUB_API_VERSION=$CLIENT_GITHUB_API_VERSION" >> .env
+          echo "REDIS_PASSWORD=$REDIS_PASSWORD" >> .env
+          echo "REDIS_HOST=$REDIS_HOST" >> .env
+          echo "REDIS_PORT=$REDIS_PORT" >> .env
+          echo "REDIS_DB_INDEX=$REDIS_DB_INDEX" >> .env
+          echo "CELERY_BROKER_REDIS_DB_INDEX=$CELERY_BROKER_REDIS_DB_INDEX" >> .env
+          echo "CELERY_BACKEND_REDIS_DB_INDEX=$CELERY_BACKEND_REDIS_DB_INDEX" >> .env
+          echo "FLOWER_USER=$FLOWER_USER" >> .env
+          echo "FLOWER_PASSWORD=$FLOWER_PASSWORD" >> .env
+          echo "DISCORD_BOT_TOKEN=$DISCORD_BOT_TOKEN" >> .env
+          echo "SEAWEEDFS_URL=$SEAWEEDFS_URL" >> .env
           # Run Docker Compose------------------
           docker compose down --remove-orphans
           docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d

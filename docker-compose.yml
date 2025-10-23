@@ -44,6 +44,8 @@ services:
     image: django-blog-image
     container_name: django-blog-container
     command: /usr/local/bin/entrypoint.sh
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT}
     ports:
       - "8000:8000"
 

@@ -53,4 +53,9 @@ runs:
       run: |
         echo "Testing Tailscale connection..."
         echo "Server Host: $SERVER_HOST"
-        tailscale ping $SERVER_HOST
+        if tailscale ping -c 3 "$SERVER_HOST"; then
+          echo "✅ Tailscale ping successful!"
+        else
+          echo "❌ Tailscale ping failed!"
+          exit 1
+        fi

@@ -1,6 +1,7 @@
 from urllib.parse import urljoin
 
 import requests
+from django.conf import settings
 
 
 class SeaweedFSClient:
@@ -44,5 +45,9 @@ class SeaweedFSClient:
     def get_file_url(self, file_path: str):
         """
         Return an accessible public URL (if filer port is exposed).
+        On production, we need to return relative path and let nginx handle the file.
         """
-        return f"{self.base_url}/{file_path}"
+
+        if settings.DEBUG:
+            return f"{self.base_url}/{file_path}"
+        return f"/{file_path}"

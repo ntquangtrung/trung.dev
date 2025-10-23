@@ -2,8 +2,6 @@ name: CI
 
 on:
   workflow_call:  # Allow this workflow to be called by other workflows
-  push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
 
