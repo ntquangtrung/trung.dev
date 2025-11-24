@@ -2,8 +2,6 @@ name: Orchestrator - CI, Test, and Deploy
 
 on:
   workflow_dispatch:  # Manual trigger
-  push:
-    branches: [ master ]  # Auto-run on main/master pushes
 
 permissions:
   contents: read
