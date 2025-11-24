@@ -61,6 +61,7 @@ pydyf==0.11.0
 pyphen==0.17.2
 python-crontab==3.3.0
 python-dateutil==2.9.0.post0
+python-json-logger==4.0.0
 pytz==2025.2
 redis==6.4.0
 requests==2.32.4

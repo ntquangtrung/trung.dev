@@ -237,34 +237,246 @@
 
    ---
 
-   ## 7. Ruff - Linting & Formatting
+## 7. Ruff - Linting & Formatting
 
-   1. **Check code for linting issues:**
+1. **Check code for linting issues:**
 
-      ```bash
-      ruff check .
-      ```
+   ```bash
+   ruff check .
+   ```
 
-   2. **Auto-fix linting issues:**
+2. **Auto-fix linting issues:**
 
-      ```bash
-      ruff check --fix .
-      ```
+   ```bash
+   ruff check --fix .
+   ```
 
-   3. **Format code:**
+3. **Format code:**
 
-      ```bash
-      ruff format --check .
-      ```
+   ```bash
+   ruff format --check .
+   ```
 
-   4. **Check specific files or directories:**
+4. **Check specific files or directories:**
 
-      ```bash
-      ruff check path/to/file_or_directory
-      ```
+   ```bash
+   ruff check path/to/file_or_directory
+   ```
 
-   5. **Show configuration:**
+5. **Show configuration:**
 
-      ```bash
-      ruff check --show-settings
-      ```
+   ```bash
+   ruff check --show-settings
+   ```
+
+---
+
+## 8. Logging with Loki & Grafana
+
+### Development
+
+1. **Start logging stack:**
+
+   ```bash
+   docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.logging.dev.yml up -d --build
+   ```
+
+   Or without explicitly specifying `docker-compose.override.yml` (auto-loaded):
+
+   ```bash
+   docker compose -f docker-compose.yml -f docker-compose.logging.dev.yml up -d --build
+   ```
+
+2. **Access Grafana:**
+
+   ```bash
+   open http://localhost:4000
+   # Login: admin / admin
+   ```
+
+3. **View logs in Grafana:**
+   - Navigate to "Explore" (compass icon)
+   - Select "Loki" datasource
+   - Use LogQL queries (see examples below)
+
+4. **Stop logging stack:**
+
+   ```bash
+   docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.logging.dev.yml down
+   ```
+
+### Production
+
+1. **Set Grafana password in `.env` (or `.env.prod`):**
+
+   ```bash
+   GRAFANA_ADMIN_USER=admin
+   GRAFANA_ADMIN_PASSWORD=your_secure_password
+   GRAFANA_URL=http://your-domain.com:4000
+   ```
+
+2. **Start with logging:**
+
+   ```bash
+   docker compose -f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.logging.prod.yml up -d --build
+   ```
+
+2. **Access Grafana (via Tailscale):**
+
+   ```bash
+   # Access at your Tailscale IP:4000
+   # Example: http://100.84.214.91:4000
+   ```
+
+3. **View logs:**
+   - Open Grafana → Explore
+   - Select "Loki" datasource
+   - Use LogQL queries (examples below)
+
+### Common LogQL Queries
+
+1. **View Django errors:**
+
+   ```logql
+   {container_name="django-blog-container"} |= "ERROR"
+   ```
+
+2. **View all application logs:**
+
+   ```logql
+   {app="trung-dev"}
+   ```
+
+3. **View specific service:**
+
+   ```logql
+   {service="celery-worker"}
+   ```
+
+4. **Filter by log level (JSON logs in production):**
+
+   ```logql
+   {app="trung-dev"} | json | levelname="ERROR"
+   ```
+
+5. **View Nginx access logs:**
+
+   ```logql
+   {service="nginx"}
+   ```
+
+6. **Search for specific text:**
+
+   ```logql
+   {container_name="django-blog-container"} |= "File saved"
+   ```
+
+7. **Time range filter (last 5 minutes):**
+
+   ```logql
+   {app="trung-dev"} |= "ERROR" [5m]
+   ```
+
+8. **Count errors per minute:**
+
+   ```logql
+   rate({app="trung-dev"} |= "ERROR" [1m])
+   ```
+
+### Docker Logs (Alternative - No Grafana Required)
+
+If you want to view logs without starting the Loki/Grafana stack:
+
+1. **View logs in real-time:**
+
+   ```bash
+   docker compose logs -f django
+   ```
+
+2. **View multiple services:**
+
+   ```bash
+   docker compose logs -f django celery-worker nginx-proxy
+   ```
+
+3. **View last 100 lines:**
+
+   ```bash
+   docker compose logs --tail=100 django
+   ```
+
+4. **Search logs:**
+
+   ```bash
+   docker compose logs django | grep ERROR
+   ```
+
+5. **Export logs:**
+
+   ```bash
+   mkdir -p logs
+   docker compose logs > logs/backup-$(date +%Y%m%d).log
+   ```
+
+6. **View logs with timestamps:**
+
+   ```bash
+   docker compose logs -f -t django
+   ```
+
+### Log Retention
+
+**Development:**
+- Docker logs: 50MB × 5 files = 250MB per container
+- Loki retention: 7 days
+
+**Production:**
+- Docker logs: 10MB × 3 files = 30MB per container
+- Nginx logs: 20MB × 5 files = 100MB
+- Loki retention: 30 days
+
+### Pre-configured Dashboard
+
+Access the "Trung-Dev Application Logs" dashboard:
+- Go to Grafana → Dashboards
+- Select "Trung-Dev Application Logs"
+- View panels for Django, Errors, Celery, and Nginx logs
+
+### Troubleshooting
+
+1. **Grafana not accessible:**
+
+   ```bash
+   # Check if Grafana is running
+   docker compose ps grafana
+   
+   # View Grafana logs
+   docker compose logs -f grafana
+   ```
+
+2. **No logs appearing in Grafana:**
+
+   ```bash
+   # Check Promtail logs
+   docker compose logs -f promtail
+   
+   # Check Loki logs
+   docker compose logs -f loki
+   
+   # Verify Loki is receiving logs
+   curl http://localhost:3100/ready
+   ```
+
+3. **Clean up log data:**
+
+   ```bash
+   # Stop services
+   docker compose -f docker-compose.yml -f docker-compose.logging.dev.yml down
+   
+   # Remove log volumes
+   docker volume rm simple-django-blog_loki-dev-data
+   docker volume rm simple-django-blog_grafana-dev-data
+   
+   # Restart
+   docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.logging.dev.yml up -d
+   ```

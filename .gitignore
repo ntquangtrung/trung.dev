@@ -110,3 +110,15 @@ test-results/
 
 # Ruff
 .ruff_cache/
+
+# Logs
+logs/
+*.log
+
+# Loki/Grafana data
+loki-data/
+loki-dev-data/
+loki-prod-data/
+grafana-data/
+grafana-dev-data/
+grafana-prod-data/

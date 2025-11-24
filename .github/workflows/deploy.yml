@@ -57,6 +57,8 @@ jobs:
         FLOWER_PASSWORD: ${{ secrets.FLOWER_PASSWORD }}
         DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
         SEAWEEDFS_URL: ${{ secrets.SEAWEEDFS_URL }}
+        GRAFANA_ADMIN_USER: ${{ secrets.GRAFANA_ADMIN_USER }}
+        GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
       run: |
         ssh -o StrictHostKeyChecking=no $SERVER_USER@$SERVER_HOST << EOF
           set -e
@@ -100,8 +102,9 @@ jobs:
           echo "FLOWER_PASSWORD=$FLOWER_PASSWORD" >> .env
           echo "DISCORD_BOT_TOKEN=$DISCORD_BOT_TOKEN" >> .env
           echo "SEAWEEDFS_URL=$SEAWEEDFS_URL" >> .env
-          # Run Docker Compose------------------
-          docker compose down --remove-orphans
-          docker compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d
-          docker image prune -f --filter "dangling=true" # Clean up dangling images
+          echo "GRAFANA_ADMIN_USER=$GRAFANA_ADMIN_USER" >> .env
+          echo "GRAFANA_ADMIN_PASSWORD=$GRAFANA_ADMIN_PASSWORD" >> .env
+          # Run deployment script------------------
+          chmod +x scripts/deploy.sh
+          ./scripts/deploy.sh
         EOF
