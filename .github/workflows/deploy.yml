@@ -105,6 +105,5 @@ jobs:
           echo "GRAFANA_ADMIN_USER=$GRAFANA_ADMIN_USER" >> .env
           echo "GRAFANA_ADMIN_PASSWORD=$GRAFANA_ADMIN_PASSWORD" >> .env
           # Run deployment script------------------
-          chmod +x scripts/deploy.sh
-          ./scripts/deploy.sh
+          bash scripts/deploy.sh
         EOF
