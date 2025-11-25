@@ -85,7 +85,7 @@
                         "type": "loki",
                         "uid": "${DS_LOKI}"
                     },
-                    "expr": "{app=\"trung-dev\"} |= \"ERROR\"",
+                    "expr": "{app=\"trung-dev\"} |~ \"(?i)(error|ERROR|Error|warning|WARNING|Warning|critical|CRITICAL|Critical)\"",
                     "refId": "A"
                 }
             ],
@@ -155,7 +155,7 @@
                         "type": "loki",
                         "uid": "${DS_LOKI}"
                     },
-                    "expr": "{service=\"nginx\"}",
+                    "expr": "{service=\"nginx-proxy\"}",
                     "refId": "A"
                 }
             ],

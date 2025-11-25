@@ -9,8 +9,8 @@ clients:
   - url: http://loki:3100/loki/api/v1/push
 
 scrape_configs:
-  # Docker container logs
-  - job_name: docker
+  # Docker container logs - Django/Celery with JSON parsing
+  - job_name: docker_json
     docker_sd_configs:
       - host: unix:///var/run/docker.sock
         refresh_interval: 5s
@@ -29,6 +29,10 @@ scrape_configs:
         target_label: 'environment'
       - source_labels: ['__meta_docker_container_label_app']
         target_label: 'app'
+      # Drop nginx containers from this job
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+        regex: 'nginx-proxy'
+        action: drop
     pipeline_stages:
       # Try to parse JSON logs from Django/Celery (production)
       - json:
@@ -48,3 +52,38 @@ scrape_configs:
           format: RFC3339
       - output:
           source: message
+
+  # Nginx access logs - parse nginx combined log format
+  - job_name: nginx
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+        filters:
+          - name: label
+            values: ["com.docker.compose.project=simple-django-blog"]
+    relabel_configs:
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(.*)'
+        target_label: 'container_name'
+      - source_labels: ['__meta_docker_container_log_stream']
+        target_label: 'stream'
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+        target_label: 'service'
+      - source_labels: ['__meta_docker_container_label_environment']
+        target_label: 'environment'
+      - source_labels: ['__meta_docker_container_label_app']
+        target_label: 'app'
+      # Only keep nginx-proxy container
+      - source_labels: ['__meta_docker_container_label_com_docker_compose_service']
+        regex: 'nginx-proxy'
+        action: keep
+    pipeline_stages:
+      # Parse nginx log format (handles IPv4, IPv6, and missing fields)
+      - regex:
+          expression: '^(?P<remote_addr>[\w\.:]+) - (?P<remote_user>[^ ]*) \[(?P<time_local>[^\]]+)\] "(?P<method>\S+) (?P<request_uri>\S+) (?P<protocol>[^"]*)" (?P<status>\d+) (?P<body_bytes_sent>\d+|-) "(?P<http_referer>[^"]*)" "(?P<http_user_agent>[^"]*)"'
+      - labels:
+          method:
+          status:
+      - timestamp:
+          source: time_local
+          format: '02/Jan/2006:15:04:05 -0700'
