@@ -1,23 +1,11 @@
 services:
   django:
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "50m"  # Larger logs for development debugging
-        max-file: "5"
-        labels: "service=django,environment=development"
     depends_on:
       - postgres
       - tailwind
       - redis
 
   tailwind:
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "20m"
-        max-file: "3"
-        labels: "service=tailwind,environment=development"
     depends_on:
       - postgres
 
@@ -25,12 +13,6 @@ services:
     image: postgres:16
     container_name: postgres-container
     restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "50m"
-        max-file: "5"
-        labels: "service=postgres,environment=development"
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -39,46 +21,6 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
-
-  redis:
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "20m"
-        max-file: "3"
-        labels: "service=redis,environment=development"
-
-  celery-worker:
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "50m"
-        max-file: "5"
-        labels: "service=celery-worker,environment=development"
-
-  celery-beat:
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "20m"
-        max-file: "3"
-        labels: "service=celery-beat,environment=development"
-
-  flower:
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "20m"
-        max-file: "3"
-        labels: "service=flower,environment=development"
-
-  discord-bot:
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "20m"
-        max-file: "3"
-        labels: "service=discord-bot,environment=development"
 
 volumes:
   postgres_data:
