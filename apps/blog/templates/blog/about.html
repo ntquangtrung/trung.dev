@@ -9,4 +9,14 @@
 
 {% block content %}
     <article class="pt-6 custom-prose mb-20">{{ user.profile.about|safe }}</article>
+    <div class="text-center py-4">
+        Huge thanks to
+        <a
+            href="https://tania.dev"
+            target="_blank"
+            class="text-blue-500 hover:underline"
+            rel="noopener noreferrer"
+        >Tania</a>
+        — her work was a big inspiration for this project
+    </div>
 {% endblock content %}

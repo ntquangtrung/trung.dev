@@ -305,34 +305,6 @@
    docker compose -f docker-compose.yml -f docker-compose.override.yml -f docker-compose.logging.dev.yml down
    ```
 
-### Production
-
-1. **Set Grafana password in `.env` (or `.env.prod`):**
-
-   ```bash
-   GRAFANA_ADMIN_USER=admin
-   GRAFANA_ADMIN_PASSWORD=your_secure_password
-   GRAFANA_URL=http://your-domain.com:4000
-   ```
-
-2. **Start with logging:**
-
-   ```bash
-   docker compose -f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.logging.prod.yml up -d --build
-   ```
-
-2. **Access Grafana (via Tailscale):**
-
-   ```bash
-   # Access at your Tailscale IP:4000
-   # Example: http://100.84.214.91:4000
-   ```
-
-3. **View logs:**
-   - Open Grafana → Explore
-   - Select "Loki" datasource
-   - Use LogQL queries (examples below)
-
 ### Common LogQL Queries
 
 1. **View Django errors:**
