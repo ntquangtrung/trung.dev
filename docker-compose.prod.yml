@@ -1,6 +1,6 @@
 services:
   django:
-    volumes: []  # Remove bind mounts from base config - use built-in static files
+    volumes: [] # Remove bind mounts from base config - use built-in static files
     ports: []
     labels:
       environment: "production"
@@ -15,6 +15,8 @@ services:
     depends_on:
       - tailwind
       - redis
+    networks:
+      - app-network
 
   tailwind:
     labels:
@@ -25,6 +27,8 @@ services:
       options:
         max-size: "10m"
         max-file: "2"
+    networks:
+      - app-network
 
   redis:
     labels:
@@ -35,6 +39,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - app-network
 
   celery-worker:
     labels:
@@ -45,6 +51,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - app-network
 
   celery-beat:
     labels:
@@ -55,6 +63,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - app-network
 
   flower:
     labels:
@@ -65,6 +75,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - app-network
 
   discord-bot:
     labels:
@@ -75,6 +87,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - app-network
 
   nginx-proxy:
     image: nginx:latest
@@ -84,23 +98,22 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - static_volume:/app/staticfiles:ro
-    networks:
-      - default
-      - trungdev-network
     labels:
       environment: "production"
       app: "trung-dev"
     logging:
       driver: "json-file"
       options:
-        max-size: "20m"  # Nginx access logs can be larger
+        max-size: "20m" # Nginx access logs can be larger
         max-file: "5"
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
       - django
+    networks:
+      - app-network
 
 networks:
-  trungdev-network:
-    external: true
-    name: simple-django-blog_trungdev-network
+  app-network:
+    name: django-blog-app-network
+    driver: bridge

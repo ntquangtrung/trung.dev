@@ -193,6 +193,12 @@
    docker compose --env-file .env.prod -f docker-compose.yml -f docker-compose.prod.yml up --build -d
    ```
 
+6. Build for production with logging
+
+   ```bash
+   docker compose --env-file .env.prod -f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.logging.yml up --build -d
+   ```
+
 ---
 
 ## 5. Django Tailwind Common Commands

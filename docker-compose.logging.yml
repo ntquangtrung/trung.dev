@@ -1,0 +1,99 @@
+services:
+  loki:
+    image: grafana/loki:latest
+    container_name: django-loki-container
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki/loki-config.yml:/etc/loki/config.yml:ro
+      - loki-data:/loki
+    command: -config.file=/etc/loki/config.yml
+    networks:
+      - app-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  promtail:
+    image: grafana/promtail:3.2.1
+    container_name: django-promtail-container
+    restart: unless-stopped
+    volumes:
+      - ./promtail/promtail-config.yml:/etc/promtail/config.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - promtail-data:/promtail
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    networks:
+      - app-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  grafana:
+    image: grafana/grafana:12.3.0
+    container_name: django-grafana-container
+    restart: unless-stopped
+    ports:
+      - "4000:3000"
+    volumes:
+      - grafana-storage:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    env_file:
+      - .env.prod
+    environment:
+      # Admin credentials (use secrets in production)
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-changeme}
+
+      # Server settings
+      - GF_SERVER_ROOT_URL=${GRAFANA_ROOT_URL:-http://localhost:4000}
+
+      # Security
+      - GF_SECURITY_DISABLE_GRAVATAR=true
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_USERS_ALLOW_ORG_CREATE=false
+
+      # Logging
+      - GF_LOG_MODE=console
+      - GF_LOG_LEVEL=info
+
+      # Provisioning paths
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+
+      # Timezone (match your Django project)
+      - TZ=${TZ:-UTC}
+
+    depends_on:
+      - loki
+    healthcheck:
+      test:
+        ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - app-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+volumes:
+  # prometheus-data:
+  grafana-storage:
+  loki-data:
+  promtail-data:
+
+networks:
+  app-network:
+    name: django-blog-app-network
+    driver: bridge

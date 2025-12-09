@@ -5,7 +5,6 @@ set -e
 # Production Deployment Script
 # =============================================================================
 # Stops current containers and starts new ones with latest code.
-# Includes Loki/Grafana logging stack by default.
 #
 # Usage:
 #   ./scripts/deploy.sh
@@ -18,8 +17,8 @@ NC='\033[0m'
 
 echo -e "${BLUE}🚀 Starting deployment...${NC}"
 
-# Compose files (includes logging stack)
-COMPOSE_FILES="-f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.logging.prod.yml"
+# Compose files
+COMPOSE_FILES="-f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.logging.yml"
 
 # Stop containers
 echo -e "${BLUE}⏹️  Stopping containers...${NC}"

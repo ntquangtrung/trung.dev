@@ -1,0 +1,96 @@
+# Promtail Configuration - Production Best Practices
+# Collects logs from Docker containers via Docker socket
+
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+  log_level: warn
+
+positions:
+  filename: /promtail/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+    batchwait: 1s
+    batchsize: 1048576  # 1MB
+    timeout: 10s
+    backoff_config:
+      min_period: 500ms
+      max_period: 5m
+      max_retries: 10
+
+scrape_configs:
+  - job_name: docker
+    docker_sd_configs:
+      - host: unix:///var/run/docker.sock
+        refresh_interval: 5s
+        filters:
+          # Only collect logs from our app containers
+          - name: label
+            values: ["app=trung-dev"]
+
+    relabel_configs:
+      # Extract container name
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(.*)'
+        target_label: container
+
+      # Extract environment label
+      - source_labels: ['__meta_docker_container_label_environment']
+        target_label: environment
+
+      # Extract service name from container name
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/django-(.+)-container'
+        target_label: service
+
+      # Drop tailwind and redis logs (not useful)
+      - source_labels: ['__meta_docker_container_name']
+        regex: '.*-(tailwind|redis)-.*'
+        action: drop
+
+      # Set the log path
+      - source_labels: ['__meta_docker_container_id']
+        target_label: __path__
+        replacement: '/var/lib/docker/containers/$1/$1-json.log'
+
+    pipeline_stages:
+      # Parse Docker JSON log format
+      - docker: {}
+
+      # Drop health check and static file logs from nginx
+      - match:
+          selector: '{service="blog-nginx"}'
+          stages:
+            - drop:
+                expression: '.*(health|/static/|/favicon.ico).*'
+                drop_counter_reason: noise
+
+      # Drop flower periodic logs
+      - match:
+          selector: '{service="flower"}'
+          stages:
+            - drop:
+                expression: '.*(Periodic|inspect).*'
+                drop_counter_reason: periodic_noise
+
+      # Drop celery heartbeat logs
+      - match:
+          selector: '{service=~"celery-worker|celery-beat"}'
+          stages:
+            - drop:
+                expression: '.*(heartbeat|Scheduler|DatabaseScheduler: Schedule changed).*'
+                drop_counter_reason: heartbeat_noise
+
+      # Drop redundant Gunicorn default logs (keep custom emoji logs)
+      - match:
+          selector: '{service="blog"}'
+          stages:
+            - drop:
+                expression: '^\[\d{4}-\d{2}-\d{2}.*\] \[\d+\] \[INFO\] (Booting worker|Listening at|Using worker|Arbiter booted).*'
+                drop_counter_reason: gunicorn_default_info
+
+      # Add static labels
+      - static_labels:
+          app: trung-dev
+          stack: django-blog
