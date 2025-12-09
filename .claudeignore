@@ -1,6 +1,7 @@
 # Sensitive environment files
 .env
 .env.*
+!.env.example
 *.env
 
 # Secrets and credentials

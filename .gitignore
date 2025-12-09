@@ -61,6 +61,7 @@ Pipfile.lock
 # dotenv
 .env
 .env.*
+!.env.example
 
 # Pyright/pyre
 .pyright/
