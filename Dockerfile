@@ -2,8 +2,8 @@
 
 FROM python:3.13-slim-bookworm
 
-# Create a non-root user and group
-RUN addgroup --system app && adduser --system --ingroup app app
+# Create a non-root user and group with home directory (needed for npm cache)
+RUN addgroup --system app && adduser --system --ingroup app --home /home/app app
 
 # Build-related envs
 ENV POETRY_VERSION=2.0.0 \
@@ -44,57 +44,6 @@ COPY . /app
 # Copy entrypoint script and make it executable
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# Runtime ARGs (won't affect cached Poetry install)
-ARG DJANGO_SETTINGS_MODULE
-ARG DJANGO_ALLOWED_HOSTS
-ARG DJANGO_CSRF_TRUSTED_ORIGINS
-ARG DJANGO_INTERNAL_IPS
-ARG CLIENT_GITHUB_TOKEN
-ARG CLIENT_GITHUB_BASE_URL
-ARG CLIENT_GITHUB_API_VERSION
-ARG REDIS_PASSWORD
-ARG REDIS_HOST
-ARG REDIS_PORT
-ARG REDIS_DB_INDEX
-ARG CELERY_BROKER_REDIS_DB_INDEX
-ARG CELERY_BACKEND_REDIS_DB_INDEX
-ARG FLOWER_USER
-ARG FLOWER_PASSWORD
-ARG SEAWEEDFS_URL
-ARG POSTGRES_DB
-ARG POSTGRES_USER
-ARG POSTGRES_PASSWORD
-ARG POSTGRES_HOST
-ARG POSTGRES_PORT
-
-# Environment variables from ARGs
-ENV DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE} \
-    DJANGO_INTERNAL_IPS=${DJANGO_INTERNAL_IPS} \
-    DJANGO_CSRF_TRUSTED_ORIGINS=${DJANGO_CSRF_TRUSTED_ORIGINS} \
-    DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS} \
-    CLIENT_GITHUB_TOKEN=${CLIENT_GITHUB_TOKEN} \
-    CLIENT_GITHUB_BASE_URL=${CLIENT_GITHUB_BASE_URL} \
-    CLIENT_GITHUB_API_VERSION=${CLIENT_GITHUB_API_VERSION} \
-    REDIS_PASSWORD=${REDIS_PASSWORD} \
-    REDIS_HOST=${REDIS_HOST} \
-    REDIS_PORT=${REDIS_PORT} \
-    REDIS_DB_INDEX=${REDIS_DB_INDEX} \
-    CELERY_BROKER_REDIS_DB_INDEX=${CELERY_BROKER_REDIS_DB_INDEX} \
-    CELERY_BACKEND_REDIS_DB_INDEX=${CELERY_BACKEND_REDIS_DB_INDEX} \
-    FLOWER_USER=${FLOWER_USER} \
-    FLOWER_PASSWORD=${FLOWER_PASSWORD} \
-    SEAWEEDFS_URL=${SEAWEEDFS_URL} \
-    POSTGRES_DB=${POSTGRES_DB} \
-    POSTGRES_USER=${POSTGRES_USER} \
-    POSTGRES_PASSWORD=${POSTGRES_PASSWORD} \
-    POSTGRES_HOST=${POSTGRES_HOST} \
-    POSTGRES_PORT=${POSTGRES_PORT}
-
-# Build Tailwind & collect static
-RUN SECRET_KEY=dummy poetry run python manage.py tailwind install --no-package-lock --no-input \
-    && SECRET_KEY=dummy poetry run python manage.py tailwind build --no-input \
-    && SECRET_KEY=dummy poetry run python manage.py collectstatic --no-input
 
 # Change ownership
 RUN chown -R app:app /app

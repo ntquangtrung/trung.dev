@@ -2,6 +2,13 @@
 
 echo "Starting Django application..."
 
+# Build Tailwind and collect static files
+echo "Building Tailwind CSS..."
+poetry run python manage.py tailwind install --no-package-lock --no-input
+poetry run python manage.py tailwind build --no-input
+echo "Collecting static files..."
+poetry run python manage.py collectstatic --no-input
+
 # Run migrations
 poetry run python manage.py migrate
 

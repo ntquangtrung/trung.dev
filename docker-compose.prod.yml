@@ -13,22 +13,14 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway" # host.docker.internal is a special DNS name that lets containers reach the host machine. On Linux, we must manually map it
     depends_on:
-      - tailwind
       - redis
     networks:
       - app-network
 
+  # Tailwind disabled in production - entrypoint.sh handles tailwind build
   tailwind:
-    labels:
-      environment: "production"
-      app: "trung-dev"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "2"
-    networks:
-      - app-network
+    profiles:
+      - disabled
 
   redis:
     labels:

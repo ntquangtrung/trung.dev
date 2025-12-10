@@ -82,6 +82,14 @@ scrape_configs:
                 expression: '.*(heartbeat|Scheduler|DatabaseScheduler: Schedule changed).*'
                 drop_counter_reason: heartbeat_noise
 
+      # Drop /metrics requests (Prometheus scrapes every 30s)
+      - match:
+          selector: '{service="blog"}'
+          stages:
+            - drop:
+                expression: '.*GET /metrics.*'
+                drop_counter_reason: prometheus_metrics
+
       # Drop redundant Gunicorn default logs (keep custom emoji logs)
       - match:
           selector: '{service="blog"}'
