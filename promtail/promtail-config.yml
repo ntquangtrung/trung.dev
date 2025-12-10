@@ -23,7 +23,7 @@ scrape_configs:
   - job_name: docker
     docker_sd_configs:
       - host: unix:///var/run/docker.sock
-        refresh_interval: 5s
+        refresh_interval: 15s  # Reduced from 5s to lower overhead
         filters:
           # Only collect logs from our app containers
           - name: label

@@ -2,9 +2,19 @@ from .base import *
 
 DATABASE_URL = f"postgres://{env.str('POSTGRES_USER', 'postgres')}:{env.str('POSTGRES_PASSWORD', 'postgres')}@{env.str('POSTGRES_HOST', 'localhost')}:{env.str('POSTGRES_PORT', '5432')}/{env.str('POSTGRES_DB', 'postgres')}"
 
+THIRD_PARTY_APPS = ["django_prometheus"]
+
+INSTALLED_APPS += THIRD_PARTY_APPS
+
+MIDDLEWARE = [
+    "django_prometheus.middleware.PrometheusBeforeMiddleware",
+    *MIDDLEWARE,
+    "django_prometheus.middleware.PrometheusAfterMiddleware",
+]
+
 DATABASES["default"] = env.db_url_config(DATABASE_URL)
 
-SECRET_KEY = env.str("DJANGO_SECRET_KEY", default="your-secret-key")
+SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 
 DEBUG = False
 

@@ -1,0 +1,60 @@
+# Prometheus configuration for Django application monitoring
+
+global:
+  scrape_interval: 30s      # How often to scrape targets (30s reduces overhead)
+  evaluation_interval: 30s  # How often to evaluate rules
+  scrape_timeout: 10s       # Timeout for scraping
+
+# Alertmanager configuration (optional - uncomment when needed)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets:
+#           - alertmanager:9093
+
+# Load rules (optional - for alerting rules)
+# rule_files:
+#   - "rules/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+        labels:
+          app: "prometheus"
+
+  # Django application metrics
+  - job_name: "django"
+    static_configs:
+      - targets: ["django:8000"]
+        labels:
+          app: "trung-dev"
+          service: "django"
+    metrics_path: "/metrics"
+    scrape_interval: 30s
+
+  # Nginx metrics (if nginx-prometheus-exporter is added)
+  # - job_name: "nginx"
+  #   static_configs:
+  #     - targets: ["nginx-exporter:9113"]
+  #       labels:
+  #         app: "trung-dev"
+  #         service: "nginx"
+
+  # Redis metrics (if redis-exporter is added)
+  # - job_name: "redis"
+  #   static_configs:
+  #     - targets: ["redis-exporter:9121"]
+  #       labels:
+  #         app: "trung-dev"
+  #         service: "redis"
+
+  # PostgreSQL metrics (if postgres-exporter is added)
+  # - job_name: "postgresql"
+  #   static_configs:
+  #     - targets: ["postgres-exporter:9187"]
+  #       labels:
+  #         app: "trung-dev"
+  #         service: "postgresql"

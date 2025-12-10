@@ -32,6 +32,11 @@ urlpatterns = [
     path("tinymce/", include("tinymce.urls")),
 ]
 
+if not settings.DEBUG:
+    urlpatterns += [
+        path("", include("django_prometheus.urls")),
+    ]
+
 if settings.DEBUG:
     urlpatterns += [
         path("__reload__/", include("django_browser_reload.urls")),

@@ -36,6 +36,30 @@ services:
         max-size: "10m"
         max-file: "3"
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: django-prometheus-container
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=15d"
+      - "--web.enable-lifecycle"
+    depends_on:
+      - django
+    networks:
+      - app-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
   grafana:
     image: grafana/grafana:12.3.0
     container_name: django-grafana-container
@@ -72,6 +96,7 @@ services:
 
     depends_on:
       - loki
+      - prometheus
     healthcheck:
       test:
         ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
@@ -88,7 +113,7 @@ services:
         max-file: "5"
 
 volumes:
-  # prometheus-data:
+  prometheus-data:
   grafana-storage:
   loki-data:
   promtail-data:

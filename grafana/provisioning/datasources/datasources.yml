@@ -13,9 +13,13 @@ datasources:
       maxLines: 1000
       timeout: 60
 
-  # Uncomment when you add Prometheus
-  # - name: Prometheus
-  #   type: prometheus
-  #   access: proxy
-  #   url: http://prometheus:9090
-  #   editable: false
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    uid: prometheus
+    isDefault: false
+    editable: false
+    jsonData:
+      timeInterval: "15s"
+      httpMethod: "POST"
