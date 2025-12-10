@@ -2,12 +2,13 @@
 
 This document explains the CI/CD pipeline structure and workflows for the `trung-dev` Django project.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
 - [Workflow Architecture](#workflow-architecture)
 - [Individual Workflows](#individual-workflows)
 - [Reusable Components](#reusable-components)
+- [Secrets and Variables](#secrets-and-variables)
 
 ---
 
@@ -24,14 +25,14 @@ The project uses a modular GitHub Actions pipeline with:
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                     ORCHESTRATOR.YML                        │
-│                   (Main Entry Point)                        │
+│                (Manual Trigger Only)                        │
 └─────────────────────────────────────────────────────────────┘
                               │
                               ▼
               ┌───────────────────────────────┐
               │         CI.YML                │
               │  • Lint (Ruff)                │
-              │  • Test (Django + Services)   │
+              │  • Test (Build + Migrations)  │
               │  • Security Check (Safety)    │
               │  • Docker Build               │
               └───────────────────────────────┘
@@ -51,7 +52,7 @@ The project uses a modular GitHub Actions pipeline with:
               │  • Connect via Tailscale      │
               │  • Clone/Pull repository      │
               │  • Update .env file           │
-              │  • Docker Compose deploy      │
+              │  • Run deploy.sh script       │
               └───────────────────────────────┘
 ```
 
@@ -84,21 +85,17 @@ Each job uses `needs:` to enforce sequential execution.
 **Purpose**: Main entry point that orchestrates the full CI/CD pipeline
 
 **Triggers**:
-- Manual: `workflow_dispatch`
-- Automatic: Push to `master` branch
+- Manual only: `workflow_dispatch`
 
 **Jobs**:
 1. `ci` - Runs the full CI pipeline
-2. `tailscale-connection` - Verifies server connectivity
-3. `deploy` - Deploys to production server
+2. `tailscale-connection` - Verifies server connectivity (requires CI success)
+3. `deploy` - Deploys to production server (requires tailscale-connection success)
 
 **Usage**:
 ```bash
 # Manual trigger via GitHub UI
-Actions → Orchestrator → Run workflow
-
-# Automatic on git push
-git push origin master
+Actions → Orchestrator - CI, Test, and Deploy → Run workflow
 ```
 
 **Configuration**:
@@ -114,8 +111,7 @@ git push origin master
 
 **Triggers**:
 - Called by orchestrator (`workflow_call`)
-- Direct push to `master` branch
-- Pull requests to `master`
+- Pull requests to `master` branch
 
 **Jobs**:
 
@@ -127,12 +123,13 @@ Runs code quality checks:
 **Tools**: Python 3.13, Ruff
 
 #### Job: `test`
-Runs Django tests with full service stack:
+Runs Django build and migration checks with full service stack:
 - **Services**: PostgreSQL 16, Redis 7
-- **Tests**: Django test suite
-- **Tailwind**: Builds CSS assets
+- **Tailwind**: Builds CSS assets via Node.js 22
+- **Migrations**: Runs and validates no missing migrations
 - **Static files**: Collects static files
-- **Migrations**: Validates no missing migrations
+
+**Package Manager**: Poetry (not pip)
 
 **Environment Variables**:
 ```yaml
@@ -140,7 +137,13 @@ ENVIRONMENT: development
 DJANGO_SETTINGS_MODULE: config.settings.development
 POSTGRES_*: Database credentials
 REDIS_*: Redis configuration
+SEAWEEDFS_URL: SeaweedFS storage URL
 ```
+
+**System Dependencies Installed**:
+- libpq-dev, python3-dev, build-essential
+- Cairo/Pango libraries (for PDF generation)
+- libffi-dev, shared-mime-info
 
 #### Job: `security`
 Security vulnerability scanning:
@@ -151,7 +154,7 @@ Security vulnerability scanning:
 Docker image build validation:
 - **Docker Buildx**: Multi-platform build support
 - **GitHub Cache**: Layer caching for faster builds
-- **Production config**: Tests production Docker image
+- **Production config**: Tests production Docker image with build args
 
 **Dependencies**: Requires `lint` and `test` to pass
 
@@ -174,13 +177,13 @@ Docker image build validation:
 3. **Test SSH Connection**: Comprehensive server health check
 
 **Server Health Check Reports**:
-- ✅ Hostname and OS version
-- ✅ Current user
-- ✅ System uptime
-- ✅ Docker installation and status
-- ✅ Docker Compose availability
-- ✅ Disk space usage
-- ✅ Memory usage
+- Hostname and OS version
+- Current user and kernel version
+- System uptime
+- Docker installation and status
+- Docker Compose availability
+- Disk space usage
+- Memory usage
 
 **Why This Exists**:
 - Validates Tailscale VPN is operational
@@ -203,28 +206,33 @@ Docker image build validation:
 **Steps**:
 
 1. **Checkout Repo**: Get latest code
-2. **Setup Tailscale and SSH**: Uses composite action (no ping)
-3. **Deploy via SSH**: Execute deployment script on server
+2. **Setup Tailscale and SSH**: Uses composite action (ping skipped)
+3. **Deploy via SSH**: Execute deployment on server
 
 **Deployment Process**:
 ```bash
 # 1. Clone or update repository
-git clone/pull from GitHub
+git clone/pull from GitHub (using PAT token)
 
 # 2. Write .env file with all secrets/variables
-cat > .env << EOT
-  POSTGRES_DB=...
-  DJANGO_SECRET_KEY=...
-  # ... all environment variables
-EOT
+# (see Secrets and Variables section)
 
-# 3. Deploy with Docker Compose
-docker compose down
-docker compose -f docker-compose.yml \
-               -f docker-compose.prod.yml \
-               up --build -d
+# 3. Run deployment script
+bash scripts/deploy.sh
+```
 
-# 4. Cleanup
+**Deploy Script (`scripts/deploy.sh`)**:
+```bash
+# Compose files used
+COMPOSE_FILES="-f docker-compose.yml -f docker-compose.prod.yml -f docker-compose.logging.yml"
+
+# Stop containers
+docker compose $COMPOSE_FILES down --remove-orphans
+
+# Start containers
+docker compose $COMPOSE_FILES up --build -d
+
+# Cleanup
 docker image prune -f --filter "dangling=true"
 ```
 
@@ -235,6 +243,8 @@ docker image prune -f --filter "dangling=true"
 - Celery worker
 - Celery beat scheduler
 - Nginx (reverse proxy)
+- Flower (Celery monitoring)
+- Logging stack (Loki, Promtail, Grafana)
 
 ---
 
@@ -249,18 +259,18 @@ docker image prune -f --filter "dangling=true"
 **Inputs**:
 | Input | Required | Description |
 |-------|----------|-------------|
-| `oauth-client-id` | ✅ | Tailscale OAuth client ID |
-| `oauth-secret` | ✅ | Tailscale OAuth secret |
-| `ssh-private-key` | ✅ | SSH private key for server |
-| `server-host` | ✅ | Server hostname (Tailscale IP/hostname) |
-| `server-user` | ✅ | SSH username |
-| `skip-ping` | ❌ | Skip ping test (default: `false`) |
+| `oauth-client-id` | Yes | Tailscale OAuth client ID |
+| `oauth-secret` | Yes | Tailscale OAuth secret |
+| `ssh-private-key` | Yes | SSH private key for server |
+| `server-host` | Yes | Server hostname (Tailscale IP/hostname) |
+| `server-user` | Yes | SSH username |
+| `skip-ping` | No | Skip ping test (default: `false`) |
 
 **Steps Performed**:
-1. Setup Tailscale using `tailscale/github-action@v4`
+1. Setup Tailscale using `tailscale/github-action@v4` with tag `tag:ci`
 2. Load SSH private key using `webfactory/ssh-agent@v0.9.1`
-3. Add server to `~/.ssh/known_hosts`
-4. Optionally ping server via Tailscale
+3. Add server to `~/.ssh/known_hosts` via ssh-keyscan
+4. Optionally ping server via Tailscale (3 attempts)
 
 **Usage Example**:
 ```yaml
@@ -270,16 +280,55 @@ docker image prune -f --filter "dangling=true"
     oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
     oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
     ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
-    server-host: ${{ vars.SERVER_HOST }}
-    server-user: ${{ vars.SERVER_USER }}
+    server-host: ${{ secrets.SERVER_HOST }}
+    server-user: ${{ secrets.SERVER_USER }}
     skip-ping: 'false'
 ```
 
-**Why Composite Action?**
-- DRY: Used in both `tailscale-connection` and `deploy` workflows
-- Consistency: Same setup logic everywhere
-- Maintainability: Update once, applies everywhere
-- Flexibility: `skip-ping` parameter for different use cases
+---
+
+## Secrets and Variables
+
+### Required Secrets
+
+| Secret | Description |
+|--------|-------------|
+| `TS_OAUTH_CLIENT_ID` | Tailscale OAuth client ID |
+| `TS_OAUTH_SECRET` | Tailscale OAuth secret |
+| `SERVER_SSH_KEY` | SSH private key for server |
+| `SERVER_HOST` | Server hostname (Tailscale IP) |
+| `SERVER_USER` | SSH username |
+| `DEPLOY_PAT_TOKEN` | GitHub PAT for cloning private repo |
+| `POSTGRES_USER` | Database username |
+| `POSTGRES_PASSWORD` | Database password |
+| `POSTGRES_HOST` | Database host |
+| `POSTGRES_PORT` | Database port |
+| `POSTGRES_DB` | Database name |
+| `DJANGO_SECRET_KEY` | Django secret key |
+| `CLIENT_GITHUB_TOKEN` | GitHub API token for client |
+| `CLIENT_GITHUB_BASE_URL` | GitHub API base URL |
+| `CLIENT_GITHUB_API_VERSION` | GitHub API version |
+| `REDIS_PASSWORD` | Redis password |
+| `FLOWER_PASSWORD` | Flower dashboard password |
+| `DISCORD_BOT_TOKEN` | Discord bot token |
+| `SEAWEEDFS_URL` | SeaweedFS storage URL |
+| `GRAFANA_ADMIN_USER` | Grafana admin username |
+| `GRAFANA_ADMIN_PASSWORD` | Grafana admin password |
+
+### Required Variables
+
+| Variable | Description |
+|----------|-------------|
+| `DEPLOY_PATH` | Server path for deployment |
+| `ENVIRONMENT` | Environment name (e.g., `production`) |
+| `DJANGO_ALLOWED_HOSTS` | Allowed hosts for Django |
+| `DJANGO_CSRF_TRUSTED_ORIGINS` | CSRF trusted origins |
+| `REDIS_HOST` | Redis hostname |
+| `REDIS_PORT` | Redis port |
+| `REDIS_DB_INDEX` | Redis database index |
+| `CELERY_BROKER_REDIS_DB_INDEX` | Celery broker Redis DB |
+| `CELERY_BACKEND_REDIS_DB_INDEX` | Celery backend Redis DB |
+| `FLOWER_USER` | Flower dashboard username |
 
 ---
 
@@ -305,6 +354,12 @@ docker image prune -f --filter "dangling=true"
 - **Maintainability**: Update once, applies everywhere
 - **Testability**: Can be tested independently
 - **Flexibility**: Parameters allow customization
+
+### Why Manual Orchestrator Trigger?
+
+- **Control**: Deployments are intentional, not accidental
+- **Safety**: Prevents unintended production changes
+- **CI on PRs**: Code quality checked on pull requests automatically
 
 ---
 

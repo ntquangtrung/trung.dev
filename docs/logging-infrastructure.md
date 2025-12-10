@@ -1,6 +1,6 @@
-# Logging Infrastructure Documentation
+# Logging & Monitoring Infrastructure Documentation
 
-This document explains the centralized logging architecture using the Loki-Grafana stack for the `trung-dev` Django project.
+This document explains the centralized logging and monitoring architecture using the Loki-Prometheus-Grafana stack for the `trung-dev` Django project.
 
 ## Table of Contents
 
@@ -8,10 +8,11 @@ This document explains the centralized logging architecture using the Loki-Grafa
 - [Architecture](#architecture)
 - [Components](#components)
 - [Log Flow](#log-flow)
+- [Metrics Flow](#metrics-flow)
 - [Configuration Files](#configuration-files)
 - [Services Monitored](#services-monitored)
 - [Grafana Dashboard](#grafana-dashboard)
-- [LogQL Query Examples](#logql-query-examples)
+- [Query Examples](#query-examples)
 - [Startup Commands](#startup-commands)
 - [Troubleshooting](#troubleshooting)
 
@@ -19,10 +20,11 @@ This document explains the centralized logging architecture using the Loki-Grafa
 
 ## Overview
 
-The project implements a **modern centralized logging architecture** using:
+The project implements a **modern observability stack** using:
 
 - **Promtail** - Log collector agent (scrapes Docker container logs)
 - **Loki** - Log aggregation and storage engine
+- **Prometheus** - Metrics collection and time-series database
 - **Grafana** - Visualization and dashboards
 
 ### Key Benefits
@@ -30,7 +32,8 @@ The project implements a **modern centralized logging architecture** using:
 | Feature | Description |
 |---------|-------------|
 | Centralized Logs | Single source of truth for all container logs |
-| Structured Data | JSON format allows structured querying in production |
+| Metrics Collection | Application and infrastructure metrics |
+| Structured Data | JSON format allows structured querying |
 | Noise Reduction | Smart filtering at collection time |
 | Fast Search | Label-based indexing with real-time updates |
 | 14-Day Retention | Compressed storage with automatic cleanup |
@@ -53,7 +56,7 @@ The project implements a **modern centralized logging architecture** using:
                                 │
                     ┌───────────▼────────────┐
                     │  Docker JSON Logger    │
-                    │  - 10-20MB files       │
+                    │  - 10-50MB files       │
                     │  - 3-5 file rotation   │
                     └───────────┬────────────┘
                                 │
@@ -79,24 +82,55 @@ The project implements a **modern centralized logging architecture** using:
                     └────────────────────────────────┘
 ```
 
-### Network Architecture
-
-All logging services run on the `django-blog-app-network` Docker network:
+### Metrics Flow
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                  django-blog-app-network                    │
-│                                                             │
-│  ┌─────────┐    ┌──────────┐    ┌───────┐    ┌─────────┐  │
-│  │ Django  │    │ Promtail │───►│ Loki  │◄───│ Grafana │  │
-│  │ Nginx   │    │          │    │ :3100 │    │ :3000   │  │
-│  │ Celery  │    │          │    │       │    │         │  │
-│  └─────────┘    └──────────┘    └───────┘    └─────────┘  │
-│       │              ▲                            │        │
-│       │              │                            │        │
-│       └──────────────┘                            │        │
-│      (via docker.sock)                      :4000 (host)   │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                   APPLICATION METRICS                           │
+├─────────────────────────────────────────────────────────────────┤
+│  Django (/metrics endpoint)                                     │
+│  - Request counts, latencies                                    │
+│  - Custom application metrics                                   │
+└─────────────────────────────────────────────────────────────────┘
+                                │
+                    ┌───────────▼────────────────────┐
+                    │  Prometheus                    │
+                    │  - Scrapes every 30s           │
+                    │  - Retention: 15 days          │
+                    │  - Query language: PromQL      │
+                    └───────────┬────────────────────┘
+                                │
+                    ┌───────────▼────────────────────┐
+                    │  Grafana (Visualization)       │
+                    │  - Metrics dashboards          │
+                    │  - Alerts (optional)           │
+                    └────────────────────────────────┘
+```
+
+### Network Architecture
+
+All services run on the `django-blog-app-network` Docker network:
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                    django-blog-app-network                            │
+│                                                                       │
+│  ┌─────────┐    ┌──────────┐    ┌───────┐    ┌────────────┐          │
+│  │ Django  │───►│ Promtail │───►│ Loki  │◄───│  Grafana   │          │
+│  │ Nginx   │    │          │    │ :3100 │    │   :3000    │          │
+│  │ Celery  │    │          │    │       │    │            │          │
+│  └─────────┘    └──────────┘    └───────┘    └────────────┘          │
+│       │                                             ▲                 │
+│       │              ┌────────────┐                 │                 │
+│       └─────────────►│ Prometheus │─────────────────┘                 │
+│     (metrics)        │   :9090    │                                   │
+│                      └────────────┘                                   │
+│                                                                       │
+│  Exposed Ports:                                                       │
+│    - Grafana:    localhost:4000                                       │
+│    - Loki:       localhost:3100                                       │
+│    - Prometheus: localhost:9090                                       │
+└──────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -104,6 +138,9 @@ All logging services run on the `django-blog-app-network` Docker network:
 ## Components
 
 ### 1. Promtail
+
+**Image**: `grafana/promtail:3.2.1`
+**Container**: `django-promtail-container`
 
 **Purpose**: Collects logs from Docker containers and pushes to Loki
 
@@ -122,7 +159,16 @@ All logging services run on the `django-blog-app-network` Docker network:
 | `container` | django-blog-container | Container name |
 | `stack` | django-blog | Stack identifier |
 
+**Configuration Highlights**:
+- Batch size: 1MB
+- Batch wait: 1s
+- Docker refresh interval: 15s
+- Log level: warn
+
 ### 2. Loki
+
+**Image**: `grafana/loki:latest`
+**Container**: `django-loki-container`
 
 **Purpose**: Central log aggregation and storage engine
 
@@ -130,24 +176,73 @@ All logging services run on the `django-blog-app-network` Docker network:
 | Setting | Value | Description |
 |---------|-------|-------------|
 | HTTP Port | 3100 | API endpoint |
+| gRPC Port | 9096 | Internal communication |
 | Storage | Filesystem | `/loki/chunks` |
 | Retention | 14 days | 336 hours |
 | Compression | Snappy | Efficient storage |
 | Schema | TSDB v13 | Time-series database |
+| Cache | 100MB | Embedded query cache |
 
-### 3. Grafana
+**Limits**:
+- Ingestion rate: 10 MB/s
+- Burst size: 20 MB
+- Max streams per user: 10,000
+- Max entries per query: 5,000
+
+### 3. Prometheus
+
+**Image**: `prom/prometheus:latest`
+**Container**: `django-prometheus-container`
+
+**Purpose**: Metrics collection and time-series storage
+
+**Key Configuration**:
+| Setting | Value | Description |
+|---------|-------|-------------|
+| HTTP Port | 9090 | Web UI and API |
+| Scrape Interval | 30s | How often to collect metrics |
+| Scrape Timeout | 10s | Timeout per target |
+| Retention | 15 days | Storage retention |
+| Lifecycle API | Enabled | Runtime config reload |
+
+**Scrape Targets**:
+| Job | Target | Description |
+|-----|--------|-------------|
+| `prometheus` | localhost:9090 | Self-monitoring |
+| `django` | django:8000 | Django app metrics |
+
+**Optional Targets** (commented out in config):
+- Nginx exporter (9113)
+- Redis exporter (9121)
+- PostgreSQL exporter (9187)
+
+### 4. Grafana
+
+**Image**: `grafana/grafana:12.3`
+**Container**: `django-grafana-container`
 
 **Purpose**: Visualization and dashboarding
 
 **Access**:
 ```
 URL: http://localhost:4000
-Credentials: From .env.prod (GF_SECURITY_ADMIN_USER/PASSWORD)
+Credentials: From environment (GRAFANA_ADMIN_USER/GRAFANA_ADMIN_PASSWORD)
 ```
 
-**Pre-configured**:
-- Loki datasource (auto-provisioned)
-- Django Logs dashboard (auto-provisioned)
+**Environment Variables**:
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `GF_SECURITY_ADMIN_USER` | admin | Admin username |
+| `GF_SECURITY_ADMIN_PASSWORD` | changeme | Admin password |
+| `GF_SERVER_ROOT_URL` | http://localhost:4000 | Public URL |
+| `GF_USERS_ALLOW_SIGN_UP` | false | Disable self-registration |
+| `TZ` | UTC | Timezone |
+
+**Pre-configured Datasources**:
+- **Loki** (default) - Log queries
+- **Prometheus** - Metric queries
+
+**Health Check**: `wget --spider -q http://localhost:3000/api/health`
 
 ---
 
@@ -185,22 +280,49 @@ Raw Docker Logs
        │
        ▼
 ┌──────────────────────────────┐
-│ Celery Filtering             │
-│ - Drop heartbeat pings       │
-│ - Drop scheduler messages    │
+│ Flower Filtering             │
+│ - Drop Periodic messages     │
+│ - Drop inspect messages      │
 └──────────────────────────────┘
        │
        ▼
 ┌──────────────────────────────┐
-│ Gunicorn Filtering           │
-│ - Drop "Booting worker"      │
-│ - Drop "Listening at"        │
+│ Celery Filtering             │
+│ - Drop heartbeat pings       │
+│ - Drop Scheduler messages    │
+│ - Drop DatabaseScheduler     │
+└──────────────────────────────┘
+       │
+       ▼
+┌──────────────────────────────┐
+│ Django Filtering             │
+│ - Drop GET /metrics          │  ← Prometheus scrapes
+│ - Drop Gunicorn boot logs    │
 │ - Keep custom app logs       │
 └──────────────────────────────┘
        │
        ▼
    Clean Logs → Loki
 ```
+
+---
+
+## Metrics Flow
+
+### Django → Prometheus Journey
+
+1. **Django exposes** `/metrics` endpoint
+2. **Prometheus scrapes** every 30 seconds
+3. **Prometheus stores** time-series data
+4. **Grafana queries** via PromQL
+
+### Available Metrics
+
+Django metrics at `/metrics` may include:
+- HTTP request counts by method, path, status
+- Request latencies (histograms)
+- Active connections
+- Custom application metrics
 
 ---
 
@@ -215,10 +337,12 @@ project/
 │   └── loki-config.yml           # Loki configuration
 ├── promtail/
 │   └── promtail-config.yml       # Promtail configuration
+├── prometheus/
+│   └── prometheus.yml            # Prometheus configuration
 └── grafana/
     └── provisioning/
         ├── datasources/
-        │   └── datasources.yml   # Auto-provision Loki datasource
+        │   └── datasources.yml   # Auto-provision Loki + Prometheus
         └── dashboards/
             ├── dashboards.yml    # Dashboard provisioning config
             └── django-logs.json  # Pre-built dashboard
@@ -226,12 +350,13 @@ project/
 
 ### docker-compose.logging.yml
 
-Defines three services:
+Defines four services:
 
 ```yaml
 services:
   loki:
     image: grafana/loki:latest
+    container_name: django-loki-container
     ports: ["3100:3100"]
     volumes:
       - ./loki/loki-config.yml:/etc/loki/config.yml:ro
@@ -239,21 +364,40 @@ services:
 
   promtail:
     image: grafana/promtail:3.2.1
+    container_name: django-promtail-container
     volumes:
       - ./promtail/promtail-config.yml:/etc/promtail/config.yml:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - promtail-data:/promtail
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: django-prometheus-container
+    ports: ["9090:9090"]
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
 
   grafana:
-    image: grafana/grafana:12.3.0
+    image: grafana/grafana:12.3
+    container_name: django-grafana-container
     ports: ["4000:3000"]
     volumes:
       - grafana-storage:/var/lib/grafana
       - ./grafana/provisioning:/etc/grafana/provisioning:ro
+
+volumes:
+  loki-data:
+  promtail-data:
+  prometheus-data:
+  grafana-storage:
 ```
 
 ---
 
 ## Services Monitored
+
+### Logs (via Promtail → Loki)
 
 | Service | Label | Logs Collected |
 |---------|-------|----------------|
@@ -267,6 +411,13 @@ services:
 **Excluded** (noise reduction):
 - Tailwind (CSS builder)
 - Redis (cache/broker)
+
+### Metrics (via Prometheus)
+
+| Service | Target | Metrics Path |
+|---------|--------|--------------|
+| Django | django:8000 | /metrics |
+| Prometheus | localhost:9090 | /metrics |
 
 ---
 
@@ -293,9 +444,11 @@ services:
 
 ---
 
-## LogQL Query Examples
+## Query Examples
 
-### Basic Queries
+### LogQL (Loki)
+
+#### Basic Queries
 
 ```logql
 # All application logs
@@ -310,7 +463,7 @@ services:
 {service=~"blog|celery-worker"}
 ```
 
-### Filtering by Content
+#### Filtering by Content
 
 ```logql
 # Errors only
@@ -326,7 +479,7 @@ services:
 {app="trung-dev"} | json | levelname="ERROR"
 ```
 
-### Aggregations
+#### Aggregations
 
 ```logql
 # Error rate per minute
@@ -339,7 +492,7 @@ sum by (service) (count_over_time({app="trung-dev"} [5m]))
 count_over_time({app="trung-dev"} [$__range])
 ```
 
-### Nginx-Specific
+#### Nginx-Specific
 
 ```logql
 # All nginx access logs
@@ -350,6 +503,31 @@ count_over_time({app="trung-dev"} [$__range])
 
 # Specific endpoint
 {service="blog-nginx"} |= "POST /api"
+```
+
+### PromQL (Prometheus)
+
+#### Basic Queries
+
+```promql
+# All Django metrics
+{job="django"}
+
+# HTTP request rate
+rate(django_http_requests_total[5m])
+
+# Request latency (95th percentile)
+histogram_quantile(0.95, rate(django_http_request_duration_seconds_bucket[5m]))
+```
+
+#### Prometheus Self-Monitoring
+
+```promql
+# Scrape duration
+prometheus_target_scrape_pool_sync_total
+
+# Targets up/down
+up{job="django"}
 ```
 
 ---
@@ -367,8 +545,7 @@ docker compose -f docker-compose.yml \
 ### Production with Logging
 
 ```bash
-docker compose --env-file .env.prod \
-               -f docker-compose.yml \
+docker compose -f docker-compose.yml \
                -f docker-compose.prod.yml \
                -f docker-compose.logging.yml \
                up --build -d
@@ -381,6 +558,7 @@ docker compose --env-file .env.prod \
 | Application | http://localhost:8001 |
 | Grafana | http://localhost:4000 |
 | Loki API | http://localhost:3100 |
+| Prometheus | http://localhost:9090 |
 
 ---
 
@@ -395,6 +573,7 @@ docker compose -f docker-compose.logging.yml ps
 # Check individual service logs
 docker compose logs -f loki
 docker compose logs -f promtail
+docker compose logs -f prometheus
 docker compose logs -f grafana
 ```
 
@@ -406,6 +585,16 @@ curl http://localhost:3100/ready
 
 # Check metrics
 curl http://localhost:3100/metrics
+```
+
+### Verify Prometheus Health
+
+```bash
+# Check targets
+curl http://localhost:9090/api/v1/targets
+
+# Check config
+curl http://localhost:9090/api/v1/status/config
 ```
 
 ### Common Issues
@@ -422,17 +611,25 @@ curl http://localhost:3100/metrics
 2. Check Loki is healthy: `docker compose ps loki`
 3. Review Promtail logs for connection errors
 
+#### Prometheus can't scrape Django
+
+1. Check Django exposes `/metrics` endpoint
+2. Verify network connectivity: `docker exec prometheus wget -qO- http://django:8000/metrics`
+3. Check targets in Prometheus UI: http://localhost:9090/targets
+
 #### Dashboard not loading
 
 1. Check Grafana health: `curl http://localhost:4000/api/health`
 2. Verify provisioning files exist in `grafana/provisioning/`
 3. Check Grafana logs: `docker compose logs grafana`
 
-### Reset Log Data
+### Reset Data
 
 ```bash
-# Remove all log data (start fresh)
+# Remove all log/metric data (start fresh)
 docker volume rm django-blog-app-network_loki-data
+docker volume rm django-blog-app-network_promtail-data
+docker volume rm django-blog-app-network_prometheus-data
 docker volume rm django-blog-app-network_grafana-storage
 
 # Restart logging stack
@@ -441,13 +638,16 @@ docker compose -f docker-compose.logging.yml up -d
 
 ---
 
-## Log Retention Policy
+## Retention Policy
 
-| Environment | Docker Logs | Loki Retention |
-|-------------|-------------|----------------|
-| Development | 50MB × 5 files | 7 days |
-| Production | 10MB × 3 files | 14 days |
-| Nginx | 20MB × 5 files | 14 days |
+| Component | Retention | Description |
+|-----------|-----------|-------------|
+| Loki | 14 days | Log data |
+| Prometheus | 15 days | Metric data |
+| Docker Logs (Loki) | 50MB x 5 | Container log rotation |
+| Docker Logs (Promtail) | 10MB x 3 | Container log rotation |
+| Docker Logs (Prometheus) | 50MB x 5 | Container log rotation |
+| Docker Logs (Grafana) | 50MB x 5 | Container log rotation |
 
 **Automatic Cleanup**:
 - Loki compactor runs every 10 minutes
@@ -456,46 +656,18 @@ docker compose -f docker-compose.logging.yml up -d
 
 ---
 
-## Django Logging Configuration
+## Environment Variables
 
-### Production (JSON Format)
+### Required for Grafana
 
-```python
-# config/settings/production.py
-LOGGING = {
-    "formatters": {
-        "json": {
-            "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
-            "format": "%(asctime)s %(name)s %(levelname)s %(message)s",
-        },
-    },
-    "handlers": {
-        "console": {"formatter": "json", "class": "logging.StreamHandler"},
-    },
-    "loggers": {
-        "django": {"level": "INFO"},
-        "apps.blog": {"level": "INFO"},
-        "celery": {"level": "INFO"},
-    },
-}
-```
+| Variable | Description |
+|----------|-------------|
+| `GRAFANA_ADMIN_USER` | Admin username |
+| `GRAFANA_ADMIN_PASSWORD` | Admin password |
+| `GRAFANA_ROOT_URL` | Public URL (optional) |
+| `TZ` | Timezone (optional, default: UTC) |
 
-### Development (Human-Readable)
-
-```python
-# config/settings/development.py
-LOGGING = {
-    "formatters": {
-        "verbose": {"format": "{levelname} {asctime} {name} {message}"},
-    },
-    "handlers": {
-        "console": {"formatter": "verbose", "class": "logging.StreamHandler"},
-    },
-    "loggers": {
-        "apps.blog": {"level": "DEBUG"},
-    },
-}
-```
+These should be set in `.env.prod` or passed via environment.
 
 ---
 
@@ -504,4 +676,6 @@ LOGGING = {
 - [Grafana Loki Documentation](https://grafana.com/docs/loki/latest/)
 - [Promtail Configuration](https://grafana.com/docs/loki/latest/clients/promtail/configuration/)
 - [LogQL Query Language](https://grafana.com/docs/loki/latest/logql/)
+- [Prometheus Documentation](https://prometheus.io/docs/)
+- [PromQL Query Language](https://prometheus.io/docs/prometheus/latest/querying/basics/)
 - [Grafana Dashboard Provisioning](https://grafana.com/docs/grafana/latest/administration/provisioning/)

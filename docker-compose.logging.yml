@@ -61,7 +61,7 @@ services:
         max-file: "5"
 
   grafana:
-    image: grafana/grafana:12.3.0
+    image: grafana/grafana:12.3
     container_name: django-grafana-container
     restart: unless-stopped
     ports:
