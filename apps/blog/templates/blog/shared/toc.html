@@ -33,36 +33,28 @@
                     const headerHeightRem = getComputedStyle(document.documentElement).getPropertyValue('--header-height');
                     const remInPx = parseFloat(getComputedStyle(document.documentElement).fontSize);
                     const offset = (parseFloat(headerHeightRem) * remInPx) + 5;
-    
-                    // Track anchors and their parent containers
-                    const $anchors = $('.custom-prose a[id]').map(function () {
+
+                    // Get all anchor positions (sorted by position in document)
+                    const anchors = $('.custom-prose a[id]').map(function () {
                         return {
-                        id: this.id,
-                        $el: $(this).parent()
+                            id: this.id,
+                            top: $(this).offset().top
                         };
                     }).get();
-    
+
                     function onScroll() {
-                        const scrollTop = $(window).scrollTop();
-                        const viewportTop = scrollTop + offset;
-                        const viewportBottom = scrollTop + $(window).height();
-    
+                        const scrollTop = $(window).scrollTop() + offset;
                         let currentId = null;
-    
-                        for (let i = 0; i < $anchors.length; i++) {
-                            const { id, $el } = $anchors[i];
-                            const top = $el.offset().top;
-                            const bottom = top + $el.outerHeight();
-    
-                            // If any part of the element is visible in viewport (with header offset)
-                            const isVisible = bottom > viewportTop && top < viewportBottom;
-    
-                            if (isVisible) {
-                                currentId = id;
-                                break; // first visible one, from top
+
+                        // Find the last anchor that we've scrolled past
+                        // This means we're currently in that section
+                        for (let i = anchors.length - 1; i >= 0; i--) {
+                            if (scrollTop >= anchors[i].top) {
+                                currentId = anchors[i].id;
+                                break;
                             }
                         }
-    
+
                         // Update active TOC link
                         $tocLinks.removeClass('active-toc');
                         if (currentId) {
@@ -70,7 +62,7 @@
                         }
                     }
 
-                    // ⬇️ Handle click with offset-aware scroll
+                    // Handle click with offset-aware scroll
                     $tocLinks.on('click', function (e) {
                         e.preventDefault();
                         const targetId = $(this).attr('href').substring(1);
@@ -80,8 +72,18 @@
                             $('html, body').animate({ scrollTop: scrollTo }, 300);
                         }
                     });
-    
-                    $(window).on('scroll', onScroll);
+
+                    // Throttle scroll events for better performance
+                    let ticking = false;
+                    $(window).on('scroll', function () {
+                        if (!ticking) {
+                            requestAnimationFrame(function () {
+                                onScroll();
+                                ticking = false;
+                            });
+                            ticking = true;
+                        }
+                    });
                     onScroll(); // run on load
                 });
             </script>
