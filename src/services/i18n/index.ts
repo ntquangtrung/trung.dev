@@ -24,10 +24,6 @@ export type TypedI18n = I18n<
  */
 class I18nManager {
   private static instance: I18nManager | null = null;
-
-  private static readonly LOCALE_VERSION = "1.0.0";
-  private static readonly STORAGE_KEY = "app_locale";
-  private static readonly VERSION_KEY = "app_locale_version";
   private static readonly DEFAULT_LOCALE: SupportedLocale = "vi-vn";
   private static readonly FALLBACK_LOCALE: SupportedLocale = "en";
 
@@ -50,7 +46,7 @@ class I18nManager {
       return this.i18n;
     }
 
-    const locale = this.getInitialLocale();
+    const locale = this.detectBrowserLocale();
 
     const options = {
       legacy: false,
@@ -76,7 +72,7 @@ class I18nManager {
    */
   get locale(): SupportedLocale {
     if (this.i18n === null) {
-      return this.getStoredLocale() ?? I18nManager.DEFAULT_LOCALE;
+      return this.detectBrowserLocale();
     }
     return this.i18n.global.locale.value as SupportedLocale;
   }
@@ -102,7 +98,6 @@ class I18nManager {
     }
 
     this.i18n.global.locale.value = locale;
-    this.persistLocale(locale);
     document.documentElement.setAttribute("lang", locale);
   }
 
@@ -128,54 +123,6 @@ class I18nManager {
     }
 
     return I18nManager.DEFAULT_LOCALE;
-  }
-
-  private getStoredLocale(): SupportedLocale | null {
-    try {
-      const storedVersion = localStorage.getItem(I18nManager.VERSION_KEY);
-
-      if (storedVersion !== I18nManager.LOCALE_VERSION) {
-        localStorage.removeItem(I18nManager.STORAGE_KEY);
-        localStorage.setItem(I18nManager.VERSION_KEY, I18nManager.LOCALE_VERSION);
-        return null;
-      }
-
-      const storedLocale = localStorage.getItem(I18nManager.STORAGE_KEY);
-
-      if (
-        storedLocale !== null &&
-        storedLocale.length > 0 &&
-        SUPPORTED_LOCALES.includes(storedLocale as SupportedLocale)
-      ) {
-        return storedLocale as SupportedLocale;
-      }
-    } catch (error) {
-      console.error("Failed to get stored locale:", error);
-    }
-
-    return null;
-  }
-
-  private persistLocale(locale: SupportedLocale): void {
-    try {
-      localStorage.setItem(I18nManager.STORAGE_KEY, locale);
-      localStorage.setItem(I18nManager.VERSION_KEY, I18nManager.LOCALE_VERSION);
-    } catch (error) {
-      console.error("Failed to persist locale:", error);
-    }
-  }
-
-  private getInitialLocale(): SupportedLocale {
-    const storedLocale = this.getStoredLocale();
-
-    if (storedLocale !== null) {
-      return storedLocale;
-    }
-
-    const browserLocale = this.detectBrowserLocale();
-    this.persistLocale(browserLocale);
-
-    return browserLocale;
   }
 }
 

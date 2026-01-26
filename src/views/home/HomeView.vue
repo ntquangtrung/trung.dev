@@ -2,11 +2,13 @@
 import InfiniteScroll from "@/components/infinite-scroll/InfiniteScroll.vue";
 import UppyDashboardModal from "@/components/uppy/UppyDashboardModal.vue";
 import { useFilesInfiniteScroll } from "@/composables/useFilesInfiniteScroll";
+import { useLocale } from "@/composables/useLocale";
 import { isImage } from "@/utils/mime";
 import mediumZoom, { type Zoom } from "medium-zoom";
 import { nextTick, onMounted, watch } from "vue";
 
 const { shouldLoadMore, onLoadMore, datas } = useFilesInfiniteScroll();
+const { t } = useLocale();
 
 let zoom: Zoom | null = null;
 
@@ -19,7 +21,6 @@ onMounted(() => {
 });
 
 watch(datas, async () => {
-  console.log("datas: ", datas);
   await nextTick(); // wait for DOM update
   zoom?.attach(".zoomable");
 });
@@ -49,7 +50,7 @@ watch(datas, async () => {
               class="w-full h-full object-cover rounded-xl"
             >
               <source :src="file.fullPath" :type="file.type" />
-              Your browser does not support the video tag.
+              {{ t("media.browserNotSupported") }}
             </video>
           </li>
         </ul>

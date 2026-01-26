@@ -1,35 +1,16 @@
 {
   "common": {
     "upload": "Upload",
-    "cancel": "Cancel",
-    "save": "Save",
-    "delete": "Delete",
-    "edit": "Edit",
-    "close": "Close",
-    "confirm": "Confirm",
-    "search": "Search",
-    "loading": "Loading...",
-    "error": "Error",
-    "success": "Success"
-  },
-  "header": {
-    "title": "Your App Dashboard"
-  },
-  "footer": {
-    "madeBy": "Made by Trung",
-    "subtitle": "A product by Trung"
+    "submit": "Submit"
   },
   "auth": {
     "login": "Login",
-    "logout": "Logout",
-    "email": "Email",
-    "password": "Password"
+    "name": "Name",
+    "fullName": "Full name",
+    "phoneNumber": "Phone number",
+    "yourPhoneNumber": "Your phone number"
   },
   "media": {
-    "gallery": "Gallery",
-    "upload": "Upload file",
-    "noFiles": "No files",
-    "uploadSuccess": "Upload successful",
-    "uploadError": "Upload failed"
+    "browserNotSupported": "Your browser does not support the video tag."
   }
 }

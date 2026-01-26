@@ -1,35 +1,16 @@
 {
   "common": {
     "upload": "Tải lên",
-    "cancel": "Hủy",
-    "save": "Lưu",
-    "delete": "Xóa",
-    "edit": "Chỉnh sửa",
-    "close": "Đóng",
-    "confirm": "Xác nhận",
-    "search": "Tìm kiếm",
-    "loading": "Đang tải...",
-    "error": "Lỗi",
-    "success": "Thành công"
-  },
-  "header": {
-    "title": "Bảng Điều Khiển Ứng Dụng"
-  },
-  "footer": {
-    "madeBy": "Được tạo bởi Trung",
-    "subtitle": "Một sản phẩm của Trung"
+    "submit": "Gửi"
   },
   "auth": {
     "login": "Đăng nhập",
-    "logout": "Đăng xuất",
-    "email": "Email",
-    "password": "Mật khẩu"
+    "name": "Tên",
+    "fullName": "Họ và tên",
+    "phoneNumber": "Số điện thoại",
+    "yourPhoneNumber": "Số điện thoại của bạn"
   },
   "media": {
-    "gallery": "Thư viện",
-    "upload": "Tải lên tệp",
-    "noFiles": "Không có tệp nào",
-    "uploadSuccess": "Tải lên thành công",
-    "uploadError": "Tải lên thất bại"
+    "browserNotSupported": "Trình duyệt của bạn không hỗ trợ thẻ video."
   }
 }

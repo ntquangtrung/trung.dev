@@ -19,7 +19,7 @@ const { toggleModal, open } = useUppyModal();
       </RouterLink>
       <ButtonPrimary
         v-if="isAuthenticated"
-        class="capitalize flex-0"
+        class="capitalize flex-0 whitespace-nowrap"
         @click="toggleModal(!open)"
         type="button"
       />
