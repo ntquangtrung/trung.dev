@@ -5,7 +5,7 @@ import { type UnwrapNestedRefs } from "vue";
 
 interface Props {
   data?: Array<TData>;
-  loadMore: boolean;
+  shouldLoadMore: boolean;
 }
 
 const props = defineProps<Props>();
@@ -20,7 +20,7 @@ const handleLoadMore = (state: UnwrapNestedRefs<ReturnType<typeof useScroll>>) =
 
 const { isLoading } = useInfiniteScroll(window, handleLoadMore, {
   distance: 100,
-  canLoadMore: () => props.loadMore,
+  canLoadMore: () => props.shouldLoadMore,
 });
 </script>
 

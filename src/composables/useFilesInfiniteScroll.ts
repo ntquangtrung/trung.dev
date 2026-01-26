@@ -1,5 +1,6 @@
 import type { FileEntryDto } from "@/api/dto/get-all-files.dto";
 import seaweedRepository from "@/api/repositories/seaweed.repository";
+import { compareDesc } from "date-fns";
 import { computed, nextTick, onMounted, ref } from "vue";
 
 export function useFilesInfiniteScroll() {
@@ -25,7 +26,7 @@ export function useFilesInfiniteScroll() {
   const groupedDatasBasedOnDateCreated = computed(() => {
     return datas.value.reduce(
       (accumulator, current) => {
-        const currentDateFormatted = new Date(current.createdTime).toLocaleDateString();
+        const currentDateFormatted = current.createdTime.formattedDate;
         if (accumulator[currentDateFormatted] === undefined) {
           return { ...accumulator, [currentDateFormatted]: [current] };
         }
@@ -34,12 +35,20 @@ export function useFilesInfiniteScroll() {
           [currentDateFormatted]: [
             ...(accumulator[currentDateFormatted] as ReadonlyArray<FileEntryDto>),
             current,
-          ],
+          ].sort((a, b) => sortDateDescending(a.createdTime.date, b.createdTime.date)),
         };
       },
       {} as Record<string, ReadonlyArray<FileEntryDto>>
     );
   });
+
+  const sortDateDescending = (a: Date, b: Date) => compareDesc(a, b);
+
+  const sortedDescDatas = computed(() =>
+    Object.entries(groupedDatasBasedOnDateCreated.value).sort(([a], [b]) =>
+      sortDateDescending(new Date(a), new Date(b))
+    )
+  );
 
   onMounted(() => {
     onLoadMore();
@@ -48,6 +57,6 @@ export function useFilesInfiniteScroll() {
   return {
     shouldLoadMore,
     onLoadMore,
-    datas: groupedDatasBasedOnDateCreated,
+    datas: sortedDescDatas,
   };
 }

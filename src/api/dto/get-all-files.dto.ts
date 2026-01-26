@@ -1,3 +1,5 @@
+import { DateFnsService } from "@/services/date-fns";
+
 export interface ApiEntry {
   FullPath: string;
   Crtime: string;
@@ -12,12 +14,12 @@ export interface ApiResponse {
 
 export class FileEntryDto {
   readonly fullPath: string;
-  readonly createdTime: string;
+  readonly createdTime: DateFnsService;
   readonly type: string;
 
   constructor(data: ApiEntry) {
     this.fullPath = `${import.meta.env.VITE_API_BASE_URL}${data.FullPath}`;
-    this.createdTime = data.Crtime;
+    this.createdTime = new DateFnsService(data.Crtime);
     this.type = data.Mime;
   }
 }

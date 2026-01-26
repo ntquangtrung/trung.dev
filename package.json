@@ -38,6 +38,7 @@
     "@vue/tsconfig": "^0.8.1",
     "@vueuse/core": "^14.1.0",
     "axios": "^1.13.2",
+    "date-fns": "^4.1.0",
     "eslint": "^9.39.2",
     "eslint-plugin-vue": "~10.6.2",
     "jiti": "^2.6.1",

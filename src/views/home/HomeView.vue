@@ -18,23 +18,24 @@ onMounted(() => {
   });
 });
 
-watch(
-  datas,
-  async () => {
-    await nextTick(); // wait for DOM update
-    zoom?.attach(".zoomable");
-  },
-  { deep: true }
-);
+watch(datas, async () => {
+  console.log("datas: ", datas);
+  await nextTick(); // wait for DOM update
+  zoom?.attach(".zoomable");
+});
 </script>
 
 <template>
   <section class="py-6">
-    <InfiniteScroll :load-more="shouldLoadMore" @load-more="onLoadMore" class="flex flex-col gap-6">
-      <li v-for="(fileGroup, key) in datas" :key="key">
-        <strong class="text-orange block border-b">{{ key }}</strong>
+    <InfiniteScroll
+      :should-load-more="shouldLoadMore"
+      @load-more="onLoadMore"
+      class="flex flex-col gap-6"
+    >
+      <li v-for="([date, files], index) in datas" :key="index">
+        <strong class="text-orange block border-b">{{ date }}</strong>
         <ul class="grid grid-cols-3 gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 py-6">
-          <li v-for="(file, fileIndex) in fileGroup" :key="fileIndex" class="h-40 md:h-48">
+          <li v-for="(file, fileIndex) in files" :key="fileIndex" class="h-40 md:h-48">
             <img
               v-if="isImage(file.type)"
               :src="file.fullPath"
