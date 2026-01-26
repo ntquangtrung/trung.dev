@@ -41,7 +41,7 @@
     "axios": "^1.13.2",
     "date-fns": "^4.1.0",
     "eslint": "^9.39.2",
-    "eslint-plugin-vue": "~10.6.2",
+    "eslint-plugin-vue": "~10.7.0",
     "jiti": "^2.6.1",
     "medium-zoom": "^1.1.0",
     "npm-run-all2": "^8.0.4",
