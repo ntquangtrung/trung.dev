@@ -9,6 +9,5 @@ import { RouterView } from "vue-router";
   <section class="pt-(--header-height) px-4 min-h-screen">
     <RouterView />
   </section>
-
   <Footer />
 </template>

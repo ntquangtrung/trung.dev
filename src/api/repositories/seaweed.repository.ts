@@ -4,6 +4,7 @@ import { HttpClient } from "@/api/http-client";
 
 interface GetAllFilesParams {
   limit?: number;
+  lastFileName?: string;
 }
 
 class SeaweedRepository extends HttpClient {
