@@ -45,7 +45,7 @@
     "jiti": "^2.6.1",
     "medium-zoom": "^1.1.0",
     "npm-run-all2": "^8.0.4",
-    "postcss-html": "^1.8.0",
+    "postcss-html": "^1.8.1",
     "prettier": "3.7.4",
     "stylelint": "^16.26.1",
     "stylelint-config-recommended-vue": "^1.6.1",
