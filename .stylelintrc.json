@@ -1,0 +1,43 @@
+{
+  "extends": ["stylelint-config-standard", "stylelint-config-recommended-vue"],
+  "plugins": ["stylelint-order"],
+  "rules": {
+    "import-notation": null,
+    "at-rule-no-unknown": [
+      true,
+      {
+        "ignoreAtRules": ["reference", "apply", "layer", "theme", "config", "tailwind"]
+      }
+    ],
+    "at-rule-empty-line-before": [
+      "always",
+      {
+        "except": ["first-nested"],
+        "ignore": ["after-comment"]
+      }
+    ],
+    "selector-class-pattern": [
+      "^([a-z][a-zA-Z0-9]*|[a-z][a-z0-9]*(-[a-z0-9]+)*)$",
+      {
+        "message": "Use camelCase or kebab-case for class names"
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["**/*.module.css"],
+      "rules": {
+        "order/order": [
+          [
+            {
+              "type": "at-rule",
+              "name": "reference"
+            },
+            "custom-properties",
+            "declarations"
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,366 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
+
+@import "tailwindcss";
+
+@font-face {
+  font-family: pixeboy;
+  src: url("@/assets/font/Pixeboy-z8XGD.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  /* Custom Properties */
+  --header-height: 3.75rem;
+
+  /* Font Family */
+  --font-roboto-mono: "Roboto Mono", monospace;
+  --font-pixeboy: pixeboy, sans-serif;
+
+  /* Primary Colors - Orange */
+  --color-orange: #ffa500;
+  --color-orange-dark: #ff6b00;
+
+  /* Secondary Colors - Violet */
+  --color-violet: #7f00ff;
+  --color-violet-dark: #5a00b8;
+  --color-violet-light: #a855f7;
+
+  /* Background Colors */
+  --color-bg-start: #1a1a2e;
+  --color-bg-mid: #16213e;
+  --color-bg-end: #0f0f1a;
+
+  /* Surface Colors */
+  --color-surface: #fff;
+
+  /* Text Colors */
+  --color-text-primary: #e8e8e8;
+  --color-text-secondary: #aaa;
+  --color-text-muted: #888;
+
+  /* Border */
+  --color-border: #fff;
+
+  /* Border Radius */
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+  --radius-3xl: 20px;
+
+  /* Box Shadow */
+  --shadow-glow-orange: 0 8px 24px oklch(from #ffa500 l c h / 30%);
+  --shadow-glow-violet: 0 8px 24px oklch(from #7f00ff l c h / 30%);
+  --shadow-glow-orange-lg: 0 0 40px oklch(from #ffa500 l c h / 40%);
+  --shadow-glow-violet-lg: 0 0 40px oklch(from #7f00ff l c h / 40%);
+
+  /* Animation */
+  --animate-glow-pulse: glow-pulse 2s ease-in-out infinite;
+
+  @keyframes glow-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 20px oklch(from #ffa500 l c h / 30%);
+    }
+
+    50% {
+      box-shadow: 0 0 30px oklch(from #7f00ff l c h / 40%);
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  :root {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  body {
+    @apply min-h-screen font-roboto-mono text-text-primary;
+
+    background: linear-gradient(
+      180deg,
+      var(--color-bg-start) 0%,
+      var(--color-bg-mid) 50%,
+      var(--color-bg-end) 100%
+    );
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5 {
+    line-height: 1.2;
+
+    @apply font-bold tracking-tight;
+  }
+
+  p,
+  span,
+  a,
+  li,
+  ul,
+  ol,
+  blockquote,
+  pre,
+  code,
+  table,
+  th,
+  td {
+    font-weight: 400;
+    letter-spacing: -0.1px;
+  }
+
+  strong {
+    font-weight: 800;
+  }
+
+  h1 {
+    @apply text-3xl;
+  }
+
+  h2 {
+    @apply text-2xl;
+  }
+
+  h3 {
+    @apply text-xl;
+  }
+
+  input,
+  button {
+    @apply outline-none font-roboto-mono;
+  }
+
+  input::placeholder {
+    @apply text-text-muted;
+  }
+
+  button:hover {
+    @apply cursor-pointer;
+  }
+}
+
+/* ============================================
+   @layer components - Reusable Components
+   ============================================ */
+
+@layer components {
+  /* Container */
+  .container-app {
+    @apply max-w-lg mx-auto px-6 py-6;
+  }
+
+  /* Gradient Text */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+
+    background-image: linear-gradient(
+      135deg,
+      var(--color-orange) 0%,
+      var(--color-violet) 100%
+    );
+  }
+
+  /* Card Component */
+  .card {
+    @apply rounded-2xl p-5 mb-4 backdrop-blur-sm;
+
+    background: oklch(from var(--color-surface) l c h / 5%);
+    border: 1px solid oklch(from var(--color-surface) l c h / 10%);
+  }
+
+  .card-title {
+    @apply text-sm text-text-muted mb-2;
+  }
+
+  .card-value {
+    @apply text-3xl font-bold text-orange;
+  }
+
+  /* Button Base */
+  .btn {
+    @apply px-5 py-3 rounded-xl text-[15px] font-semibold
+           cursor-pointer transition-all duration-300
+           border-none flex-1;
+  }
+
+  .btn:hover {
+    @apply -translate-y-0.5;
+  }
+
+  /* Primary Button (Orange) */
+  .btn-primary {
+    @apply text-black;
+
+    background: linear-gradient(
+      135deg,
+      var(--color-orange) 0%,
+      var(--color-orange-dark) 100%
+    );
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 8px 24px oklch(from var(--color-orange) l c h / 30%);
+  }
+
+  /* Secondary Button (Violet) */
+  .btn-secondary {
+    @apply text-white;
+
+    background: linear-gradient(
+      135deg,
+      var(--color-violet) 0%,
+      var(--color-violet-dark) 100%
+    );
+  }
+
+  .btn-secondary:hover {
+    box-shadow: 0 8px 24px oklch(from var(--color-violet) l c h / 30%);
+  }
+
+  /* Outline Buttons */
+  .btn-outline-orange {
+    @apply bg-transparent text-orange;
+
+    border: 1px solid oklch(from var(--color-orange) l c h / 50%);
+  }
+
+  .btn-outline-orange:hover {
+    @apply bg-orange/10;
+  }
+
+  .btn-outline-violet {
+    @apply bg-transparent text-violet-light;
+
+    border: 1px solid oklch(from var(--color-violet) l c h / 50%);
+  }
+
+  .btn-outline-violet:hover {
+    @apply bg-violet/10;
+  }
+
+  /* Input Field */
+  .input {
+    @apply w-full px-4 py-3.5 rounded-xl text-[15px] text-white
+           transition-colors duration-300;
+
+    background: oklch(from var(--color-surface) l c h / 5%);
+    border: 1px solid oklch(from var(--color-surface) l c h / 15%);
+  }
+
+  .input:focus {
+    @apply border-orange;
+  }
+
+  /* Progress Bar */
+  .progress-bar {
+    @apply h-2 rounded overflow-hidden;
+
+    background: oklch(from var(--color-surface) l c h / 10%);
+  }
+
+  .progress-fill {
+    @apply h-full rounded;
+
+    background: linear-gradient(90deg, var(--color-orange) 0%, var(--color-violet) 100%);
+  }
+
+  /* Toggle Switch */
+  .toggle {
+    @apply w-12.5 h-7 rounded-full relative cursor-pointer;
+
+    background: linear-gradient(135deg, var(--color-orange), var(--color-violet));
+  }
+
+  .toggle::after {
+    content: "";
+
+    @apply absolute w-5.5 h-5.5 bg-white rounded-full
+           top-0.75 right-0.75 transition-all duration-300;
+  }
+
+  .toggle.off::after {
+    @apply right-auto left-0.75;
+  }
+
+  .toggle.off {
+    @apply bg-gray-600;
+
+    background: oklch(from var(--color-surface) l c h / 20%);
+  }
+
+  /* Toggle Row */
+  .toggle-row {
+    @apply flex justify-between items-center p-4 rounded-xl mb-3;
+
+    background: oklch(from var(--color-surface) l c h / 3%);
+  }
+
+  /* Badges */
+  .badge {
+    @apply px-3.5 py-1.5 rounded-full text-[13px] font-medium;
+  }
+
+  .badge-orange {
+    @apply text-orange;
+
+    background: oklch(from var(--color-orange) l c h / 20%);
+    border: 1px solid oklch(from var(--color-orange) l c h / 30%);
+  }
+
+  .badge-violet {
+    @apply text-violet-light;
+
+    background: oklch(from var(--color-violet) l c h / 20%);
+    border: 1px solid oklch(from var(--color-violet) l c h / 30%);
+  }
+
+  .badge-gradient {
+    @apply text-gray-300;
+
+    background: linear-gradient(
+      135deg,
+      oklch(from var(--color-orange) l c h / 20%),
+      oklch(from var(--color-violet) l c h / 20%)
+    );
+    border: 1px solid oklch(from var(--color-orange) l c h / 20%);
+  }
+}
+
+/* ============================================
+   @layer utilities - Custom Utilities
+   ============================================ */
+
+@layer utilities {
+  .gradient-bg {
+    background: linear-gradient(
+      180deg,
+      var(--color-bg-start) 0%,
+      var(--color-bg-mid) 50%,
+      var(--color-bg-end) 100%
+    );
+  }
+
+  .gradient-orange-violet {
+    background: linear-gradient(135deg, var(--color-orange) 0%, var(--color-violet) 100%);
+  }
+
+  .glow-orange {
+    box-shadow: 0 0 20px oklch(from var(--color-orange) l c h / 40%);
+  }
+
+  .glow-violet {
+    box-shadow: 0 0 20px oklch(from var(--color-violet) l c h / 40%);
+  }
+}
