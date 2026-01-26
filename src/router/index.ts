@@ -1,5 +1,5 @@
 import type { User } from "@/auth/interface";
-import HomeView from "@/views/HomeView.vue";
+import HomeView from "@/views/home/HomeView.vue";
 import Login from "@/views/Login.vue";
 import { createRouter, createWebHistory } from "vue-router";
 
@@ -41,7 +41,7 @@ router.beforeEach((to, _, next) => {
   if (to.meta.requiresAuth === true && user === null) {
     next({ name: routes.login.name, query: { redirect: to.fullPath } });
   }
-  // // Check if route is for guests only (like login page)
+  // Check if route is for guests only (like login page)
   else if (to.meta.guestOnly === true && user !== null) {
     next({ name: routes.home.name });
   } else {

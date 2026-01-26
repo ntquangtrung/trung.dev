@@ -20,7 +20,7 @@ const defaultConfig: UppyServiceConfig = {
     allowedFileTypes: ["image/*", "video/*"],
   },
   tus: {
-    endpoint: `${import.meta.env.VITE_SEAWEEDFS_BASE_URL}${import.meta.env.VITE_SEAWEEDFS_TUS_ENDPOINT}`,
+    endpoint: `${import.meta.env.VITE_API_BASE_URL}/api/v1/${import.meta.env.VITE_SEAWEEDFS_TUS_ENDPOINT}`,
     chunkSize: 50 * 1024 * 1024, // 50 MB
     retryDelays: [0, 1000, 3000, 5000, 10000, 30000],
     storeFingerprintForResuming: true,
