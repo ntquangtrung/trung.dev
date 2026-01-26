@@ -1,4 +1,6 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import UppyDashboardModal from "@/components/uppy/UppyDashboardModal.vue";
+</script>
 
 <template>
   <section>
@@ -9,5 +11,6 @@
     popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages,
     and more recently with desktop publishing software like Aldus PageMaker including versions of
     Lorem Ipsum.
+    <UppyDashboardModal />
   </section>
 </template>
