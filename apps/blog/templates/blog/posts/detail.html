@@ -29,4 +29,20 @@
 
     {% include "blog/shared/toc.html" with tags=object.tags.all status=object.status created=object.created table_of_contents=object.table_of_contents %}
 </section>
+
+<section id="utterances-post-comments"></section>
+<script>
+    (function() {
+        const theme = localStorage.getItem("darkmode") === "enabled" ? "github-dark" : "github-light";
+        const script = document.createElement("script");
+        script.src = "https://utteranc.es/client.js";
+        script.setAttribute("repo", "ntquangtrung/trung.dev");
+        script.setAttribute("issue-term", "url");
+        script.setAttribute("label", "utterances");
+        script.setAttribute("theme", theme);
+        script.setAttribute("crossorigin", "anonymous");
+        script.async = true;
+        document.getElementById("utterances-post-comments").appendChild(script);
+    })();
+</script>
 {% endblock content %}
