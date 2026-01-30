@@ -39,25 +39,3 @@ class RedisCacheHandler:
 
     def increase(self, name: str, amount: int = 1):
         return cache.incr(self._key(name), amount)
-
-
-class ResumeCache(RedisCacheHandler):
-    def __init__(self):
-        super().__init__(CACHE_PREFIXES["RESUME"])
-
-    def increase_number_of_downloaded_resume(self, date: str):
-        today = self.get(date)
-        if today is None:
-            self.set_cache(date, 1)
-        else:
-            self.increase(date)
-
-    def available_dates(self) -> dict[str, int]:
-        keys = self.get_all_keys()
-        result = {}
-        for key in keys:
-            date = key.split(":")[-1]
-            count = self.get(date)
-            if count is not None:
-                result[date] = count
-        return result

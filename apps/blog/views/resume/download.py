@@ -1,13 +1,8 @@
-from zoneinfo import ZoneInfo
-
-from django.conf import settings
 from django.http import HttpResponse
 from django.template.loader import render_to_string
-from django.utils import timezone
 
 from apps.blog.context.global_context import shared
 from apps.blog.views.resume.base import ResumePreviewBaseView
-from services.redis import ResumeCache
 
 
 class ResumeDownloadView(ResumePreviewBaseView):
@@ -26,14 +21,6 @@ class ResumeDownloadView(ResumePreviewBaseView):
         # still have full PDF functionality without forcing all developers to install
         # the extra dependencies locally.
         from weasyprint import HTML
-
-        utc_now = timezone.now()
-        local_now = utc_now.astimezone(ZoneInfo(settings.COMMON_TIMEZONE["sai_gon"]))
-
-        resume_cache = ResumeCache()
-        resume_cache.increase_number_of_downloaded_resume(
-            date=local_now.strftime("%Y-%m-%d")
-        )
 
         html_string = render_to_string(
             self.template_name, context=self.get_context_data()
