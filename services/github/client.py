@@ -1,4 +1,4 @@
-from typing import NotRequired, TypedDict, Unpack
+from typing import Any, NotRequired, TypedDict, Unpack
 
 import requests
 from django.conf import settings
@@ -35,6 +35,6 @@ class GitHubClient:
         resp.raise_for_status()
         return resp
 
-    def get(self, url: str, **kwargs: Unpack[RequestKwargs]) -> requests.Response.json:
+    def get(self, url: str, **kwargs: Unpack[RequestKwargs]) -> Any:
         response = self._request("GET", url, **kwargs)
         return response.json()
