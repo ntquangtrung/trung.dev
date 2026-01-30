@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import Any
+from datetime import datetime
+from typing import Any, cast
 
 from django.utils.dateparse import parse_datetime
 
@@ -14,7 +15,7 @@ class GithubProjectDto(BaseDto):
     stargazers_count: int
     forks: int
     topics: list[str]
-    created_at: str
+    created_at: datetime
     description: str | None = None
 
     @classmethod
@@ -27,7 +28,7 @@ class GithubProjectDto(BaseDto):
             stargazers_count=data["stargazers_count"],
             forks=data["forks"],
             topics=data["topics"],
-            created_at=parse_datetime(data["created_at"]),
+            created_at=cast("datetime", parse_datetime(data["created_at"])),
             description=data.get("description"),
         )
 

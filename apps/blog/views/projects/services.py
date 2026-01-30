@@ -1,7 +1,15 @@
+import logging
+
 from apps.blog.views.projects.dto.projects import GithubProjectDto
 from services.github import github_service
 from services.github.github import RepositoriesParams
 from services.redis import CACHE_PREFIXES, RedisCacheHandler
+
+logger = logging.getLogger(__name__)
+
+
+class GithubProjectsFetchError(Exception):
+    """Raised when fetching GitHub projects fails."""
 
 
 class ProjectsService:
@@ -16,11 +24,15 @@ class ProjectsService:
         if is_cached:
             return [GithubProjectDto.from_dict(project) for project in cached_projects]
 
-        params = RepositoriesParams(type="owner", sort="created", direction="desc")
-        response = github_service.get_user_repositories(params=params)
-        datas = [GithubProjectDto.from_dict(project) for project in response]
-        self._set_cached_github_project([project.to_dict() for project in datas])
-        return datas
+        try:
+            params = RepositoriesParams(type="owner", sort="created", direction="desc")
+            response = github_service.get_user_repositories(params=params)
+            datas = [GithubProjectDto.from_dict(project) for project in response]
+            self._set_cached_github_project([project.to_dict() for project in datas])
+            return datas
+        except Exception as error:
+            logger.exception("Failed to fetch GitHub projects: %s", error)
+            return []
 
     def _get_cached_github_project(self):
         cached_projects = self.cache.get(name=self.CACHE_NAME)

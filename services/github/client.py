@@ -1,4 +1,4 @@
-from typing import NotRequired, TypedDict, Unpack
+from typing import Any, NotRequired, TypedDict, Unpack
 
 import requests
 from django.conf import settings
@@ -13,6 +13,8 @@ class RequestKwargs(TypedDict, total=False):
 
 
 class GitHubClient:
+    DEFAULT_TIMEOUT = (5, 30)  # (connect timeout, read timeout) in seconds
+
     def __init__(self):
         self._token = settings.CLIENT_GITHUB_TOKEN
         self.base_url = settings.CLIENT_GITHUB_BASE_URL
@@ -31,10 +33,13 @@ class GitHubClient:
         self, method: str, endpoint: str, **kwargs: Unpack[RequestKwargs]
     ) -> requests.Response:
         url = f"{self.base_url}{endpoint}"
+        # Set default timeout if not provided
+        if "timeout" not in kwargs:
+            kwargs["timeout"] = self.DEFAULT_TIMEOUT
         resp = self.session.request(method, url, **kwargs)
         resp.raise_for_status()
         return resp
 
-    def get(self, url: str, **kwargs: Unpack[RequestKwargs]) -> requests.Response.json:
+    def get(self, url: str, **kwargs: Unpack[RequestKwargs]) -> dict[str, Any]:
         response = self._request("GET", url, **kwargs)
         return response.json()
