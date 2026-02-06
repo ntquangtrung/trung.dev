@@ -406,7 +406,6 @@ volumes:
 | Celery Worker | `service=celery-worker` | Job execution, failures |
 | Celery Beat | `service=celery-beat` | Task scheduling |
 | Flower | `service=flower` | Task monitoring |
-| Discord Bot | `service=discord-bot` | Bot events |
 
 **Excluded** (noise reduction):
 - Tailwind (CSS builder)

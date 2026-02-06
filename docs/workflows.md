@@ -310,7 +310,6 @@ docker image prune -f --filter "dangling=true"
 | `CLIENT_GITHUB_API_VERSION` | GitHub API version |
 | `REDIS_PASSWORD` | Redis password |
 | `FLOWER_PASSWORD` | Flower dashboard password |
-| `DISCORD_BOT_TOKEN` | Discord bot token |
 | `SEAWEEDFS_URL` | SeaweedFS storage URL |
 | `GRAFANA_ADMIN_USER` | Grafana admin username |
 | `GRAFANA_ADMIN_PASSWORD` | Grafana admin password |

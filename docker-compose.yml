@@ -118,17 +118,6 @@ services:
       timeout: 10s
       retries: 3
 
-  discord-bot:
-    <<: *default-app
-    image: django-blog-image
-    container_name: django-discord-bot-container
-    command: >
-      sh -c 'poetry run python services/discord/bot.py'
-    depends_on:
-      - django
-    environment:
-      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
-
 volumes:
   static_volume:
   redis_data:

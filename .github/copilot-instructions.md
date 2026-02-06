@@ -10,7 +10,7 @@ Django 5.2+ personal portfolio site with Tailwind CSS 4.x, containerized with Do
 - **Config:** `config/settings/{base,development,production}.py` for environment-specific settings
 - **Admin:** Custom admin classes in `apps/blog/model_admin/*.py` registered in `apps/blog/admin.py`
 - **Models:** Split across `apps/blog/models/*.py` with `__init__.py` exporting all models
-- **Services:** External integrations abstracted in `services/` (SeaweedFS, Redis, GitHub, Discord)
+- **Services:** External integrations abstracted in `services/` (SeaweedFS, Redis, GitHub)
 - **Adapters:** API clients in `adapters/` (e.g., `github_adapter.py`)
 - **Utilities:** Reusable helpers in `utilities/` (e.g., `VariableResolver` for template variable substitution)
 
@@ -117,11 +117,6 @@ ruff check --fix .
 - Adapter: `adapters/github_adapter.py`
 - Service: `services/github_service.py`
 - Model: `apps.blog.models.GithubRepository` stores repo metadata
-
-### Discord Bot
-- Bot logic: `services/discord/bot.py`
-- Uses `discord.py` library
-- Cogs pattern for command organization: `services/discord/cogs/`
 
 ### Variable Resolver Utility
 - `utilities.resolve_variables.VariableResolver` replaces `{variable.KEY}` patterns

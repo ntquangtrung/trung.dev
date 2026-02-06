@@ -55,7 +55,6 @@ jobs:
         CELERY_BACKEND_REDIS_DB_INDEX: ${{ vars.CELERY_BACKEND_REDIS_DB_INDEX }}
         FLOWER_USER: ${{ vars.FLOWER_USER }}
         FLOWER_PASSWORD: ${{ secrets.FLOWER_PASSWORD }}
-        DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
         SEAWEEDFS_URL: ${{ secrets.SEAWEEDFS_URL }}
         GRAFANA_ADMIN_USER: ${{ secrets.GRAFANA_ADMIN_USER }}
         GRAFANA_ADMIN_PASSWORD: ${{ secrets.GRAFANA_ADMIN_PASSWORD }}
@@ -100,7 +99,6 @@ jobs:
           echo "CELERY_BACKEND_REDIS_DB_INDEX=$CELERY_BACKEND_REDIS_DB_INDEX" >> .env
           echo "FLOWER_USER=$FLOWER_USER" >> .env
           echo "FLOWER_PASSWORD=$FLOWER_PASSWORD" >> .env
-          echo "DISCORD_BOT_TOKEN=$DISCORD_BOT_TOKEN" >> .env
           echo "SEAWEEDFS_URL=$SEAWEEDFS_URL" >> .env
           echo "GRAFANA_ADMIN_USER=$GRAFANA_ADMIN_USER" >> .env
           echo "GRAFANA_ADMIN_PASSWORD=$GRAFANA_ADMIN_PASSWORD" >> .env
