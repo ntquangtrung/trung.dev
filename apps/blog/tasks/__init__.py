@@ -9,8 +9,8 @@ current_app.conf.beat_schedule = {
     #     "task": "<app-path-to-task-function>",
     #     "schedule": <schedule>,
     # }
-    "notify-downloads-resume-every-1-minute": {
-        "task": "apps.blog.tasks.notify_downloads_resume.notify_downloads_resume",
-        "schedule": timedelta(minutes=1),
-    },
+    # "notify-downloads-resume-every-1-minute": {
+    #     "task": "apps.blog.tasks.notify_downloads_resume.notify_downloads_resume",
+    #     "schedule": timedelta(minutes=1),
+    # },
 }
