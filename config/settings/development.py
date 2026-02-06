@@ -76,9 +76,10 @@ LOGGING = {
             "level": "WARNING",
             "propagate": False,
         },
+        # PostgreSQL logging (uncomment to debug database queries)
         # "django.db.backends": {
         #     "handlers": ["console_debug"],
-        #     "level": "DEBUG",
+        #     "level": "DEBUG",  # Logs all SQL queries - useful for debugging N+1 queries
         #     "propagate": False,
         # },
         # Application loggers

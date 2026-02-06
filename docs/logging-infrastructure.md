@@ -2,6 +2,9 @@
 
 This document explains the centralized logging and monitoring architecture using the Loki-Prometheus-Grafana stack for the `trung-dev` Django project.
 
+**Last Updated**: 2025-02-06
+**Version**: 2.0 (Standardized logging with JSON format)
+
 ## Table of Contents
 
 - [Overview](#overview)
@@ -29,14 +32,14 @@ The project implements a **modern observability stack** using:
 
 ### Key Benefits
 
-| Feature | Description |
-|---------|-------------|
-| Centralized Logs | Single source of truth for all container logs |
-| Metrics Collection | Application and infrastructure metrics |
-| Structured Data | JSON format allows structured querying |
-| Noise Reduction | Smart filtering at collection time |
-| Fast Search | Label-based indexing with real-time updates |
-| 14-Day Retention | Compressed storage with automatic cleanup |
+| Feature            | Description                                   |
+| ------------------ | --------------------------------------------- |
+| Centralized Logs   | Single source of truth for all container logs |
+| Metrics Collection | Application and infrastructure metrics        |
+| Structured Data    | JSON format allows structured querying        |
+| Noise Reduction    | Smart filtering at collection time            |
+| Fast Search        | Label-based indexing with real-time updates   |
+| 14-Day Retention   | Compressed storage with automatic cleanup     |
 
 ---
 
@@ -145,6 +148,7 @@ All services run on the `django-blog-app-network` Docker network:
 **Purpose**: Collects logs from Docker containers and pushes to Loki
 
 **Key Features**:
+
 - Connects via Docker socket for automatic container discovery
 - Filters containers by label `app=trung-dev`
 - Applies smart noise reduction (health checks, static files, heartbeats)
@@ -160,6 +164,7 @@ All services run on the `django-blog-app-network` Docker network:
 | `stack` | django-blog | Stack identifier |
 
 **Configuration Highlights**:
+
 - Batch size: 1MB
 - Batch wait: 1s
 - Docker refresh interval: 15s
@@ -184,6 +189,7 @@ All services run on the `django-blog-app-network` Docker network:
 | Cache | 100MB | Embedded query cache |
 
 **Limits**:
+
 - Ingestion rate: 10 MB/s
 - Burst size: 20 MB
 - Max streams per user: 10,000
@@ -212,6 +218,7 @@ All services run on the `django-blog-app-network` Docker network:
 | `django` | django:8000 | Django app metrics |
 
 **Optional Targets** (commented out in config):
+
 - Nginx exporter (9113)
 - Redis exporter (9121)
 - PostgreSQL exporter (9187)
@@ -224,6 +231,7 @@ All services run on the `django-blog-app-network` Docker network:
 **Purpose**: Visualization and dashboarding
 
 **Access**:
+
 ```
 URL: http://localhost:4000
 Credentials: From environment (GRAFANA_ADMIN_USER/GRAFANA_ADMIN_PASSWORD)
@@ -239,6 +247,7 @@ Credentials: From environment (GRAFANA_ADMIN_USER/GRAFANA_ADMIN_PASSWORD)
 | `TZ` | UTC | Timezone |
 
 **Pre-configured Datasources**:
+
 - **Loki** (default) - Log queries
 - **Prometheus** - Metric queries
 
@@ -319,6 +328,7 @@ Raw Docker Logs
 ### Available Metrics
 
 Django metrics at `/metrics` may include:
+
 - HTTP request counts by method, path, status
 - Request latencies (histograms)
 - Active connections
@@ -332,25 +342,30 @@ Django metrics at `/metrics` may include:
 
 ```
 project/
-├── docker-compose.logging.yml    # Logging stack services
-├── loki/
-│   └── loki-config.yml           # Loki configuration
-├── promtail/
-│   └── promtail-config.yml       # Promtail configuration
-├── prometheus/
-│   └── prometheus.yml            # Prometheus configuration
-└── grafana/
-    └── provisioning/
-        ├── datasources/
-        │   └── datasources.yml   # Auto-provision Loki + Prometheus
-        └── dashboards/
-            ├── dashboards.yml    # Dashboard provisioning config
-            └── django-logs.json  # Pre-built dashboard
+├── docker-compose.logging.yml    # Logging stack services (root level)
+├── logging/                       # All logging configurations grouped here
+│   ├── loki/
+│   │   └── loki-config.yml       # Loki configuration
+│   ├── promtail/
+│   │   └── promtail-config.yml   # Promtail configuration
+│   ├── prometheus/
+│   │   └── prometheus.yml        # Prometheus configuration
+│   └── grafana/
+│       └── provisioning/
+│           ├── datasources/
+│           │   └── datasources.yml   # Auto-provision Loki + Prometheus
+│           └── dashboards/
+│               ├── dashboards.yml    # Dashboard provisioning config
+│               └── django-logs.json  # Pre-built dashboard
+├── config/settings/
+│   └── production.py             # Django logging config (JSON format)
+├── nginx.conf                     # Nginx logging config (JSON format)
+└── gunicorn.conf.py              # Gunicorn logging config (standardized)
 ```
 
 ### docker-compose.logging.yml
 
-Defines four services:
+Defines four services with configs in `logging/` folder:
 
 ```yaml
 services:
@@ -359,23 +374,25 @@ services:
     container_name: django-loki-container
     ports: ["3100:3100"]
     volumes:
-      - ./loki/loki-config.yml:/etc/loki/config.yml:ro
+      - ./logging/loki/loki-config.yml:/etc/loki/config.yml:ro
       - loki-data:/loki
 
   promtail:
     image: grafana/promtail:3.2.1
     container_name: django-promtail-container
     volumes:
-      - ./promtail/promtail-config.yml:/etc/promtail/config.yml:ro
+      - ./logging/promtail/promtail-config.yml:/etc/promtail/config.yml:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - promtail-data:/promtail
+      # Optional: SeaweedFS logs from host filesystem
+      # - /your/seaweedfs/log/path:/seaweedfs-logs:ro
 
   prometheus:
     image: prom/prometheus:latest
     container_name: django-prometheus-container
     ports: ["9090:9090"]
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./logging/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
 
   grafana:
@@ -384,7 +401,7 @@ services:
     ports: ["4000:3000"]
     volumes:
       - grafana-storage:/var/lib/grafana
-      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./logging/grafana/provisioning:/etc/grafana/provisioning:ro
 
 volumes:
   loki-data:
@@ -399,24 +416,184 @@ volumes:
 
 ### Logs (via Promtail → Loki)
 
-| Service | Label | Logs Collected |
-|---------|-------|----------------|
-| Django/Gunicorn | `service=blog` | Application logs, request handling |
-| Nginx | `service=blog-nginx` | HTTP access/errors (filtered) |
-| Celery Worker | `service=celery-worker` | Job execution, failures |
-| Celery Beat | `service=celery-beat` | Task scheduling |
-| Flower | `service=flower` | Task monitoring |
+All logs are output in **JSON format** for structured querying:
+
+| Service         | Label                   | Logs Collected                     | Format                   |
+| --------------- | ----------------------- | ---------------------------------- | ------------------------ |
+| Django/Gunicorn | `service=blog`          | Application logs, request handling | JSON (pythonjsonlogger)  |
+| Nginx           | `service=blog-nginx`    | HTTP access/errors (filtered)      | JSON (custom log_format) |
+| Celery Worker   | `service=celery-worker` | Job execution, failures            | JSON (Django logging)    |
+| Celery Beat     | `service=celery-beat`   | Task scheduling                    | JSON (Django logging)    |
+| Flower          | `service=flower`        | Task monitoring                    | Plain text               |
 
 **Excluded** (noise reduction):
+
 - Tailwind (CSS builder)
 - Redis (cache/broker)
+- Discord bot (not monitored)
 
 ### Metrics (via Prometheus)
 
-| Service | Target | Metrics Path |
-|---------|--------|--------------|
-| Django | django:8000 | /metrics |
-| Prometheus | localhost:9090 | /metrics |
+| Service    | Target         | Metrics Path |
+| ---------- | -------------- | ------------ |
+| Django     | django:8000    | /metrics     |
+| Prometheus | localhost:9090 | /metrics     |
+
+---
+
+## Standardized Log Formats
+
+All services now output structured logs for easier parsing and querying:
+
+### Django (config/settings/production.py)
+
+**Format**: JSON via `pythonjsonlogger`
+
+```json
+{
+  "asctime": "2025-02-06T11:30:45.123Z",
+  "levelname": "INFO",
+  "name": "django.request",
+  "message": "GET /api/posts/ HTTP/1.1",
+  "pathname": "/app/apps/blog/views.py",
+  "lineno": 42,
+  "funcName": "list_posts"
+}
+```
+
+**Log Levels**:
+
+- `django.request`: INFO (all requests, changed from ERROR)
+- `django.security`: WARNING
+- `apps.*`: INFO
+- `celery.*`: INFO
+
+**Optional PostgreSQL Logging** (commented in config):
+
+```python
+# Option 1: ERROR level - Only database errors
+"django.db.backends": {"level": "ERROR"}
+
+# Option 2: DEBUG level - ALL SQL queries (verbose, for debugging)
+"django.db.backends": {"level": "DEBUG"}
+```
+
+To enable: Uncomment desired option in `config/settings/production.py`
+
+### Nginx (nginx.conf)
+
+**Format**: JSON via custom `log_format json_combined`
+
+```json
+{
+  "timestamp": "2025-02-06T11:30:45+00:00",
+  "level": "INFO",
+  "service": "nginx",
+  "message": "GET /api/posts/ HTTP/1.1",
+  "context": {
+    "remote_addr": "192.168.1.10",
+    "method": "GET",
+    "path": "/api/posts/",
+    "status_code": 200,
+    "body_bytes_sent": 1234,
+    "http_referer": "https://example.com",
+    "http_user_agent": "Mozilla/5.0...",
+    "request_time": 0.045,
+    "upstream_response_time": "0.042"
+  }
+}
+```
+
+**Features**:
+
+- JSON escape handling for special characters
+- Request timing (total and upstream)
+- Status codes as integers for easy filtering
+- Static files and favicon logs disabled for performance
+
+### Gunicorn (gunicorn.conf.py)
+
+**Format**: Plain text (parsed by Promtail)
+
+```
+[2025-02-06 11:30:45 +0000] [1] [INFO] Gunicorn server ready - spawned 5 workers
+[2025-02-06 11:30:46 +0000] [12] [INFO] Gunicorn worker spawned - pid=12
+```
+
+**Changes**:
+
+- Removed emojis for cleaner log parsing
+- Standardized messages with consistent formatting
+- Includes worker PID in messages
+
+### Celery (via Django logging config)
+
+**Format**: JSON (uses Django's JSON formatter)
+
+```json
+{
+  "asctime": "2025-02-06T11:30:45.123Z",
+  "levelname": "INFO",
+  "name": "celery.worker",
+  "message": "Task apps.blog.tasks.process_post[abc-123] succeeded in 0.045s"
+}
+```
+
+---
+
+## Optional Services
+
+### PostgreSQL Logging
+
+PostgreSQL logging can be enabled in two ways:
+
+**Option 1: Application-level logging** (Recommended)
+
+- Django's `django.db.backends` logger captures DB errors and queries
+- Already configured (commented) in `config/settings/production.py`
+- No additional services needed
+
+**Option 2: Metrics via postgres_exporter** (Future enhancement)
+
+- Add `postgres_exporter` service to `docker-compose.logging.yml`
+- Uncomment PostgreSQL scrape config in `logging/prometheus/prometheus.yml`
+- Provides database performance metrics (connections, queries/sec, cache hit ratio)
+
+### SeaweedFS Logging
+
+SeaweedFS logs from your Ubuntu server can be collected by Promtail:
+
+**Configuration Steps**:
+
+1. **Update Promtail volume mount** in `docker-compose.logging.yml`:
+
+   ```yaml
+   promtail:
+     volumes:
+       - /your/actual/seaweedfs/log/path:/seaweedfs-logs:ro
+   ```
+
+2. **Enable SeaweedFS job** in `logging/promtail/promtail-config.yml`:
+   - Uncomment the `seaweedfs` job at the bottom of the file
+   - Update `__path__` to match your log file pattern
+   - Adjust timestamp format if needed
+
+3. **Restart Promtail**:
+   ```bash
+   docker compose -f docker-compose.logging.yml restart promtail
+   ```
+
+**Log Format**: Plain text (parsed with regex)
+
+```
+[2025/02/06 11:30:45] [INFO] Master server started on port 9333
+```
+
+**Labels Added**:
+
+- `job`: seaweedfs
+- `service`: seaweedfs
+- `environment`: production
 
 ---
 
@@ -434,12 +611,12 @@ volumes:
 
 ### Dashboard Features
 
-| Feature | Value |
-|---------|-------|
-| Auto-refresh | 30 seconds |
-| Default time range | Last 1 hour |
-| Service filter | Multi-select dropdown |
-| Tags | django, logs, loki, nginx |
+| Feature            | Value                     |
+| ------------------ | ------------------------- |
+| Auto-refresh       | 30 seconds                |
+| Default time range | Last 1 hour               |
+| Service filter     | Multi-select dropdown     |
+| Tags               | django, logs, loki, nginx |
 
 ---
 
@@ -552,12 +729,12 @@ docker compose -f docker-compose.yml \
 
 ### Access Points
 
-| Service | URL |
-|---------|-----|
+| Service     | URL                   |
+| ----------- | --------------------- |
 | Application | http://localhost:8001 |
-| Grafana | http://localhost:4000 |
-| Loki API | http://localhost:3100 |
-| Prometheus | http://localhost:9090 |
+| Grafana     | http://localhost:4000 |
+| Loki API    | http://localhost:3100 |
+| Prometheus  | http://localhost:9090 |
 
 ---
 
@@ -639,16 +816,17 @@ docker compose -f docker-compose.logging.yml up -d
 
 ## Retention Policy
 
-| Component | Retention | Description |
-|-----------|-----------|-------------|
-| Loki | 14 days | Log data |
-| Prometheus | 15 days | Metric data |
-| Docker Logs (Loki) | 50MB x 5 | Container log rotation |
-| Docker Logs (Promtail) | 10MB x 3 | Container log rotation |
-| Docker Logs (Prometheus) | 50MB x 5 | Container log rotation |
-| Docker Logs (Grafana) | 50MB x 5 | Container log rotation |
+| Component                | Retention | Description            |
+| ------------------------ | --------- | ---------------------- |
+| Loki                     | 14 days   | Log data               |
+| Prometheus               | 15 days   | Metric data            |
+| Docker Logs (Loki)       | 50MB x 5  | Container log rotation |
+| Docker Logs (Promtail)   | 10MB x 3  | Container log rotation |
+| Docker Logs (Prometheus) | 50MB x 5  | Container log rotation |
+| Docker Logs (Grafana)    | 50MB x 5  | Container log rotation |
 
 **Automatic Cleanup**:
+
 - Loki compactor runs every 10 minutes
 - Retention enforced with 2-hour deletion delay
 - Docker log rotation handled by Docker daemon
@@ -659,12 +837,12 @@ docker compose -f docker-compose.logging.yml up -d
 
 ### Required for Grafana
 
-| Variable | Description |
-|----------|-------------|
-| `GRAFANA_ADMIN_USER` | Admin username |
-| `GRAFANA_ADMIN_PASSWORD` | Admin password |
-| `GRAFANA_ROOT_URL` | Public URL (optional) |
-| `TZ` | Timezone (optional, default: UTC) |
+| Variable                 | Description                       |
+| ------------------------ | --------------------------------- |
+| `GRAFANA_ADMIN_USER`     | Admin username                    |
+| `GRAFANA_ADMIN_PASSWORD` | Admin password                    |
+| `GRAFANA_ROOT_URL`       | Public URL (optional)             |
+| `TZ`                     | Timezone (optional, default: UTC) |
 
 These should be set in `.env.prod` or passed via environment.
 

@@ -58,6 +58,45 @@ scrape_configs:
       # Parse Docker JSON log format
       - docker: {}
 
+      # Parse JSON logs from Django (pythonjsonlogger format)
+      - match:
+          selector: '{service="blog"}'
+          stages:
+            - json:
+                expressions:
+                  level: levelname
+                  timestamp: asctime
+                  logger: name
+                  message: message
+            - labels:
+                level:
+                logger:
+            - timestamp:
+                source: timestamp
+                format: RFC3339
+
+      # Parse JSON logs from Nginx
+      - match:
+          selector: '{service="blog-nginx"}'
+          stages:
+            - json:
+                expressions:
+                  level: level
+                  timestamp: timestamp
+                  service: service
+                  message: message
+                  method: context.method
+                  path: context.path
+                  status_code: context.status_code
+                  request_time: context.request_time
+            - labels:
+                level:
+                method:
+                status_code:
+            - timestamp:
+                source: timestamp
+                format: RFC3339
+
       # Drop health check and static file logs from nginx
       - match:
           selector: '{service="blog-nginx"}'
@@ -90,7 +129,7 @@ scrape_configs:
                 expression: '.*GET /metrics.*'
                 drop_counter_reason: prometheus_metrics
 
-      # Drop redundant Gunicorn default logs (keep custom emoji logs)
+      # Drop redundant Gunicorn booting logs
       - match:
           selector: '{service="blog"}'
           stages:
@@ -102,3 +141,34 @@ scrape_configs:
       - static_labels:
           app: trung-dev
           stack: django-blog
+
+  # SeaweedFS logs from Ubuntu server filesystem (COMMENTED - uncomment and configure)
+  # Prerequisites:
+  #   1. Replace /seaweedfs/log/path with actual path (e.g., /var/log/seaweedfs/)
+  #   2. Add volume mount in docker-compose.logging.yml:
+  #      volumes:
+  #        - /seaweedfs/log/path:/seaweedfs-logs:ro
+  #   3. Ensure Promtail container has read permissions
+  # - job_name: seaweedfs
+  #   static_configs:
+  #     - targets:
+  #         - localhost
+  #       labels:
+  #         job: seaweedfs
+  #         service: seaweedfs
+  #         environment: production
+  #         __path__: /seaweedfs-logs/*.log
+  #
+  #   pipeline_stages:
+  #     # Parse SeaweedFS plain text logs
+  #     # Format: [timestamp] [level] message
+  #     - regex:
+  #         expression: '^\[(?P<timestamp>.*?)\] \[(?P<level>\w+)\] (?P<message>.*)'
+  #     - labels:
+  #         level:
+  #     - timestamp:
+  #         source: timestamp
+  #         format: '2006/01/02 15:04:05'  # Adjust based on actual SeaweedFS log format
+  #     - static_labels:
+  #         app: trung-dev
+  #         stack: django-blog

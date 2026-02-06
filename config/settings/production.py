@@ -18,17 +18,27 @@ SECRET_KEY = env.str("DJANGO_SECRET_KEY")
 
 DEBUG = False
 
-ALLOWED_HOSTS = ALLOWED_HOSTS + env.list("DJANGO_ALLOWED_HOSTS", default=[])
+# ALLOWED_HOSTS configuration:
+# - "django": Internal Docker network (for Prometheus scraping)
+# - "localhost", "127.0.0.1": For local testing in production mode
+# - Add your domain via DJANGO_ALLOWED_HOSTS env variable
+ALLOWED_HOSTS = ALLOWED_HOSTS + env.list("DJANGO_ALLOWED_HOSTS", default=[]) + [
+    "django",      # Internal Docker network hostname (Prometheus, internal services)
+    "localhost",   # Local testing
+    "127.0.0.1",   # Local testing
+]
 
 CSRF_TRUSTED_ORIGINS = env.list("DJANGO_CSRF_TRUSTED_ORIGINS", default=[])
 
+# Standardized logging configuration for production
+# All logs output as JSON to stdout for collection by Promtail -> Loki -> Grafana
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
         "json": {
             "()": "pythonjsonlogger.jsonlogger.JsonFormatter",
-            "format": "%(asctime)s %(name)s %(levelname)s %(message)s %(pathname)s %(lineno)d %(funcName)s",
+            "format": "%(asctime)s %(levelname)s %(name)s %(message)s %(pathname)s %(lineno)d %(funcName)s",
         },
     },
     "handlers": {
@@ -39,7 +49,7 @@ LOGGING = {
         },
     },
     "loggers": {
-        # Django core
+        # Django core loggers
         "django": {
             "handlers": ["console"],
             "level": "INFO",
@@ -47,7 +57,7 @@ LOGGING = {
         },
         "django.request": {
             "handlers": ["console"],
-            "level": "ERROR",
+            "level": "INFO",  # Changed from ERROR to INFO to capture all requests
             "propagate": False,
         },
         "django.security": {
@@ -55,6 +65,24 @@ LOGGING = {
             "level": "WARNING",
             "propagate": False,
         },
+        "django.server": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        # PostgreSQL logging (commented out - uncomment to enable)
+        # Option 1: ERROR - Only log database connection/query errors
+        # "django.db.backends": {
+        #     "handlers": ["console"],
+        #     "level": "ERROR",
+        #     "propagate": False,
+        # },
+        # Option 2: DEBUG - Log ALL SQL queries (verbose, use for debugging slow queries)
+        # "django.db.backends": {
+        #     "handlers": ["console"],
+        #     "level": "DEBUG",
+        #     "propagate": False,
+        # },
         # Application loggers
         "apps.blog": {
             "handlers": ["console"],
@@ -76,7 +104,18 @@ LOGGING = {
             "level": "INFO",
             "propagate": False,
         },
+        # Celery logging
         "celery": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "celery.task": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "celery.worker": {
             "handlers": ["console"],
             "level": "INFO",
             "propagate": False,

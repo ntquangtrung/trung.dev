@@ -6,7 +6,7 @@ services:
     ports:
       - "3100:3100"
     volumes:
-      - ./loki/loki-config.yml:/etc/loki/config.yml:ro
+      - ./logging/loki/loki-config.yml:/etc/loki/config.yml:ro
       - loki-data:/loki
     command: -config.file=/etc/loki/config.yml
     networks:
@@ -22,9 +22,12 @@ services:
     container_name: django-promtail-container
     restart: unless-stopped
     volumes:
-      - ./promtail/promtail-config.yml:/etc/promtail/config.yml:ro
+      - ./logging/promtail/promtail-config.yml:/etc/promtail/config.yml:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - promtail-data:/promtail
+      # SeaweedFS logs (COMMENTED - uncomment when ready)
+      # Replace /seaweedfs/log/path with actual path on your Ubuntu server
+      # - /seaweedfs/log/path:/seaweedfs-logs:ro
     command: -config.file=/etc/promtail/config.yml
     depends_on:
       - loki
@@ -43,7 +46,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./logging/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
@@ -68,7 +71,7 @@ services:
       - "4000:3000"
     volumes:
       - grafana-storage:/var/lib/grafana
-      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./logging/grafana/provisioning:/etc/grafana/provisioning:ro
     env_file:
       - .env.prod
     environment:
