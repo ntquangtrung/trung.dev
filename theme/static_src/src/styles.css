@@ -203,8 +203,21 @@
       margin-block-end: 1em;
     }
 
+    ul,
+    ol {
+      @apply pl-6 mt-4 marker:leading-[3];
+    }
+
     ul {
-      @apply list-disc pl-6 mt-4 marker:leading-[3];
+      @apply list-disc;
+    }
+
+    ol {
+      @apply list-decimal;
+    }
+
+    code {
+      @apply bg-neutral-500/15 px-1.5 py-0.5 rounded-md text-sm font-mono;
     }
 
     table:not([cellpadding]) td,

@@ -27,66 +27,7 @@
                 <article id="toc" class="table-of-contents-prose">{{ table_of_contents|safe }}</article>
             </nav>
     
-            <script>
-                $(function () {
-                    const $tocLinks = $('#toc a');
-                    const headerHeightRem = getComputedStyle(document.documentElement).getPropertyValue('--header-height');
-                    const remInPx = parseFloat(getComputedStyle(document.documentElement).fontSize);
-                    const offset = (parseFloat(headerHeightRem) * remInPx) + 5;
-
-                    // Get all anchor positions (sorted by position in document)
-                    const anchors = $('.custom-prose a[id]').map(function () {
-                        return {
-                            id: this.id,
-                            top: $(this).offset().top
-                        };
-                    }).get();
-
-                    function onScroll() {
-                        const scrollTop = $(window).scrollTop() + offset;
-                        let currentId = null;
-
-                        // Find the last anchor that we've scrolled past
-                        // This means we're currently in that section
-                        for (let i = anchors.length - 1; i >= 0; i--) {
-                            if (scrollTop >= anchors[i].top) {
-                                currentId = anchors[i].id;
-                                break;
-                            }
-                        }
-
-                        // Update active TOC link
-                        $tocLinks.removeClass('active-toc');
-                        if (currentId) {
-                            $tocLinks.filter(`[href="#${currentId}"]`).addClass('active-toc');
-                        }
-                    }
-
-                    // Handle click with offset-aware scroll
-                    $tocLinks.on('click', function (e) {
-                        e.preventDefault();
-                        const targetId = $(this).attr('href').substring(1);
-                        const $target = $('#' + targetId);
-                        if ($target.length) {
-                            const scrollTo = $target.offset().top - offset;
-                            $('html, body').animate({ scrollTop: scrollTo }, 300);
-                        }
-                    });
-
-                    // Throttle scroll events for better performance
-                    let ticking = false;
-                    $(window).on('scroll', function () {
-                        if (!ticking) {
-                            requestAnimationFrame(function () {
-                                onScroll();
-                                ticking = false;
-                            });
-                            ticking = true;
-                        }
-                    });
-                    onScroll(); // run on load
-                });
-            </script>
+            <script src="{% static 'js/toc.js' %}"></script>
     
         {% endif %}
     </div>
