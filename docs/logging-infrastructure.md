@@ -51,8 +51,8 @@ The project implements a **modern observability stack** using:
 ┌─────────────────────────────────────────────────────────────────┐
 │                     CONTAINER LOGS                              │
 ├──────────────────────┬──────────────────────┬──────────────────┤
-│ Django/Gunicorn      │ Celery Workers/Beat  │ Nginx            │
-│ (JSON formatted)     │ (JSON formatted)     │ (stdout/stderr)  │
+│ Django/Gunicorn      │ Nginx                                    │
+│ (JSON formatted)     │ (stdout/stderr)                          │
 └──────────────────────┴──────────────────────┴──────────────────┘
            │                    │                    │
            └────────────────────┼────────────────────┘
@@ -121,7 +121,7 @@ All services run on the `django-blog-app-network` Docker network:
 │  ┌─────────┐    ┌──────────┐    ┌───────┐    ┌────────────┐          │
 │  │ Django  │───►│ Promtail │───►│ Loki  │◄───│  Grafana   │          │
 │  │ Nginx   │    │          │    │ :3100 │    │   :3000    │          │
-│  │ Celery  │    │          │    │       │    │            │          │
+│  │         │    │          │    │       │    │            │          │
 │  └─────────┘    └──────────┘    └───────┘    └────────────┘          │
 │       │                                             ▲                 │
 │       │              ┌────────────┐                 │                 │
@@ -158,7 +158,7 @@ All services run on the `django-blog-app-network` Docker network:
 | Label | Example | Description |
 |-------|---------|-------------|
 | `app` | trung-dev | Application identifier |
-| `service` | blog, celery-worker | Service name |
+| `service` | blog, blog-nginx | Service name |
 | `environment` | production | Environment type |
 | `container` | django-blog-container | Container name |
 | `stack` | django-blog | Stack identifier |
@@ -289,21 +289,6 @@ Raw Docker Logs
        │
        ▼
 ┌──────────────────────────────┐
-│ Flower Filtering             │
-│ - Drop Periodic messages     │
-│ - Drop inspect messages      │
-└──────────────────────────────┘
-       │
-       ▼
-┌──────────────────────────────┐
-│ Celery Filtering             │
-│ - Drop heartbeat pings       │
-│ - Drop Scheduler messages    │
-│ - Drop DatabaseScheduler     │
-└──────────────────────────────┘
-       │
-       ▼
-┌──────────────────────────────┐
 │ Django Filtering             │
 │ - Drop GET /metrics          │  ← Prometheus scrapes
 │ - Drop Gunicorn boot logs    │
@@ -422,9 +407,6 @@ All logs are output in **JSON format** for structured querying:
 | --------------- | ----------------------- | ---------------------------------- | ------------------------ |
 | Django/Gunicorn | `service=blog`          | Application logs, request handling | JSON (pythonjsonlogger)  |
 | Nginx           | `service=blog-nginx`    | HTTP access/errors (filtered)      | JSON (custom log_format) |
-| Celery Worker   | `service=celery-worker` | Job execution, failures            | JSON (Django logging)    |
-| Celery Beat     | `service=celery-beat`   | Task scheduling                    | JSON (Django logging)    |
-| Flower          | `service=flower`        | Task monitoring                    | Plain text               |
 
 **Excluded** (noise reduction):
 
@@ -466,8 +448,6 @@ All services now output structured logs for easier parsing and querying:
 - `django.request`: INFO (all requests, changed from ERROR)
 - `django.security`: WARNING
 - `apps.*`: INFO
-- `celery.*`: INFO
-
 **Optional PostgreSQL Logging** (commented in config):
 
 ```python
@@ -525,19 +505,6 @@ To enable: Uncomment desired option in `config/settings/production.py`
 - Removed emojis for cleaner log parsing
 - Standardized messages with consistent formatting
 - Includes worker PID in messages
-
-### Celery (via Django logging config)
-
-**Format**: JSON (uses Django's JSON formatter)
-
-```json
-{
-  "asctime": "2025-02-06T11:30:45.123Z",
-  "levelname": "INFO",
-  "name": "celery.worker",
-  "message": "Task apps.blog.tasks.process_post[abc-123] succeeded in 0.045s"
-}
-```
 
 ---
 
@@ -632,11 +599,7 @@ SeaweedFS logs from your Ubuntu server can be collected by Promtail:
 
 # Specific service
 {service="blog"}
-{service="celery-worker"}
 {service="blog-nginx"}
-
-# Multiple services
-{service=~"blog|celery-worker"}
 ```
 
 #### Filtering by Content

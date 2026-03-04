@@ -34,42 +34,6 @@ services:
     networks:
       - app-network
 
-  celery-worker:
-    labels:
-      environment: "production"
-      app: "trung-dev"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    networks:
-      - app-network
-
-  celery-beat:
-    labels:
-      environment: "production"
-      app: "trung-dev"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    networks:
-      - app-network
-
-  flower:
-    labels:
-      environment: "production"
-      app: "trung-dev"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-    networks:
-      - app-network
-
   nginx-proxy:
     image: nginx:latest
     container_name: django-blog-nginx-container

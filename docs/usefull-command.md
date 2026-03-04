@@ -325,13 +325,7 @@
    {app="trung-dev"}
    ```
 
-3. **View specific service:**
-
-   ```logql
-   {service="celery-worker"}
-   ```
-
-4. **Filter by log level (JSON logs in production):**
+3. **Filter by log level (JSON logs in production):**
 
    ```logql
    {app="trung-dev"} | json | levelname="ERROR"
@@ -374,7 +368,7 @@ If you want to view logs without starting the Loki/Grafana stack:
 2. **View multiple services:**
 
    ```bash
-   docker compose logs -f django celery-worker nginx-proxy
+   docker compose logs -f django nginx-proxy
    ```
 
 3. **View last 100 lines:**
@@ -418,7 +412,7 @@ If you want to view logs without starting the Loki/Grafana stack:
 Access the "Trung-Dev Application Logs" dashboard:
 - Go to Grafana → Dashboards
 - Select "Trung-Dev Application Logs"
-- View panels for Django, Errors, Celery, and Nginx logs
+- View panels for Django, Errors, and Nginx logs
 
 ### Troubleshooting
 

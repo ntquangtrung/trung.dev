@@ -26,12 +26,6 @@ x-app: &default-app
     - REDIS_HOST=${REDIS_HOST}
     - REDIS_PORT=${REDIS_PORT}
     - REDIS_DB_INDEX=${REDIS_DB_INDEX}
-    # Celery
-    - CELERY_BROKER_REDIS_DB_INDEX=${CELERY_BROKER_REDIS_DB_INDEX}
-    - CELERY_BACKEND_REDIS_DB_INDEX=${CELERY_BACKEND_REDIS_DB_INDEX}
-    # Flower
-    - FLOWER_USER=${FLOWER_USER}
-    - FLOWER_PASSWORD=${FLOWER_PASSWORD}
     # Storage
     - SEAWEEDFS_URL=${SEAWEEDFS_URL}
     # Database
@@ -76,45 +70,6 @@ services:
       - redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  celery-worker:
-    <<: *default-app
-    image: django-blog-image
-    container_name: django-celery-worker-container
-    command: >
-      sh -c 'poetry run celery -A config worker --loglevel=info'
-    depends_on:
-      - redis
-      - django
-
-  celery-beat:
-    <<: *default-app
-    image: django-blog-image
-    container_name: django-celery-beat-container
-    command: >
-      sh -c 'poetry run celery -A config beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler'
-    depends_on:
-      - redis
-      - django
-    volumes:
-      - .:/app
-
-  flower:
-    <<: *default-app
-    image: django-blog-image
-    container_name: django-flower-container
-    command: >
-      poetry run celery -A config.celery flower --port=5555 --basic_auth=${FLOWER_USER}:${FLOWER_PASSWORD} --broker=redis://:${REDIS_PASSWORD}@redis:${REDIS_PORT}/${CELERY_BROKER_REDIS_DB_INDEX} --result-backend=redis://:${REDIS_PASSWORD}@redis:${REDIS_PORT}/${CELERY_BACKEND_REDIS_DB_INDEX}
-    ports:
-      - "5555:5555"
-    depends_on:
-      - redis
-      - django
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5555/"]
       interval: 30s
       timeout: 10s
       retries: 3

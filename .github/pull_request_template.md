@@ -15,7 +15,7 @@
 - [ ] `requirements.txt` regenerated if `poetry.lock` changed
 - [ ] Environment variables documented (if new ones added)
 - [ ] Django admin tested (if models/admin changed)
-- [ ] Custom storage/Celery tasks tested (if applicable)
+- [ ] Custom storage tested (if applicable)
 
 ### Security & Performance
 - [ ] No sensitive data exposed (secrets, tokens, passwords)

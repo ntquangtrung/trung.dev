@@ -20,12 +20,6 @@ Django 5.2+ personal portfolio site with Tailwind CSS 4.x, containerized with Do
 - **Configuration:** Set `SEAWEEDFS_URL` and `SEAWEEDFS_PREFIX` in settings; used in `STORAGES['default']`
 - Files are uploaded with prefix: `{SEAWEEDFS_PREFIX}/{filename}`
 
-### Async Tasks
-- **Celery + Redis:** Background tasks configured in `config/celery.py`
-- **Task Location:** `apps/blog/tasks/` (e.g., `notify_downloads_resume.py`)
-- **Broker:** Redis with separate DB indices for broker (`CELERY_BROKER_REDIS_DB_INDEX`) and backend (`CELERY_BACKEND_REDIS_DB_INDEX`)
-- **Beat Scheduler:** Uses `django_celery_beat` for periodic tasks stored in database
-
 ## Developer Workflows
 
 ### Running Commands (Poetry-based)
@@ -34,17 +28,11 @@ Django 5.2+ personal portfolio site with Tailwind CSS 4.x, containerized with Do
 poetry run python manage.py migrate
 poetry run python manage.py createsuperuser
 poetry run python manage.py runserver
-
-# Celery worker
-poetry run celery -A config worker --loglevel=info
-
-# Celery beat scheduler
-poetry run celery -A config beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
 ```
 
 ### Docker Development
 ```bash
-# Start all services (Django, Tailwind, Redis, Postgres, Celery)
+# Start all services (Django, Tailwind, Redis, Postgres)
 docker-compose up
 
 # Production build (uses docker-compose.prod.yml overlay)
@@ -138,11 +126,6 @@ poetry run python manage.py makemigrations
 poetry run python manage.py migrate
 ```
 
-### Add Celery Task
-1. Create task in `apps/blog/tasks/<taskname>.py`
-2. Use `@shared_task` decorator
-3. Task autodiscovered via `config/celery.py`
-
 ### Update Requirements
 ```bash
 poetry add <package>
@@ -154,7 +137,6 @@ poetry add <package>
 - **Models:** `apps/blog/models/__init__.py`
 - **Admin:** `apps/blog/admin.py`, `apps/blog/model_admin/*.py`
 - **Storage:** `apps/blog/storage.py`, `services/seaweedfs.py`
-- **Async:** `config/celery.py`, `apps/blog/tasks/`
 - **CI/CD:** `.github/workflows/ci.yml`, `.github/workflows/deploy.yml`
 - **Docker:** `Dockerfile`, `docker-compose.yml`, `docker-compose.override.yml`, `docker-compose.prod.yml`
 

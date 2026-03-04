@@ -82,8 +82,6 @@ jobs:
       REDIS_PORT: 6379
       REDIS_PASSWORD: redispassword
       REDIS_DB_INDEX: 0
-      CELERY_BROKER_REDIS_DB_INDEX: 1
-      CELERY_BACKEND_REDIS_DB_INDEX: 2
       DJANGO_SECRET_KEY: test-secret-key-for-ci-only
       DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1
       DJANGO_CSRF_TRUSTED_ORIGINS: http://localhost,http://127.0.0.1
@@ -220,8 +218,6 @@ jobs:
             REDIS_PORT=6379
             REDIS_PASSWORD=dummy
             REDIS_DB_INDEX=0
-            CELERY_BROKER_REDIS_DB_INDEX=1
-            CELERY_BACKEND_REDIS_DB_INDEX=2
             POSTGRES_DB=postgres
             POSTGRES_USER=postgres
             POSTGRES_PASSWORD=postgres

@@ -46,8 +46,6 @@ THIRD_PARTY_APPS = [
     "taggit",
     "taggit_labels",
     "active_link",
-    "django_celery_results",
-    "django_celery_beat",
 ]
 
 INSTALLED_APPS = [
@@ -265,9 +263,3 @@ CLIENT_GITHUB_BASE_URL = env.str(
     "CLIENT_GITHUB_BASE_URL", default="https://api.github.com"
 )
 CLIENT_GITHUB_API_VERSION = env.str("CLIENT_GITHUB_API_VERSION", default="2022-11-28")
-
-CELERY_REDIS_URL = (
-    f"redis://:{env.str('REDIS_PASSWORD')}@redis:{env.str('REDIS_PORT')}/"
-)
-CELERY_BROKER_URL = CELERY_REDIS_URL + env.str("CELERY_BROKER_REDIS_DB_INDEX")
-CELERY_RESULT_BACKEND = CELERY_REDIS_URL + env.str("CELERY_BACKEND_REDIS_DB_INDEX")

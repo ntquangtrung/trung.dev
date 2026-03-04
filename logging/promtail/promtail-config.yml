@@ -105,22 +105,6 @@ scrape_configs:
                 expression: '.*(health|/static/|/favicon.ico).*'
                 drop_counter_reason: noise
 
-      # Drop flower periodic logs
-      - match:
-          selector: '{service="flower"}'
-          stages:
-            - drop:
-                expression: '.*(Periodic|inspect).*'
-                drop_counter_reason: periodic_noise
-
-      # Drop celery heartbeat logs
-      - match:
-          selector: '{service=~"celery-worker|celery-beat"}'
-          stages:
-            - drop:
-                expression: '.*(heartbeat|Scheduler|DatabaseScheduler: Schedule changed).*'
-                drop_counter_reason: heartbeat_noise
-
       # Drop /metrics requests (Prometheus scrapes every 30s)
       - match:
           selector: '{service="blog"}'

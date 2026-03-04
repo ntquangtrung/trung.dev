@@ -103,11 +103,6 @@ LOGGING = {
             "level": "DEBUG",
             "propagate": False,
         },
-        "celery": {
-            "handlers": ["console"],
-            "level": "INFO",
-            "propagate": False,
-        },
     },
     "root": {
         "handlers": ["console"],

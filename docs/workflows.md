@@ -239,11 +239,8 @@ docker image prune -f --filter "dangling=true"
 **Stack Deployed**:
 - Django web application
 - PostgreSQL database
-- Redis (cache + Celery broker)
-- Celery worker
-- Celery beat scheduler
+- Redis (cache)
 - Nginx (reverse proxy)
-- Flower (Celery monitoring)
 - Logging stack (Loki, Promtail, Grafana)
 
 ---
@@ -309,7 +306,6 @@ docker image prune -f --filter "dangling=true"
 | `CLIENT_GITHUB_BASE_URL` | GitHub API base URL |
 | `CLIENT_GITHUB_API_VERSION` | GitHub API version |
 | `REDIS_PASSWORD` | Redis password |
-| `FLOWER_PASSWORD` | Flower dashboard password |
 | `SEAWEEDFS_URL` | SeaweedFS storage URL |
 | `GRAFANA_ADMIN_USER` | Grafana admin username |
 | `GRAFANA_ADMIN_PASSWORD` | Grafana admin password |
@@ -325,9 +321,6 @@ docker image prune -f --filter "dangling=true"
 | `REDIS_HOST` | Redis hostname |
 | `REDIS_PORT` | Redis port |
 | `REDIS_DB_INDEX` | Redis database index |
-| `CELERY_BROKER_REDIS_DB_INDEX` | Celery broker Redis DB |
-| `CELERY_BACKEND_REDIS_DB_INDEX` | Celery backend Redis DB |
-| `FLOWER_USER` | Flower dashboard username |
 
 ---
 
