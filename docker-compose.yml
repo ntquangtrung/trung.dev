@@ -8,6 +8,7 @@ x-app: &default-app
   volumes:
     - .:/app
     - static_volume:/app/staticfiles
+    - node_modules:/app/theme/static_src/node_modules
   environment:
     # Django
     - ENVIRONMENT=${ENVIRONMENT}
@@ -121,3 +122,4 @@ services:
 volumes:
   static_volume:
   redis_data:
+  node_modules:
