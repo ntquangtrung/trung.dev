@@ -1,43 +1,27 @@
-#!/bin/sh
+#!/bin/bash
+set -euo pipefail
 
 echo "Starting Django application..."
 
-# Build Tailwind and collect static files
-echo "Building Tailwind CSS..."
-poetry run python manage.py tailwind install --no-package-lock --no-input
-poetry run python manage.py tailwind build --no-input
+# Collect static files
 echo "Collecting static files..."
 poetry run python manage.py collectstatic --no-input
 
 # Run migrations
-poetry run python manage.py migrate
+echo "Running migrations..."
+poetry run python manage.py migrate --no-input
 
-# Create superuser if it doesn't exist
-if [ "$DJANGO_SUPERUSER_USERNAME" ] && [ "$DJANGO_SUPERUSER_EMAIL" ] && [ "$DJANGO_SUPERUSER_PASSWORD" ]; then
+# Create superuser if env vars are set
+if [ -n "${DJANGO_SUPERUSER_USERNAME:-}" ]; then
   echo "Creating superuser..."
-  poetry run python manage.py shell << END
-from django.contrib.auth import get_user_model
-import os
-
-User = get_user_model()
-username = os.environ['DJANGO_SUPERUSER_USERNAME']
-email = os.environ['DJANGO_SUPERUSER_EMAIL']
-password = os.environ['DJANGO_SUPERUSER_PASSWORD']
-
-if not User.objects.filter(username=username).exists():
-    User.objects.create_superuser(username=username, email=email, password=password)
-    print("Superuser created.")
-else:
-    print("Superuser already exists.")
-END
-else
-  echo "Superuser environment variables not set. Skipping superuser creation."
+  poetry run python manage.py createsuperuser --noinput || true
 fi
 
-if [ "$ENVIRONMENT" = "production" ]; then
+# Detect environment via DJANGO_SETTINGS_MODULE
+if [ "$DJANGO_SETTINGS_MODULE" = "config.settings.production" ]; then
   echo "Starting Gunicorn server..."
-  poetry run gunicorn config.wsgi:application --config gunicorn.conf.py
+  exec poetry run gunicorn config.wsgi:application --config gunicorn.conf.py
 else
   echo "Starting Django development server..."
-  poetry run python manage.py runserver 0.0.0.0:8000
+  exec poetry run python manage.py runserver 0.0.0.0:8000
 fi

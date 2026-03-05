@@ -1,6 +1,7 @@
 services:
   django:
-    volumes: [] # Remove bind mounts from base config - use built-in static files
+    volumes:
+      - static_volume:/app/staticfiles # bind mount removed; static_volume shared with nginx
     ports: []
     labels:
       environment: "production"
@@ -17,7 +18,7 @@ services:
     networks:
       - app-network
 
-  # Tailwind disabled in production - entrypoint.sh handles tailwind build
+  # Tailwind disabled in production - baked into the image at build time
   tailwind:
     profiles:
       - disabled

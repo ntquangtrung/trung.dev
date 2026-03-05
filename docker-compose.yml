@@ -11,7 +11,7 @@ x-app: &default-app
     - node_modules:/app/theme/static_src/node_modules
   environment:
     # Django
-    - ENVIRONMENT=${ENVIRONMENT}
+    # - ENVIRONMENT=${ENVIRONMENT} # replaced by DJANGO_SETTINGS_MODULE
     - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
     - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
     - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
@@ -45,17 +45,16 @@ services:
       - "8000:8000"
 
   tailwind:
-    <<: *default-app
     image: django-blog-image
     container_name: django-tailwind-container
-    command: >
-      sh -c 'if [ "$ENVIRONMENT" = "production" ]; then
-        echo "Starting Tailwind in production mode";
-        poetry run python manage.py tailwind build;
-      else
-        echo "Starting Tailwind in development mode";
-        poetry run python manage.py tailwind start;
-      fi'
+    build:
+      context: .
+    user: root
+    volumes:
+      - .:/app
+      - node_modules:/app/theme/static_src/node_modules
+    working_dir: /app/theme/static_src
+    entrypoint: ["npm", "run", "dev"]
     tty: true
 
   redis:

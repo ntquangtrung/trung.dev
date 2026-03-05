@@ -27,25 +27,29 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get install -y --no-install-recommends nodejs \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy poetry files
-COPY pyproject.toml poetry.lock poetry.toml ./
+# Set work directory before any COPY
+WORKDIR /app
 
-# Install Poetry + main dependencies
+# Copy poetry files and install dependencies (separate layer for cache efficiency)
+COPY pyproject.toml poetry.lock poetry.toml ./
 RUN pip install "poetry==$POETRY_VERSION" \
     && poetry install --only main --no-root --no-directory
 
-# Set work directory and copy source code
-WORKDIR /app
-COPY . /app
+# Copy source code
+COPY . .
 
-# Copy entrypoint script and make it executable
+# Bake Tailwind CSS into the image — runs npm directly, no Django settings needed
+RUN cd theme/static_src \
+    && npm install --no-package-lock \
+    && npm run build
+
+# Copy entrypoint script and fix ownership in one layer
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# Change ownership
-RUN chown -R app:app /app
+RUN chmod +x /usr/local/bin/entrypoint.sh \
+    && chown -R app:app /app
 
 # Switch to non-root user
 USER app
 
 EXPOSE 8000
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
