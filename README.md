@@ -3,13 +3,21 @@
 </p>
 
 <h1 align="center">
-    <a href="https://www.trung.dev">www.trung.dev</a>
+    <a href="https://ntqtrung.dev">ntptrung.dev</a>
 </h1>
 
 <p align="center">
-    This is my personal portfolio project built with Django and styled using Tailwind CSS. It uses GitHub Actions for continuous deployment and is containerized with Docker. The project was greatly inspired by Tania — you can check out her site here: <a href="https://www.taniarascia.com/">https://www.taniarascia.com/</a>.
+    A personal portfolio and blog built with Django, containerized with Docker, and monitored with Grafana. Inspired by <a href="https://www.taniarascia.com/">Tania Rascia</a>.
 </p>
 
-<p align="center">
-    Feel free to clone this repository and use it as a starting point for your own projects.
-</p>
+## Tech Stack
+
+**Backend** — [Django 5.2](https://www.djangoproject.com/), [Gunicorn](https://gunicorn.org/), [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/)
+
+**Frontend** — [Tailwind CSS](https://tailwindcss.com/), [TinyMCE](https://www.tiny.cloud/)
+
+**Infrastructure** — [Docker](https://www.docker.com/), [Nginx](https://nginx.org/), [Poetry](https://python-poetry.org/), [SeaweedFS](https://github.com/seaweedfs/seaweedfs), [WhiteNoise](http://whitenoise.evans.io/), [Grafana](https://grafana.com/), [Prometheus](https://prometheus.io/), [Loki + Promtail](https://grafana.com/oss/loki/)
+
+## About
+
+A blog for sharing what I learn and experiences worth sharing.
