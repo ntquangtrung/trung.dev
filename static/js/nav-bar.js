@@ -31,3 +31,11 @@ function toggleNav() {
     localStorage.setItem(navKey, "closed");
   }
 }
+
+// Close sidebar on mobile when a nav link is clicked
+$("#nav-sidebar a").on("click", function () {
+  if (!window.matchMedia("(min-width: 768px)").matches) {
+    $("#nav-sidebar, #main-content, #toggle-sidebar-mobile").removeClass("open");
+    localStorage.setItem(navKey, "closed");
+  }
+});

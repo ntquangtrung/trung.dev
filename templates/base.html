@@ -24,7 +24,7 @@
 			<div id="main-content" class="pt-[var(--header-height)] ml-0 md:[&.open]:ml-[var(--sidebar-width)] transition-[margin-left] duration-300 ease-in-out flex flex-col min-h-full items-center">
 				<script src="{% static 'js/nav-bar.js' %}"></script>
 
-				<div class="flex-grow w-full lg:max-w-4xl 2xl:max-w-5xl">{% block content %}<div>No content available</div>{% endblock content %}</div>
+				<div class="flex-grow w-full px-4 sm:px-6 lg:px-8 max-w-4xl 2xl:max-w-5xl">{% block content %}<div>No content available</div>{% endblock content %}</div>
 				
 				{% include "footer.html" %}
 			</div>
