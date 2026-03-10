@@ -18,11 +18,6 @@ services:
     networks:
       - app-network
 
-  # Tailwind disabled in production - baked into the image at build time
-  tailwind:
-    profiles:
-      - disabled
-
   redis:
     labels:
       environment: "production"
