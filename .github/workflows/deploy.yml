@@ -17,20 +17,15 @@ jobs:
     - name: Checkout Repo
       uses: actions/checkout@v4
 
-    - name: Setup Tailscale and SSH
-      uses: ./.github/actions/setup-tailscale-ssh
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.9.1
       with:
-        oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-        oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
         ssh-private-key: ${{ secrets.SERVER_SSH_KEY }}
-        server-host: ${{ secrets.SERVER_HOST }}
-        server-user: ${{ secrets.SERVER_USER }}
-        skip-ping: 'true'
 
     - name: Deploy via SSH
       env:
         SERVER_USER: ${{ secrets.SERVER_USER }}  # e.g., 'ubuntu' or your username
-        SERVER_HOST: ${{ secrets.SERVER_HOST }}  # Tailscale hostname or IP (e.g., 100.x.x.x)
+        SERVER_HOST: ${{ secrets.SERVER_HOST }}
         DEPLOY_PATH: ${{ vars.DEPLOY_PATH }}  # e.g., '/home/ubuntu/django-app'
         REPO_URL: https://${{ secrets.DEPLOY_PAT_TOKEN }}@github.com/${{ github.repository }}.git
         BRANCH: ${{ github.ref_name }}

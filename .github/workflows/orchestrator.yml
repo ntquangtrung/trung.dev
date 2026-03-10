@@ -13,17 +13,9 @@ jobs:
     permissions:
       contents: read
 
-  tailscale-connection:
-    name: Test Server Connection
-    needs: ci
-    uses: ./.github/workflows/tailscale-connection.yml
-    secrets: inherit
-    permissions:
-      contents: read
-
   deploy:
     name: Deploy to Production
-    needs: tailscale-connection
+    needs: ci
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
     permissions:
