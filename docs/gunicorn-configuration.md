@@ -10,7 +10,7 @@ Gunicorn (Green Unicorn) is a Python WSGI HTTP Server for UNIX that serves your 
 
 ### Location
 - Configuration file: `gunicorn.conf.py` (project root)
-- Called from: `entrypoint.sh` when `ENVIRONMENT=production`
+- Called from: `entrypoint.sh`
 
 ### Command
 ```bash

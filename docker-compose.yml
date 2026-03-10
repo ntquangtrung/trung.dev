@@ -11,7 +11,6 @@ x-app: &default-app
     - node_modules:/app/theme/static_src/node_modules
   environment:
     # Django
-    # - ENVIRONMENT=${ENVIRONMENT} # replaced by DJANGO_SETTINGS_MODULE
     - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
     - DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
     - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
