@@ -117,26 +117,47 @@
   }
 
   h1 {
-    font-size: 2.25rem;
+    font-size: 2rem;
   }
   h2 {
-    font-size: 1.875rem;
+    font-size: 1.625rem;
   }
   h3 {
-    font-size: 1.5rem;
-  }
-  h4 {
     font-size: 1.25rem;
   }
+  h4 {
+    font-size: 1rem;
+  }
   h5 {
-    font-size: 1.125rem;
+    font-size: 0.875rem;
   }
   h6 {
-    font-size: 1rem;
+    font-size: 0.75rem;
   }
 
   button:hover {
     @apply cursor-pointer;
+  }
+
+  @media (min-width: 768px) {
+    h1 {
+      font-size: 2.25rem;
+    }
+    h2 {
+      font-size: 1.875rem;
+    }
+    h3 {
+      font-size: 1.5rem;
+    }
+    h4 {
+      font-size: 1.25rem;
+    }
+    h5 {
+      font-size: 1.125rem;
+    }
+    h6 {
+      font-size: 1rem;
+    }
   }
 }
 
@@ -173,6 +194,8 @@
 
 @layer component {
   .custom-prose {
+    width: 100%;
+
     hr {
       @apply text-muted my-4;
     }

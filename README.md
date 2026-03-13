@@ -3,11 +3,11 @@
 </p>
 
 <h1 align="center">
-    <a href="https://ntqtrung.dev">ntptrung.dev</a>
+    <a href="https://ntqtrung.dev">ntqtrung.dev</a>
 </h1>
 
 <p align="center">
-    A personal portfolio and blog built with Django, containerized with Docker, and monitored with Grafana. Inspired by <a href="https://www.taniarascia.com/">Tania Rascia</a>.
+    A personal portfolio and blog built with Django, containerized with Docker, and monitored with Grafana.
 </p>
 
 ## Tech Stack
