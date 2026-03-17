@@ -3,9 +3,10 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
-      # - postgres
       - tailwind
       - redis
+      # - postgres
+      # - seaweedfs
 
   # tailwind:
   #   depends_on:
@@ -24,5 +25,17 @@ services:
 #     ports:
 #       - "5432:5432"
 
+#   seaweedfs:
+#     image: chrislusf/seaweedfs
+#     container_name: seaweedfs-container
+#     restart: always
+#     command: server -master.dir=/data/master -volume.dir.idx=/data/volume -filer
+#     volumes:
+#       - seaweedfs_data:/data
+#     ports:
+#       - "8888:8888"
+#       - "9333:9333"
+
 # volumes:
 #   postgres_data:
+#   seaweedfs_data:
