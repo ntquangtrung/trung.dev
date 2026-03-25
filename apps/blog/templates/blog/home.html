@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+{% endblock extrahead %}
+
 {% block content %}
 <div class="px-6">
     <div class="bg-background-card rounded-xl p-6 mt-8 border border-[#3d3d3d] shadow-lg flex justify-center gap-4 md:gap-0">
@@ -24,5 +29,7 @@
             <img src="{% static 'icons/django.jpg' %}" alt="unchained" class="w-3xl" />
         </div>
     </div>
+
+    {% include "blog/components/skill_marquee/index.html" %}
 </div>
 {% endblock content %}

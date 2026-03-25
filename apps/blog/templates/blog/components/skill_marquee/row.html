@@ -1,0 +1,11 @@
+<div class="flex overflow-hidden p-2 gap-4 flex-row relative">
+    {% for _ in "12" %}
+    <div class="flex shrink-0 justify-around animate-marquee flex-row space-x-4" style="--duration: {{ row_duration }}s">
+        <div class="flex space-x-4">
+            {% include "blog/components/skill_marquee/items.html" %}
+        </div>
+    </div>
+    {% endfor %}
+    <div class="pointer-events-none absolute inset-y-0 left-0 w-1/5 bg-gradient-to-r from-background-primary"></div>
+    <div class="pointer-events-none absolute inset-y-0 right-0 w-1/5 bg-gradient-to-l from-background-primary"></div>
+</div>

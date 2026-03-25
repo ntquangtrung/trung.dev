@@ -42,6 +42,21 @@
   }
 }
 
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-100% - 1rem));
+  }
+}
+
+@layer utilities {
+  .animate-marquee {
+    animation: marquee var(--duration, 30s) linear infinite;
+  }
+}
+
 @theme {
   --font-mono: "JetBrains Mono", monospace;
 
