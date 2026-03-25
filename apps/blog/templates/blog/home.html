@@ -8,13 +8,13 @@
 {% block content %}
 <div class="px-6">
     <div class="bg-background-card rounded-xl p-6 mt-8 border border-[#3d3d3d] shadow-lg flex justify-center gap-4 md:gap-0">
-        <div class="flex flex-col justify-between">
+        <div class="flex flex-col justify-center gap-4">
             <div>
                 <h1 class="mb-6">
-                    Xin chao, I'm <strong class="text-gold">{{ first_name }}</strong>
+                    <strong class="text-gold">{{last_name}} {{ first_name }}</strong>
                 </h1>
                 <p class="mb-4">
-                    A developer who spent countless hours figuring out how to center a div, and is now exploring the backend, motivated by curiosity and the simple goal of getting a little better each day.
+                    Full-stack developer specializing in web applications
                 </p>
                 <p class="mb-4">
                     This site was built with <strong>Django</strong>, with a sprinkle of AI
@@ -26,7 +26,7 @@
             </div>
         </div>
         <div class="rounded-lg overflow-hidden md:block hidden">
-            <img src="{% static 'icons/django.jpg' %}" alt="unchained" class="w-3xl" />
+            <img src="{% static 'icons/django.jpg' %}" alt="unchained" class="max-w-64  object-cover" />
         </div>
     </div>
 
